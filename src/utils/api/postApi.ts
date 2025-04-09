@@ -1,17 +1,46 @@
 import axiosInstance from "../service/axiosInstance";
 
-export const getGeneralStat = async(): Promise<any> => {
-    return await axiosInstance.get(`/api/stats/`)
-} 
+const endpoint = "/api/posts";
 
-// export const getUserActivityStat = async(days: number): Promise<any> => {
-//     return await axiosInstance.get(`/api/stats/get-user-activity-stat?${days}/`)
-// }
-
-export const getPopularSongsStat = async(): Promise<any> => {
-    return await axiosInstance.get(`/api/stats/get-popular-songs-stat/`)
+export const getAllPost = async (): Promise<any> => {
+    return await axiosInstance.get(`${endpoint}/`)
 }
 
-export const getTopArtistsStat = async(): Promise<any> => {
-    return await axiosInstance.get(`/api/stats/get-top-artists-stat/`)
+export const getAllStory = async (): Promise<any> => {
+    return await axiosInstance.get(`${endpoint}/get-all-story`)
+}
+
+export const createPost = async (userId: string, formData: FormData): Promise<any> => {
+    return await axiosInstance.post(`${endpoint}/create-post/${userId}`, formData)
+}
+
+export const createStory = async (userId: string, formData: FormData): Promise<any> => {
+    return await axiosInstance.post(`${endpoint}/create-story/${userId}`, formData)
+}
+
+export const deletePost = async (postId: string): Promise<any> => {
+    return await axiosInstance.delete(`${endpoint}/delete-post/${postId}`)
+}
+
+export const deleteStory = async (storyId: string): Promise<any> => {
+    return await axiosInstance.delete(`${endpoint}/delete-story/${storyId}`)
+}
+
+export const likePost = async (postId: string, userId: string): Promise<any> => {
+    return await axiosInstance.post(`${endpoint}/like-post/${postId}/${userId}`)
+}
+
+// export const likeStory = async(storyId: string, userId: string): Promise<any> => {
+//     return await axiosInstance.post(`${endpoint}/like-story/${storyId}/${userId}`)
+// }
+
+export const addCommentToPost = async (postId: string, userId: string, text: string): Promise<any> => {
+    const formData = new FormData();
+    formData.append("text", text);
+
+    return await axiosInstance.post(`${endpoint}/add-comment-to-post/${postId}/${userId}`, formData)
+}
+
+export const sharePost = async (postId: string, userId: string): Promise<any> => {
+    return await axiosInstance.post(`${endpoint}/share-post/${postId}/${userId}`);
 }

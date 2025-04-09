@@ -1,22 +1,25 @@
-import { getGeneralStat, getPopularPostStat, getTopUsersStat } from "@/utils/api/statsApi";
 import { toast } from "react-toastify";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import {
+    updateAvatarPhoto,
+    updateCoverPhoto,
+    updateUserBio
+} from "@/utils/api/userBiosApi";
 
-
-interface StatStore {
-    isLoading: boolean;
-    error: string | null;
+export interface UserBioStore {
     status: number;
     message: string | null;
+    isLoading: boolean;
+    error: string | null;
 
-    getGeneralStat: () => Promise<any>;
-    getPopularPostStat: () => Promise<any>;
-    getTopUsersStat: () => Promise<any>;
-    reset: () => void;
+    updateUserBio: (userId: string, formData: FormData) => Promise<any>;
+    updateCoverPhoto: (userId: string, formData: FormData) => Promise<any>;
+    updateAvatarPhoto: (userId: string, formData: FormData) => Promise<any>;
+    reset: () => any;
 }
 
-export const useStatStore = create<StatStore>()(
+export const useUserBioStore = create<UserBioStore>()(
     persist(
         (set) => ({
             isLoading: false,
@@ -24,14 +27,14 @@ export const useStatStore = create<StatStore>()(
             status: 0,
             message: null,
 
-            getGeneralStat: async () => {
+            updateUserBio: async (userId: string, formData: FormData) => {
                 set({ isLoading: true, error: null });
 
                 try {
-                    const response = await getGeneralStat();
-                    const { generalStat } = response.data;
+                    const response = await updateUserBio(userId, formData);
+                    const { userBio } = response.data;
 
-                    return generalStat;
+                    return userBio;
                 } catch (error: any) {
                     console.error(error)
                     const { message } = error.response.data;
@@ -44,14 +47,13 @@ export const useStatStore = create<StatStore>()(
                 }
             },
 
-            getPopularPostStat: async () => {
+            updateCoverPhoto: async (userId: string, formData: FormData) => {
                 set({ isLoading: true, error: null });
 
                 try {
-                    const response = await getPopularPostStat();
-                    const { posts } = response.data;
+                    await updateCoverPhoto(userId, formData);
 
-                    return posts;
+                    return true;
                 } catch (error: any) {
                     console.error(error)
                     const { message } = error.response.data;
@@ -64,14 +66,13 @@ export const useStatStore = create<StatStore>()(
                 }
             },
 
-            getTopUsersStat: async () => {
+            updateAvatarPhoto: async (userId: string, formData: FormData) => {
                 set({ isLoading: true, error: null });
 
                 try {
-                    const response = await getTopUsersStat();
-                    const { users } = response.data;
+                    await updateAvatarPhoto(userId, formData);
 
-                    return users;
+                    return true;
                 } catch (error: any) {
                     console.error(error)
                     const { message } = error.response.data;
@@ -86,17 +87,19 @@ export const useStatStore = create<StatStore>()(
 
             reset: () => {
                 set({
-                    isLoading: false,
-                    error: null,
                     status: 0,
                     message: null,
-                })
+                    isLoading: false,
+                    error: null
+                });
             },
         }),
 
         {
-            name: "stat-storage",
+            name: "user-bio-storage",
             storage: createJSONStorage(() => sessionStorage),
         }
     )
 );
+
+

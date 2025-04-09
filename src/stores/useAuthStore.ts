@@ -1,25 +1,24 @@
 import { toast } from "react-toastify";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { User } from "@/utils/types";
+import { usePostStore } from './usePostStore';
+import { useUserStore } from "./useUserStore";
+import { useStatStore } from "./useStatStore";
+import { useOpenStore } from "./useOpenStore";
+import { useUserBioStore } from "./useUserBioStore";
 import {
-	checkArtist,
-	login,
-	logout,
-	refreshToken,
-	register,
 	changePassword,
-	resetPassword,
-	sendOTP,
+	checkAdmin,
 	checkOTP,
 	forgotPassword,
-	loginWithGoogle
-} from './../utils/api/authApi';
-import { checkAdmin } from "@/utils/api/authApi";
-import { useUserStore } from "./useUserStore";
-import { useMusicStore } from "./useMusicStore";
-import { usePlayerStore } from "./usePlayerStore";
-import { useStatStore } from "./useStatStore";
-import { User } from "@/utils/types";
+	login,
+	loginGoogle,
+	logout,
+	register,
+	resetPassword,
+	sendOTP
+} from "@/utils/api/authApi";
 
 export interface AuthStore {
 	status: number;
@@ -28,21 +27,18 @@ export interface AuthStore {
 	error: string | null;
 	user: User | null;
 	isAuth: boolean;
-	isArtist: boolean;
 	isAdmin: boolean;
 
 	checkAdmin: () => Promise<any>;
-	checkArtist: () => Promise<any>;
 	sendOTP: (email: string) => Promise<any>;
 	checkOTP: (email: string, OTP: string) => Promise<any>;
 	register: (formData: FormData) => Promise<any>;
 	login: (formData: FormData) => Promise<any>;
-	loginWithGoogle: (formData: FormData) => Promise<any>;
+	loginGoogle: (formData: FormData) => Promise<any>;
 	logout: () => Promise<any>;
 	forgotPassword: (formData: FormData) => Promise<any>;
 	changePassword: (userId: string, formData: FormData) => Promise<any>;
 	resetPassword: (userId: string) => Promise<any>;
-	refreshToken: () => Promise<any>;
 	setUserAuth: (user: User | null) => any;
 	reset: () => any;
 }
@@ -52,7 +48,6 @@ export const useAuthStore = create<AuthStore>()(
 		(set, get) => ({
 			user: null,
 			isAuth: false,
-			isArtist: false,
 			isAdmin: false,
 			isLoading: false,
 			error: null,
@@ -80,27 +75,6 @@ export const useAuthStore = create<AuthStore>()(
 				}
 			},
 
-			checkArtist: async () => {
-				set({ isLoading: true, error: null });
-
-				try {
-					const response = await checkArtist();
-					const data: boolean = response.data.isArtist;
-
-					set({ isArtist: data });
-					return true;
-				} catch (error: any) {
-					console.error(error)
-					const { message } = error.response.data;
-					set({ isArtist: false, error: message });
-
-					toast.error(message);
-					return false;
-				} finally {
-					set({ isLoading: false });
-				}
-			},
-
 			sendOTP: async (email) => {
 				set({ isLoading: true, error: null });
 
@@ -111,7 +85,7 @@ export const useAuthStore = create<AuthStore>()(
 				} catch (error: any) {
 					console.error(error)
 					const { message } = error.response.data;
-					set({ isArtist: false, error: message });
+					set({ error: message });
 
 					toast.error(message);
 					return false;
@@ -132,7 +106,7 @@ export const useAuthStore = create<AuthStore>()(
 				} catch (error: any) {
 					console.error(error)
 					const { message } = error.response.data;
-					set({ isArtist: false, error: message });
+					set({ error: message });
 
 					toast.error(message);
 					return false;
@@ -173,7 +147,6 @@ export const useAuthStore = create<AuthStore>()(
 						set({ user, isAuth: true })
 
 						await get().checkAdmin();
-						await get().checkArtist();
 					}
 
 					return { user: user, isVerified };
@@ -189,16 +162,15 @@ export const useAuthStore = create<AuthStore>()(
 				}
 			},
 
-			loginWithGoogle: async (formData) => {
+			loginGoogle: async (formData) => {
 				set({ isLoading: true, error: null });
 
 				try {
-					const response = await loginWithGoogle(formData);
+					const response = await loginGoogle(formData);
 					const { user } = response.data;
 
 					set({ user, isAuth: true })
 					await get().checkAdmin();
-					await get().checkArtist();
 
 					return user;
 				} catch (error: any) {
@@ -296,25 +268,6 @@ export const useAuthStore = create<AuthStore>()(
 				}
 			},
 
-			refreshToken: async () => {
-				set({ isLoading: true, error: null });
-
-				try {
-					await refreshToken();
-
-					return true;
-				} catch (error: any) {
-					console.error(error)
-					const { message } = error.response.data;
-					set({ error: message });
-
-					toast.error(message);
-					return false;
-				} finally {
-					set({ isLoading: false });
-				}
-			},
-
 			setUserAuth: (user) => {
 				set({ user: user });
 			},
@@ -325,17 +278,16 @@ export const useAuthStore = create<AuthStore>()(
 					status: 0,
 					message: null,
 					isAdmin: false,
-					isArtist: false,
 					isAuth: false,
 					isLoading: false,
 					error: null
 				});
 
 				useUserStore.getState().reset();
-				useMusicStore.getState().reset();
-				usePlayerStore.getState().reset();
 				useStatStore.getState().reset();
-				useUserStore.getState().reset();
+				usePostStore.getState().reset();
+				useOpenStore.getState().reset();
+				useUserBioStore.getState().reset();
 			},
 		}),
 

@@ -1,55 +1,57 @@
 import axiosInstance from "../service/axiosInstance";
 
-export const register = async (formData: FormData): Promise<any> => {
-  return await axiosInstance.post("/api/auth/register/", formData);
-};
+const endpoint = "/api/auth";
 
-export const registerAdmin = async (formData: FormData): Promise<any> => {
-  return await axiosInstance.post("/api/auth/register-admin/", formData);
+export const register = async (formData: FormData): Promise<any> => {
+  return await axiosInstance.post(`${endpoint}/register`, formData);
 };
 
 export const login = async (formData: FormData): Promise<any> => {
-  return await axiosInstance.post("/api/auth/login/", formData);
+  return await axiosInstance.post(`${endpoint}/login`, formData);
 };
 
-export const loginWithGoogle = async (formData: FormData): Promise<any> => {
-  return await axiosInstance.post("/api/auth/login-with-google/", formData);
+export const loginGoogle = async (formData: FormData): Promise<any> => {
+  return await axiosInstance.post(`${endpoint}/login-google`, formData);
 };
 
 export const logout = async (): Promise<any> => {
-  return await axiosInstance.post("/api/auth/logout/");
+  return await axiosInstance.post(`${endpoint}/logout`);
 };
 
-export const refreshToken = async (): Promise<any> => {
-  return await axiosInstance.post("/api/auth/refresh-token/")
-}
-
 export const checkAdmin = async (): Promise<any> => {
-  return await axiosInstance.post("/api/auth/check-admin/")
-}
-
-export const checkArtist = async (): Promise<any> => {
-  return await axiosInstance.post("/api/auth/check-artist/")
+  return await axiosInstance.post(`${endpoint}/check-admin`)
 }
 
 export const sendOTP = async (email: string): Promise<any> => {
-  return await axiosInstance.post(`/api/auth/send-otp/${email}/`)
+  return await axiosInstance.post(`${endpoint}/send-otp/${email}`)
 }
 
 export const checkOTP = async (email: string, OTP: string): Promise<any> => {
   const data = new FormData();
-    data.append("OTP", OTP);
-  return await axiosInstance.post(`/api/auth/check-otp/${email}/`, data)
+    data.append(`OTP`, OTP);
+  return await axiosInstance.post(`${endpoint}/check-otp/${email}`, data)
 }
 
 export const changePassword = async (userId: string, formData: FormData): Promise<any> => {
-  return await axiosInstance.put(`/api/auth/change-password/${userId}/`, formData);
+  return await axiosInstance.put(`${endpoint}/change-password/${userId}`, formData);
 };
 
 export const forgotPassword = async (formData: FormData): Promise<any> => {
-  return await axiosInstance.put(`/api/auth/forgot-password/`, formData);
+  return await axiosInstance.put(`${endpoint}/forgot-password`, formData);
 };
 
 export const resetPassword = async (userId: string): Promise<any> => {
-  return await axiosInstance.put(`/api/auth/reset-password/${userId}/`);
+  return await axiosInstance.put(`${endpoint}/reset-password/${userId}`);
 };
+
+// export const checkArtist = async (): Promise<any> => {
+//   return await axiosInstance.post(`${endpoint}/check-artist/`)
+// }
+
+// export const refreshToken = async (): Promise<any> => {
+//   return await axiosInstance.post(`${endpoint}/refresh-token/`)
+// }
+
+// export const registerAdmin = async (formData: FormData): Promise<any> => {
+//   return await axiosInstance.post(`${endpoint}/register-admin`, formData);
+// };

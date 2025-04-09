@@ -32,3 +32,7 @@ export const formateDate  =(date: string) =>{
 export const  formatDateInDDMMYYY = (date: string) =>{
   return new Date(date).toLocaleDateString('en-GB')
 }
+
+export const serverUrl = import.meta.env.VITE_SERVER_URL as string;
+
+export const clientUrl = import.meta.env.VITE_CLIENT_URL as string;

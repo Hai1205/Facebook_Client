@@ -1,34 +1,38 @@
-import { useEffect, useState } from "react";
-import ProfileHeader from "../ProfileHeader";
-import ProfileTabs from "../ProfileTabs";
-import { useParams } from "next/navigation";
-import { fetchUserProfile } from "@/service/user.service";
+import { useUserStore } from "@/stores/useUserStore";
+import { useCallback, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import ProfileHeader from "./components/ProfileHeader";
+import ProfileTabs from "./components/ProfileTabs";
+import { USER } from "@/utils/types";
+// import ProfileHeader from "../ProfileHeader";
+// import ProfileTabs from "../ProfileTabs";
+// import { useParams } from "next/navigation";
+// import { fetchUserProfile } from "@/service/user.service";
 
 const ProfilePage = () => {
   const params = useParams();
-  const id = params.id;
-  const [profileData, setProfileData] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const userId = params.id;
+  const [profileData, setProfileData] = useState<USER | null>(null);
   const [isOwner, setIsOwner] = useState(false);
 
-  const fetchProfile = async () => {
-    setLoading(true);
-    try {
-      const result = await fetchUserProfile(id);
-      setProfileData(result.profile);
-      setIsOwner(result.isOwner);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
+  const { getUser } = useUserStore();
+
+  const fetchProfile = useCallback(async () => {
+    if (userId) {
+      const result = await getUser(userId);
+
+      if (result) {
+        setProfileData(result.profile);
+        setIsOwner(result.isOwner);
+      }
     }
-  };
+  }, [userId, getUser]);
 
   useEffect(() => {
-    if (id) {
+    if (userId) {
       fetchProfile();
     }
-  }, [id]);
+  }, [fetchProfile, userId]);
 
   if (!profileData) {
     return <div>Loading...</div>;
@@ -38,20 +42,18 @@ const ProfilePage = () => {
     <div>
       <ProfileHeader
         profileData={profileData}
-        setProfileData={setProfileData}
         isOwner={isOwner}
-        id={id}
-        fetchProfile={fetchProfile}
+        userId={userId}
+        setProfileData={setProfileData}
       />
+
       <ProfileTabs
         profileData={profileData}
-        setProfileData={setProfileData}
         isOwner={isOwner}
-        id={id}
-        fetchProfile={fetchProfile}
+        userId={userId}
       />
     </div>
   );
 };
 
-export default Page;
+export default ProfilePage;

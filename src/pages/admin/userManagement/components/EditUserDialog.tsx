@@ -15,7 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { User } from "@/utils/types";
 import { useUserStore } from "@/stores/useUserStore";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { COUNTRY_CHOICE, STATUS_CHOICE } from "@/utils/tuple";
+import { COUNTRY_CHOICE, STATUS_CHOICE } from "@/utils/choice";
 import LoadingSpinner from "@/components/ui/loading";
 import { Save, UserIcon } from "lucide-react";
 

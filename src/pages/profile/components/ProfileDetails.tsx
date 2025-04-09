@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-// import PostsContent from "./profileContent/PostsContent";
+import { useCallback, useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Briefcase,
@@ -14,71 +13,92 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-// import MutualFriends from "./profileContent/MutualFriends";
-// import EditBio from "./profileContent/EditBio";
-// import { usePostStore } from "@/store/usePostStore";
 import { formatDateInDDMMYYY } from "@/lib/utils";
 import { usePostStore } from "@/stores/usePostStore";
+import PostsContent from "./PostContent";
+import { COMMENT, POST, USER } from "@/utils/types";
+import MutualFriends from "./MutualFriends";
+import EditBio from "./EditBio";
 
 interface ProfileDetailsProps {
-  activeTab: string;
-  id: string;
-  profileData: any;
+  activeTab: "posts" | "about" | "friends" | "photos";
+  userId: string | undefined;
+  profileData: USER;
   isOwner: boolean;
-  fetchProfile: () => void;
 }
 
 const ProfileDetails = ({
   activeTab,
-  id,
+  userId,
   profileData,
   isOwner,
-  fetchProfile,
 }: ProfileDetailsProps) => {
   const [isEditBioModel, setIsEditBioModel] = useState(false);
   const [likePosts, setLikePosts] = useState(new Set());
-  const {
-    getUserPosts,
-    likePost,
-    addCommentToPost,
-    sharePost,
-  } = usePostStore();
+  const [userPosts, setUserPosts] = useState<POST[]>([]);
 
-  useEffect(() => {
-    if (id) {
-      getUserPosts(id);
+  const { likePost, addCommentToPost, sharePost, getUserPosts } =
+    usePostStore();
+
+  const fetchUserPosts = useCallback(async () => {
+    if (!userId) {
+      return;
     }
-  }, [id, getUserPosts]);
+
+    const posts = await getUserPosts(userId);
+    if (posts) {
+      setUserPosts(posts);
+    }
+  }, [userId, getUserPosts]);
 
   useEffect(() => {
-    const saveLikes = localStorage.getItem("likePosts");
+    fetchUserPosts();
+  }, [fetchUserPosts]);
+
+  useEffect(() => {
+    const saveLikes = sessionStorage.getItem("likePosts");
     if (saveLikes) {
       setLikePosts(new Set(JSON.parse(saveLikes)));
     }
   }, []);
 
   const handleLikePost = async (postId: string) => {
-    // const updatedLikePost = new Set(likePosts);
-    // if (updatedLikePost.has(postId)) {
-    //   updatedLikePost.delete(postId);
-    //   toast.error("post disliked successfully");
-    // } else {
-    //   updatedLikePost.add(postId);
-    //   toast.success("post like successfully");
-    // }
-    // setLikePosts(updatedLikePost);
-    // localStorage.setItem(
-    //   "likePosts",
-    //   JSON.stringify(Array.from(updatedLikePost))
-    // );
+    if (!userId) {
+      return;
+    }
 
-    // try {
-    //   await likePost(postId);
-    //   await fetchPost();
-    // } catch (error) {
-    //   console.error(error);
-    //   toast.error("failed to like or unlike the post");
-    // }
+    const updatedLikePost = new Set(likePosts);
+    if (updatedLikePost.has(postId)) {
+      updatedLikePost.delete(postId);
+    } else {
+      updatedLikePost.add(postId);
+    }
+    setLikePosts(updatedLikePost);
+    sessionStorage.setItem(
+      "likePosts",
+      JSON.stringify(Array.from(updatedLikePost))
+    );
+
+    await likePost(postId, userId);
+    fetchUserPosts();
+  };
+
+  const handleCommentPost = async (comment: COMMENT, postId: string) => {
+    if (!userId) {
+      return;
+    }
+
+    await addCommentToPost(postId, userId, comment.text);
+    await fetchUserPosts();
+  };
+
+  const handleSharePost = async (postId: string) => {
+    if (!userId) {
+      return;
+    }
+
+    await sharePost(postId, userId);
+    await fetchUserPosts();
   };
 
   const tabContent = {
@@ -87,22 +107,18 @@ const ProfileDetails = ({
         <div className="w-full lg:w-[70%] space-y-6 mb-4">
           {userPosts?.map((post) => (
             <PostsContent
-              key={userPosts?.id}
+              key={post?.id}
               post={post}
               isLiked={likePosts.has(post?.id)}
               onLike={() => handleLikePost(post?.id)}
-              onComment={async (comment) => {
-                await addCommentToPost(post?.id, comment.text);
-                await getUserPost(id);
-              }}
-              onShare={async () => {
-                await sharePost(post?.id);
-                await getUserPost(id);
-              }}
+              onComment={(comment: COMMENT) =>
+                handleCommentPost(comment, post?.id)
+              }
+              onShare={() => handleSharePost(post?.id)}
             />
           ))}
         </div>
-        
+
         <div className="w-full lg:w-[30%]">
           <Card>
             <CardContent className="p-6">
@@ -129,7 +145,7 @@ const ProfileDetails = ({
 
                 <div className="flex items-center">
                   <MapPin className="w-5 h-5 mr-2" />
-                  
+
                   <span>{profileData?.bio?.hometown}</span>
                 </div>
 
@@ -149,7 +165,7 @@ const ProfileDetails = ({
               <div className="flex items-center mb-4 dark:text-gray-300">
                 <Rss className="w-5 h-5 mr-2" />
 
-                <span>Followed by {profileData?.followingCount} people</span>
+                <span>Followed by {profileData?.following?.length} people</span>
               </div>
 
               {isOwner && (
@@ -211,7 +227,7 @@ const ProfileDetails = ({
 
               <div className="flex items-center">
                 <Phone className="w-5 h-5 mr-2" />
-                
+
                 <span>{profileData?.bio?.phone}</span>
               </div>
 
@@ -233,7 +249,7 @@ const ProfileDetails = ({
         </Card>
       </motion.div>
     ),
-    friends: <MutualFriends id={id} isOwner={isOwner} />,
+    friends: <MutualFriends userId={userId} isOwner={isOwner} />,
     photos: (
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -269,14 +285,13 @@ const ProfileDetails = ({
 
   return (
     <div>
-      {tabContent[activeTab] || null}
+      {tabContent[activeTab as keyof typeof tabContent] || null}
 
       <EditBio
         isOpen={isEditBioModel}
         onClose={() => setIsEditBioModel(false)}
-        fetchProfile={fetchProfile}
         initialData={profileData?.bio}
-        id={id}
+        userId={userId}
       />
     </div>
   );

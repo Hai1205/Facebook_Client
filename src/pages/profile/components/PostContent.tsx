@@ -13,27 +13,27 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import PostComments from "./PostComments";
-import { POST } from "@/utils/types";
 import { formateDate, clientUrl } from "@/lib/utils";
+import { COMMENT, POST } from "@/utils/types";
+import PostComments from "@/pages/post/components/PostComments";
 
-interface PostCardProps {
+interface PostContentProps {
   post: POST;
   isLiked: boolean;
   onShare: () => void;
-  onComment: () => void;
+  onComment: (comment: COMMENT) => void;
   onLike: () => void;
 }
 
-const PostCard = ({
+const PostsContent = ({
   post,
   isLiked,
   onShare,
   onComment,
   onLike,
-}: PostCardProps) => {
-  const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
+}: PostContentProps) => {
   const [showComments, setShowComments] = useState(false);
+  const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
   const commentInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleCommentClick = () => {
@@ -67,7 +67,6 @@ const PostCard = ({
     window.open(shareUrl, "_blank");
     setIsShareDialogOpen(false);
   };
-
   return (
     <motion.div
       key={post?.id}
@@ -76,24 +75,25 @@ const PostCard = ({
       transition={{ duration: 0.5 }}
     >
       <Card>
-        <CardContent className="p-6  dark:text-white">
+        <CardContent className="p-6  dark:text-white ">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-3 cursor-pointer">
               <Avatar>
                 {post?.user?.avatarPhotoUrl ? (
                   <AvatarImage
                     src={post?.user?.avatarPhotoUrl}
-                    alt={post?.user?.username}
+                    alt={post?.user?.fullName}
                   />
                 ) : (
                   <AvatarFallback className="dark:bg-gray-400">
-                    {post?.user?.username?.substring(0, 2)}
+                    {post?.user?.fullName?.substring(0, 2)}
                   </AvatarFallback>
                 )}
               </Avatar>
+
               <div>
                 <p className="font-semibold dark:text-white">
-                  {post?.user?.username}
+                  {post?.user?.fullName}
                 </p>
 
                 <p className="font-sm text-gray-500">
@@ -128,7 +128,6 @@ const PostCard = ({
             <span className="text-sm text-gray-500 dark:text-gray-400 hover:border-b-2 border-gray-400 cursor-pointer ">
             {post?.likes?.length} {post?.likes?.length === 1 ? 'like' : 'likes'}
             </span>
-
             <div className="flex gap-3">
               <span
                 className="text-sm text-gray-500 dark:text-gray-400 hover:border-b-2 border-gray-400 cursor-pointer "
@@ -136,7 +135,6 @@ const PostCard = ({
               >
                 {post?.comments?.length} {post?.comments?.length === 1 ? 'comment' : 'comments'}
               </span>
-
               <span className="text-sm text-gray-500 dark:text-gray-400 hover:border-b-2 border-gray-400 cursor-pointer ">
                 {post?.shares?.length} {post?.shares?.length === 1 ? 'share' : 'shares'}
               </span>
@@ -220,9 +218,7 @@ const PostCard = ({
                 <PostComments
                   post={post}
                   onComment={onComment}
-                  commentInputRef={
-                    commentInputRef as React.RefObject<HTMLInputElement>
-                  }
+                  commentInputRef={commentInputRef}
                 />
               </motion.div>
             )}
@@ -233,4 +229,4 @@ const PostCard = ({
   );
 };
 
-export default PostCard;
+export default PostsContent;

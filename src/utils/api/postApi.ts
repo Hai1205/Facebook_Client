@@ -10,6 +10,10 @@ export const getAllStory = async (): Promise<any> => {
     return await axiosInstance.get(`${endpoint}/get-all-story`)
 }
 
+export const getUserPosts = async (userId: string): Promise<any> => {
+    return await axiosInstance.get(`${endpoint}/get-user-posts/${userId}`)
+}
+
 export const createPost = async (userId: string, formData: FormData): Promise<any> => {
     return await axiosInstance.post(`${endpoint}/create-post/${userId}`, formData)
 }

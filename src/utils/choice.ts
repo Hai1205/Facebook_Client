@@ -1,20 +1,33 @@
-export interface TupleChoice {
+export interface CHOICE {
     value: string;
     label: string;
 }
 
-export const ROLE_CHOICE: TupleChoice[] = [
+export const ROLE_CHOICE: CHOICE[] = [
     { value: "CELEBRITY", label: "Celebrity" },
     { value: "ADMIN", label: "Admin" },
     { value: "USER", label: "User" },
 ];
 
-export const MEDIA_TYPE_CHOICE: TupleChoice[] = [
+export const MEDIA_TYPE_CHOICE: CHOICE[] = [
     { value: "IMAGE", label: "Image" },
     { value: "VIDEO", label: "Video" },
 ];
 
-export const COUNTRY_CHOICE: TupleChoice[] = [
+export const GENDER_CHOICE: CHOICE[] = [
+    { value: 'male', label: 'Male' },
+    { value: 'female', label: 'Female' },
+    { value: 'other', label: 'Other' },
+];
+
+export const TAB_LIST_CHOICE: CHOICE[] = [
+    { value: 'posts', label: 'Posts' },
+    { value: 'about', label: 'About' },
+    { value: 'friends', label: 'Friends' },
+    { value: 'photos', label: 'Photos' },
+];
+
+export const COUNTRY_CHOICE: CHOICE[] = [
     { value: "vietnam", label: "Vietnam" },
     { value: "usa", label: "United States" },
     { value: "uk", label: "United Kingdom" },
@@ -40,13 +53,13 @@ export const COUNTRY_CHOICE: TupleChoice[] = [
     { value: "south_africa", label: "South Africa" },
 ];
 
-export const STATUS_CHOICE: TupleChoice[] = [
+export const STATUS_CHOICE: CHOICE[] = [
     { value: "active", label: "Active" },
     { value: "lock", label: "Lock" },
     { value: "pending", label: "Pending" },
 ];
 
-// export const REJECTION_REASON_CHOICE: TupleChoice[] = [
+// export const REJECTION_REASON_CHOICE: CHOICE[] = [
 //     { value: "Insufficient content", label: "Insufficient content" },
 //     { value: "Quality issues", label: "Quality issues" },
 //     { value: "Incomplete profile", label: "Incomplete profile" },

@@ -42,8 +42,8 @@ export interface POST {
 	mediaUrl: string;
 	mediaType: string;
 	likes: USER[] | string[];
-	comments: Comment[] | string[];
-	share: USER[] | string[];
+	comments: COMMENT[] | string[];
+	shares: USER[] | string[];
 	createdAt: string;
 	updatedAt: string;
 }

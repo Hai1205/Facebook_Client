@@ -9,6 +9,7 @@ import {
   deleteStory,
   getAllPost,
   getAllStory,
+  getUserPosts,
   likePost,
   sharePost,
 } from "@/utils/api/postApi";
@@ -21,6 +22,7 @@ export interface PostStore {
 
   getAllPost: () => Promise<any>;
   getAllStory: () => Promise<any>;
+  getUserPosts: (userId: string) => Promise<any>;
   createPost: (userId: string, formData: FormData) => Promise<any>;
   createStory: (userId: string, formData: FormData) => Promise<any>;
   deletePost: (postId: string) => Promise<any>;
@@ -62,15 +64,35 @@ export const usePostStore = create<PostStore>()(
           set({ isLoading: false });
         }
       },
-
+      
       getAllStory: async () => {
         set({ isLoading: true, error: null });
-
+        
         try {
           const response = await getAllStory();
           const { stories } = response.data;
 
           return stories;
+        } catch (error: any) {
+          console.error(error);
+          const { message } = error.response.data;
+          set({ error: message });
+          
+          toast.error(message);
+          return false;
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+      
+      getUserPosts: async (userId: string) => {
+        set({ isLoading: true, error: null });
+
+        try {
+          const response = await getUserPosts(userId);
+          const { posts } = response.data;
+
+          return posts;
         } catch (error: any) {
           console.error(error);
           const { message } = error.response.data;
@@ -82,7 +104,7 @@ export const usePostStore = create<PostStore>()(
           set({ isLoading: false });
         }
       },
-
+      
       createPost: async (userId: string, formData: FormData) => {
         set({ isLoading: true, error: null });
 

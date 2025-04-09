@@ -1,3 +1,4 @@
+import { serverUrl } from "@/lib/utils";
 import axios, { InternalAxiosRequestConfig, AxiosResponse } from "axios";
 
 // Hàm lấy JWT token từ cookies
@@ -5,8 +6,6 @@ const getCookie = (name: string): string | null => {
   const matches = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`));
   return matches ? matches[2] : null;
 };
-
-export const serverUrl = import.meta.env.VITE_SERVER_URL as string;
 
 // Tạo instance Axios
 const axiosInstance = axios.create({

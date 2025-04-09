@@ -1,7 +1,7 @@
 import { toast } from "react-toastify";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { User } from "@/utils/types";
+import { USER } from "@/utils/types";
 import { usePostStore } from './usePostStore';
 import { useUserStore } from "./useUserStore";
 import { useStatStore } from "./useStatStore";
@@ -21,13 +21,13 @@ import {
 } from "@/utils/api/authApi";
 
 export interface AuthStore {
+	userAuth: USER | null;
+	isAuth: boolean;
+	isAdmin: boolean;
 	status: number;
 	message: string | null;
 	isLoading: boolean;
 	error: string | null;
-	user: User | null;
-	isAuth: boolean;
-	isAdmin: boolean;
 
 	checkAdmin: () => Promise<any>;
 	sendOTP: (email: string) => Promise<any>;
@@ -39,14 +39,14 @@ export interface AuthStore {
 	forgotPassword: (formData: FormData) => Promise<any>;
 	changePassword: (userId: string, formData: FormData) => Promise<any>;
 	resetPassword: (userId: string) => Promise<any>;
-	setUserAuth: (user: User | null) => any;
+	setUserAuth: (user: USER | null) => any;
 	reset: () => any;
 }
 
 export const useAuthStore = create<AuthStore>()(
 	persist(
 		(set, get) => ({
-			user: null,
+			userAuth: null,
 			isAuth: false,
 			isAdmin: false,
 			isLoading: false,
@@ -144,7 +144,7 @@ export const useAuthStore = create<AuthStore>()(
 					const { user, isVerified } = response.data;
 
 					if (isVerified) {
-						set({ user, isAuth: true })
+						set({ userAuth: user, isAuth: true })
 
 						await get().checkAdmin();
 					}
@@ -153,7 +153,7 @@ export const useAuthStore = create<AuthStore>()(
 				} catch (error: any) {
 					console.error(error)
 					const { message } = error.response.data;
-					set({ user: null, error: message });
+					set({ userAuth: null, error: message });
 
 					toast.error(message);
 					return false;
@@ -169,14 +169,14 @@ export const useAuthStore = create<AuthStore>()(
 					const response = await loginGoogle(formData);
 					const { user } = response.data;
 
-					set({ user, isAuth: true })
+					set({ userAuth: user, isAuth: true })
 					await get().checkAdmin();
 
 					return user;
 				} catch (error: any) {
 					console.error(error)
 					const { message } = error.response.data;
-					set({ user: null, error: message });
+					set({ userAuth: null, error: message });
 
 					toast.error(message);
 					return false;
@@ -269,12 +269,12 @@ export const useAuthStore = create<AuthStore>()(
 			},
 
 			setUserAuth: (user) => {
-				set({ user: user });
+				set({ userAuth: user });
 			},
 
 			reset: () => {
 				set({
-					user: null,
+					userAuth: null,
 					status: 0,
 					message: null,
 					isAdmin: false,

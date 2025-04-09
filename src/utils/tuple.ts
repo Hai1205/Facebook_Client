@@ -3,6 +3,17 @@ export interface TupleChoice {
     label: string;
 }
 
+export const ROLE_CHOICE: TupleChoice[] = [
+    { value: "CELEBRITY", label: "Celebrity" },
+    { value: "ADMIN", label: "Admin" },
+    { value: "USER", label: "User" },
+];
+
+export const MEDIA_TYPE_CHOICE: TupleChoice[] = [
+    { value: "IMAGE", label: "Image" },
+    { value: "VIDEO", label: "Video" },
+];
+
 export const COUNTRY_CHOICE: TupleChoice[] = [
     { value: "vietnam", label: "Vietnam" },
     { value: "usa", label: "United States" },
@@ -35,12 +46,12 @@ export const STATUS_CHOICE: TupleChoice[] = [
     { value: "pending", label: "Pending" },
 ];
 
-export const REJECTION_REASON_CHOICE: TupleChoice[] = [
-    { value: "Insufficient content", label: "Insufficient content" },
-    { value: "Quality issues", label: "Quality issues" },
-    { value: "Incomplete profile", label: "Incomplete profile" },
-    { value: "Copyright concerns", label: "Copyright concerns" },
-    { value: "Not a good fit", label: "Not a good fit" },
-    { value: "Other (please specify)", label: "Other (please specify)" },
-];
+// export const REJECTION_REASON_CHOICE: TupleChoice[] = [
+//     { value: "Insufficient content", label: "Insufficient content" },
+//     { value: "Quality issues", label: "Quality issues" },
+//     { value: "Incomplete profile", label: "Incomplete profile" },
+//     { value: "Copyright concerns", label: "Copyright concerns" },
+//     { value: "Not a good fit", label: "Not a good fit" },
+//     { value: "Other (please specify)", label: "Other (please specify)" },
+// ];
 

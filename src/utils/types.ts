@@ -1,78 +1,75 @@
-export interface User {
+export interface USER {
 	id: string;
-	albums: Album[] | string[];
-	songs: Song[] | string[];
-	likedSongs: Song[] | string[];
-	likedAlbums: Album[] | string[];
-	followers: User[] | string[];
-	following: User[] | string[];
 	username: string;
 	email: string;
+	gender: string;
 	fullName: string;
-	avatarUrl: string;
-	biography: string;
-	status: string;
-	website: string;
-	instagram: string;
-	twitter: string;
-	facebook: string;
-	youtube: string;
+	dateOfBirth: string;
+	avatarPhotoUrl: string;
+	coverPhotoUrl: string;
+	followers: USER[] | string[];
+	following: USER[] | string[];
+	bio: BIO;
 	role: string;
-	country: string;
-	joinDate: string;
-}
-
-export interface Album {
-	id: string;
-	user: User;
-	title: string;
-	thumbnailUrl: string;
-	releaseDate: string;
-	songs: Song[];
-}
-
-export interface Song {
-	id: string;
-	title: string;
-	user: User;
-	album: Album | null;
-	thumbnailUrl: string;
-	audioUrl: string;
-	duration: number;
-	releaseDate: string;
-	views: number;
-	lyrics: string;
+	createdAt: string;
 	updatedAt: string;
 }
 
-export interface ArtistApplication {
-	id: string;
-	user: User | null;
-	songs: Song[];
-	biography: string;
-	achievements: string;
-	reason: string;
-	submitDate: string;
-	status: string;
-}
-
-export interface GeneralStat {
-	totalSongs: number;
-	totalAlbums: number;
+export interface STAT {
+	totalPosts: number;
 	totalUsers: number;
-	totalArtists: number;
+	totalCelebrities: number;
 }
 
-export interface Message {
+export interface BIO {
+	id: string;
+	user: USER;
+	bioText: string;
+	liveIn: string;
+	relationship: string;
+	workplace: string;
+	education: string;
+	phone: string;
+	hometown: string;
+	createdAt: string;
+	updatedAt: string;
+}
+
+export interface POST {
+	id: string;
+	user: USER;
+	content: string;
+	mediaUrl: string;
+	mediaType: string;
+	likes: USER[] | string[];
+	comments: Comment[] | string[];
+	share: USER[] | string[];
+	createdAt: string;
+	updatedAt: string;
+}
+
+export interface STORY {
+	id: string;
+	user: USER;
+	mediaUrl: string;
+	mediaType: string;
+	createdAt: string;
+	updatedAt: string;
+}
+
+export interface COMMENT {
+	id: string;
+	user: USER;
+	text: string;
+	createdAt: string;
+	updatedAt: string;
+}
+
+export interface MESSAGE {
 	id: string;
 	senderId: string;
 	receiverId: string;
 	content: string;
 	createdAt: string;
 	updatedAt: string;
-}
-
-export interface FileState {
-	thumbnail: File | null;
-	audio: File | null;
 }

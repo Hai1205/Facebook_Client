@@ -6,9 +6,11 @@ const getCookie = (name: string): string | null => {
   return matches ? matches[2] : null;
 };
 
+export const serverUrl = import.meta.env.VITE_SERVER_URL as string;
+
 // Tạo instance Axios
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_SERVER_URL as string,
+  baseURL: serverUrl,
   withCredentials: true,
   headers: {
     accept: "application/json",

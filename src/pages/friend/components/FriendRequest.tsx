@@ -1,15 +1,16 @@
 import { AnimatePresence } from "framer-motion";
-import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { motion } from "framer-motion";
 import { UserMinus, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Loader from "@/layout/components/Loader";
+import { FriendComponentProps } from "../FriendPage";
 
-const FriendRequest = ({ friend, onAction }) => {
-  const userPlaceholder = friend?.username
-    ?.split(" ")
-    .map((name) => name[0])
-    .join("");
+const FriendRequest = ({ friend, isLoading, onAction }: FriendComponentProps) => {
+  if (isLoading) {
+    return <Loader />;
+  }
+
   return (
     <AnimatePresence>
       <motion.div
@@ -19,24 +20,25 @@ const FriendRequest = ({ friend, onAction }) => {
         className="bg-white mb-4 dark:bg-gray-800 p-4 shadow rounded-lg"
       >
         <Avatar className="h-32 w-32 rounded mx-auto mb-4">
-          {friend?.profilePicture ? (
-            <AvatarImage src={friend?.profilePicture} alt={friend?.username} />
+          {friend?.avatarPhotoUrl ? (
+            <AvatarImage src={friend?.avatarPhotoUrl} alt={friend?.username} />
           ) : (
             <AvatarFallback className="dark:bg-gray-400">
-              {userPlaceholder}
+              {friend?.fullName.substring(0, 2)}
             </AvatarFallback>
           )}
         </Avatar>
+
         <h3 className="text-lg font-semibold text-center mb-4 ">
           {friend?.username}
         </h3>
 
         <div className="flex flex-col justify-between">
-          <Button className="bg-blue-500 " size="lg" onClick={() => {}}>
+          <Button className="bg-blue-500 " size="lg" onClick={() => onAction(friend?.id)}>
             <UserPlus className="mr-2 h-4 w-4" /> Confirm
           </Button>
 
-          <Button className="mt-2 " size="lg" onClick={() => {}}>
+          <Button className="mt-2 " size="lg" onClick={() => onAction(friend?.id)}>
             <UserMinus className="mr-2 h-4 w-4" /> Delete
           </Button>
         </div>

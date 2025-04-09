@@ -5,10 +5,8 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import AudioPlayer from "./components/AudioPlayer";
 import { SidebarMenuAdmin } from "./components/SideBarMenuAdmin";
-import { Header } from "./components/Header";
-import { PlaybackControls } from "./components/PlaybackControls";
+import Header from "./components/Header";
 
 const AdminLayout = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -34,8 +32,6 @@ const AdminLayout = () => {
         direction="horizontal"
         className="flex-1 flex h-full overflow-hidden p-2"
       >
-        <AudioPlayer />
-
         {/* Left sidebar */}
         <ResizablePanel
           defaultSize={20}
@@ -55,9 +51,6 @@ const AdminLayout = () => {
           </div>
         </ResizablePanel>
       </ResizablePanelGroup>
-
-      {/* Fixed Playback Controls at Bottom */}
-      <PlaybackControls />
     </div>
   );
 };

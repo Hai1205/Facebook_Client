@@ -2,7 +2,19 @@ import { toast } from "react-toastify";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { useAuthStore } from "./useAuthStore";
-import { createUser, deleteUser, deleteUserFromRequests, followUser, getAllUser, getSuggestedUsers, getUser, getUserForRequest, getUserFriendsRequests, getUserMutualFriends, updateUser } from "@/utils/api/usersApi";
+import {
+    createUser,
+    deleteUser,
+    deleteUserFromRequests,
+    followUser,
+    getAllUser,
+    getSuggestedUsers,
+    getUser,
+    getUserForRequest,
+    getUserFriendsRequests,
+    getUserMutualFriends,
+    updateUser
+} from "@/utils/api/usersApi";
 
 interface UserStore {
     isLoading: boolean;
@@ -235,7 +247,7 @@ export const useUserStore = create<UserStore>()(
                     set({ isLoading: false });
                 }
             },
-            
+
             deleteUserFromRequests: async (currentUserId: string, requestSenderId: string) => {
                 set({ isLoading: true, error: null });
 

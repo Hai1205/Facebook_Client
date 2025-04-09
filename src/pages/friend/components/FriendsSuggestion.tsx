@@ -1,15 +1,16 @@
 import { AnimatePresence } from "framer-motion";
-import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { motion } from "framer-motion";
-import { UserMinus, UserPlus } from "lucide-react";
+import { UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Loader from "@/layout/components/Loader";
+import { FriendComponentProps } from "../FriendPage";
 
-const FriendsSuggestion = ({ friend, onAction }) => {
-  const userPlaceholder = friend?.username
-    ?.split(" ")
-    .map((name) => name[0])
-    .join("");
+const FriendsSuggestion = ({ friend, isLoading, onAction }: FriendComponentProps) => {
+  if (isLoading) {
+    return <Loader />;
+  }
+
   return (
     <AnimatePresence>
       <motion.div
@@ -19,10 +20,10 @@ const FriendsSuggestion = ({ friend, onAction }) => {
         className="bg-white mb-4 dark:bg-gray-800 p-4 shadow rounded-lg"
       >
         <Avatar className="h-32 w-32 rounded mx-auto mb-4">
-          {friend?.profilePicture ? (
-            <AvatarImage src={friend?.profilePicture} alt={friend?.username} />
+          {friend?.avatarPhotoUrl ? (
+            <AvatarImage src={friend?.avatarPhotoUrl} alt={friend?.username} />
           ) : (
-            <AvatarFallback>{userPlaceholder}</AvatarFallback>
+            <AvatarFallback>{friend?.fullName.substring(0, 2)}</AvatarFallback>
           )}
         </Avatar>
         <h3 className="text-lg font-semibold text-center mb-4 ">
@@ -33,7 +34,7 @@ const FriendsSuggestion = ({ friend, onAction }) => {
           <Button
             className="bg-blue-500 "
             size="lg"
-            onClick={() => onAction("confirm", friend?.id)}
+            onClick={() => onAction(friend?.id)}
           >
             <UserPlus className="mr-2 h-4 w-4" /> Add Friend
           </Button>

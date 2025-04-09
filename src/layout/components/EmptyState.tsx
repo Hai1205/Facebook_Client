@@ -47,7 +47,7 @@ const UserEmptyState = () => {
   return (
     <div className=" h-[calc(100vh-420px)]">
       <EmptyState
-      icon={<Users className="h-8 w-8 text-gray-400" />}
+        icon={<Users className="h-8 w-8 text-gray-400" />}
         title="No Users Found"
         description="We couldn't find the user you're looking for. They may have deleted their account or the URL might be incorrect."
       />
@@ -59,7 +59,7 @@ const ApplicationsEmptyState = () => {
   return (
     <div className=" h-[calc(100vh-420px)]">
       <EmptyState
-      icon={<FileUser className="h-8 w-8 text-gray-400" />}
+        icon={<FileUser className="h-8 w-8 text-gray-400" />}
         title="No Applications Found"
         description="We couldn't find the application you're looking for. They may have deleted their account or the URL might be incorrect."
       />
@@ -67,4 +67,10 @@ const ApplicationsEmptyState = () => {
   );
 };
 
-export { EmptyState, SongsEmptyState, AlbumsEmptyState, UserEmptyState, ApplicationsEmptyState };
+export {
+  EmptyState,
+  SongsEmptyState,
+  AlbumsEmptyState,
+  UserEmptyState,
+  ApplicationsEmptyState,
+};

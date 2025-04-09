@@ -1,5 +1,4 @@
-"use client";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ProfileHeader from "../ProfileHeader";
 import ProfileTabs from "../ProfileTabs";
 import { useParams } from "next/navigation";

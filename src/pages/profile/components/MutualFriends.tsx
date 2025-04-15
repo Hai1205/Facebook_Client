@@ -69,7 +69,7 @@ const MutualFriends = ({ userId, isOwner }: MutualFriendsProps) => {
                     {friend?.avatarPhotoUrl ? (
                       <AvatarImage
                         src={friend?.avatarPhotoUrl}
-                        alt={friend?.username}
+                        alt={friend?.fullName}
                       />
                     ) : (
                       <AvatarFallback className="dark:bg-gray-400">
@@ -80,7 +80,7 @@ const MutualFriends = ({ userId, isOwner }: MutualFriendsProps) => {
                 
                   <div>
                     <p className="font-semibold dark:text-gray-100">
-                      {friend?.username}
+                      {friend?.fullName}
                     </p>
                
                     <p className="text-sm text-gray-400">

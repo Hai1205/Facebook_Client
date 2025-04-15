@@ -18,12 +18,12 @@ export default function Loader() {
   };
 
   return (
-    <div className="fixed inset-0 flex flex-col gap-4 items-center justify-center bg-blue-600 dark:bg-blue-200 z-50">
-      <div className="relative  w-40 h-40">
+    <div className="fixed inset-0 flex flex-col gap-4 items-center justify-center bg-black z-50">
+      <div className="relative w-40 h-40">
         <motion.svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
-          className="w-full h-full text-white"
+          className="w-full h-full text-blue-500"
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
@@ -34,11 +34,12 @@ export default function Loader() {
           />
         </motion.svg>
       </div>
+      
       <div className="flex space-x-3">
         {[0, 1, 2].map((index) => (
           <motion.div
             key={index}
-            className="w-6 h-6 bg-white rounded-full"
+            className="w-6 h-6 bg-gray-200 rounded-full"
             initial="hidden"
             animate="visible"
             custom={index}
@@ -46,8 +47,9 @@ export default function Loader() {
           />
         ))}
       </div>
+
       <motion.div
-        className="text-white text-3xl mt-4 font-bold  tracking-widest"
+        className="text-blue-500 text-3xl mt-4 font-bold tracking-widest"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5, duration: 0.5 }}

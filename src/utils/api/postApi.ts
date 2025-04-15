@@ -34,10 +34,6 @@ export const likePost = async (postId: string, userId: string): Promise<any> => 
     return await axiosInstance.post(`${endpoint}/like-post/${postId}/${userId}`)
 }
 
-// export const likeStory = async(storyId: string, userId: string): Promise<any> => {
-//     return await axiosInstance.post(`${endpoint}/like-story/${storyId}/${userId}`)
-// }
-
 export const addCommentToPost = async (postId: string, userId: string, text: string): Promise<any> => {
     const formData = new FormData();
     formData.append("text", text);
@@ -48,3 +44,7 @@ export const addCommentToPost = async (postId: string, userId: string, text: str
 export const sharePost = async (postId: string, userId: string): Promise<any> => {
     return await axiosInstance.post(`${endpoint}/share-post/${postId}/${userId}`);
 }
+
+// export const likeStory = async(storyId: string, userId: string): Promise<any> => {
+//     return await axiosInstance.post(`${endpoint}/like-story/${storyId}/${userId}`)
+// }

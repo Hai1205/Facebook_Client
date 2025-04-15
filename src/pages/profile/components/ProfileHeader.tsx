@@ -49,7 +49,7 @@ const ProfileHeader = ({
 
   const { register, handleSubmit, setValue } = useForm({
     defaultValues: {
-      username: profileData?.username,
+      fullName: profileData?.fullName,
       dateOfBirth: profileData?.dateOfBirth?.split("T")[0],
       gender: profileData?.gender,
     },
@@ -64,7 +64,7 @@ const ProfileHeader = ({
     }
 
     const formData = new FormData();
-    formData.append("username", data.username);
+    formData.append("fullName", data.fullName);
     formData.append("dateOfBirth", data.dateOfBirth);
     formData.append("gender", data.gender);
 
@@ -159,7 +159,7 @@ const ProfileHeader = ({
           </Avatar>
 
           <div className="mt-4 mdLmt-0 text-center md:text-left flex-grow">
-            <h1 className="text-3xl font-bold">{profileData?.username}</h1>
+            <h1 className="text-3xl font-bold">{profileData?.fullName}</h1>
 
             <p className="text-gray-400 font-semibold">
               {profileData?.followers?.length}{" "}
@@ -220,10 +220,7 @@ const ProfileHeader = ({
                     />
 
                     <AvatarFallback className="dark:bg-gray-400">
-                      {profileData?.fullName
-                        ?.split(" ")
-                        .map((name) => name[0])
-                        .join("")}
+                      {profileData?.fullName?.substring(0, 2)}
                     </AvatarFallback>
                   </Avatar>
 
@@ -247,9 +244,9 @@ const ProfileHeader = ({
                 </div>
 
                 <div>
-                  <Label htmlFor="username">Username</Label>
+                  <Label htmlFor="fullName">Full Name</Label>
 
-                  <Input id="username" {...register("username")} />
+                  <Input id="fullName" {...register("fullName")} />
                 </div>
 
                 <div>

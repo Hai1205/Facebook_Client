@@ -1,80 +1,75 @@
-"use client"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { usePostStore } from "@/store/usePostStore";
-import userStore from "@/store/userStore";
+// import { usePostStore } from "@/store/usePostStore";
+// import userStore from "@/store/userStore";
 import { Plus } from "lucide-react";
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import ShowStoryPreview from "./ShowStoryPreview";
+import { STORY } from "@/utils/types";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { usePostStore } from "@/stores/usePostStore";
 
-const StoryCard = ({ isAddStory, story }) => {
-  const { user } = userStore();
-  const [filePreview, setFilePreview] = useState(null);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [fileType, setFileType] = useState("");
-  const [loading, setLoading] = useState(false);
-  const { handleCreateStory } = usePostStore();
+interface StoryCardProps {
+  isAddStory?: boolean;
+  story?: STORY;
+}
+
+const StoryCard = ({ isAddStory = false, story }: StoryCardProps) => {
+  const { userAuth } = useAuthStore();
+  const { isLoading, createStory } = usePostStore();
+
+  const [filePreview, setFilePreview] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [fileType, setFileType] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [isNewStory, setIsNewStory] = useState(false);
 
-  const fileInputRef= useRef(null)
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const userPlaceholder = story?.user?.username
-    ?.split(" ")
-    .map((name) => name[0])
-    .join("");
-
-
-  const handleFileChnage = (e) => {
-    const file = e.target.files[0];
-    if(file){
-      setSelectedFile(file), 
-      setFileType(file.type.startsWith("video") ?"video" : "image");
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      setFileType(file.type.startsWith("video") ? "video" : "image");
       setFilePreview(URL.createObjectURL(file));
-      setIsNewStory(true)
-      setShowPreview(true)
+      setIsNewStory(true);
+      setShowPreview(true);
     }
-    e.target.value= '';
+    e.target.value = "";
   };
-
 
   const handleCreateStoryPost = async () => {
-    try {
-      setLoading(true);
-      const formData = new FormData();
-      if (selectedFile) {
-        formData.append("media", selectedFile);
-      }
-      await handleCreateStory(formData);
-        resetStoryState()
-      
-    } catch (error) {
-      console.error(error);
-      setLoading(false);
+    if (!userAuth) {
+      return null;
     }
+
+    const formData = new FormData();
+    if (selectedFile) {
+      formData.append("media", selectedFile);
+    }
+    await createStory(userAuth?.id, formData);
+    resetStoryState();
   };
 
+  const handleClosePreview = () => {
+    resetStoryState();
+  };
 
-  const handleClosePreview = () =>{
-       resetStoryState()
-  }
+  const resetStoryState = () => {
+    setShowPreview(false);
+    setSelectedFile(null);
+    setFilePreview(null);
+    setFileType(null);
+    setIsNewStory(false);
+  };
 
-  const resetStoryState = ()=>{
-         setShowPreview(false);
-         setSelectedFile(null);
-         setFilePreview(null);
-         setFileType(null)
-         setIsNewStory(false)
-  }
-
-  const handleStoryClick = () =>{
-     setFilePreview(story?.mediaUrl)
-     setFileType(story?.mediaType)
-     setIsNewStory(false)
-     setShowPreview(true)
-  }
-
+  const handleStoryClick = () => {
+    setFilePreview(story?.mediaUrl || "");
+    setFileType(story?.mediaType || "");
+    setIsNewStory(false);
+    setShowPreview(true);
+  };
 
   return (
     <>
@@ -87,31 +82,38 @@ const StoryCard = ({ isAddStory, story }) => {
             <div className="w-full h-full flex flex-col">
               <div className="h-3/4 w-full relative border-b">
                 <Avatar className="w-full h-full rounded-none">
-                 {user?.profilePicture ? (
+                  {userAuth?.avatarPhotoUrl ? (
                     <AvatarImage
-                      src={user?.profilePicture}
-                      alt={user?.username}
+                      src={userAuth?.avatarPhotoUrl}
+                      alt={userAuth?.fullName}
                       className="object-cover"
                     />
                   ) : (
-                    <p className="w-full h-full flex justify-center items-center text-4xl">{userPlaceholder}</p>
+                    <p className="w-full h-full flex justify-center items-center text-4xl">
+                      {userAuth?.fullName.substring(0, 2)}
+                    </p>
                   )}
                 </Avatar>
               </div>
+
               <div className="h-1/4 w-full bg-white dark:bg-gray-800 flex flex-col items-center justify-center">
                 <Button
                   variant="ghost"
                   size="sm"
                   className="p-0 h-8 w-8 rounded-full bg-blue-500 hover:bg-blue-600 "
-                  onClick={() => fileInputRef.current.click()}
+                  onClick={() => fileInputRef.current?.click()}
                 >
                   <Plus className="h-5 w-5 text-white" />
                 </Button>
                 <p className="text-xs font-semibold mt-1">Create Story</p>
               </div>
-              <input type="file" accept="image/*,video/*" className="hidden"
-               ref={fileInputRef}
-               onChange={handleFileChnage}              
+
+              <input
+                type="file"
+                accept="image/*,video/*"
+                className="hidden"
+                ref={fileInputRef}
+                onChange={handleFileChange}
               />
             </div>
           ) : (
@@ -119,51 +121,58 @@ const StoryCard = ({ isAddStory, story }) => {
               {story?.mediaType === "image" ? (
                 <img
                   src={story?.mediaUrl}
-                  alt={story?.user?.username}
+                  alt={story?.user?.fullName}
                   className="w-full h-full object-cover"
                 />
               ) : (
                 <video
-                  src={story?.mediaUrl}
-                  alt={story?.user?.username}
+                  src={story?.mediaUrl || ""}
                   className="w-full h-full object-cover"
                 />
               )}
+
               <div className="absolute top-2 left-2 ring-2 ring-blue-500 rounded-full ">
                 <Avatar className="w-8 h-8">
-                {story?.user?.profilePicture ? (
+                  {story?.user?.avatarPhotoUrl ? (
                     <AvatarImage
-                      src={story?.user?.profilePicture}
-                      alt={story?.user?.username}
+                      src={story?.user?.avatarPhotoUrl}
+                      alt={story?.user?.fullName}
                     />
                   ) : (
-                    <AvatarFallback>{userPlaceholder}</AvatarFallback>
+                    <AvatarFallback>
+                      {story?.user?.fullName.substring(0, 2)}
+                    </AvatarFallback>
                   )}
                 </Avatar>
               </div>
               <div className="absolute bottom-2 left-2 right-2">
-                <p className="text-white text-xs font-semibold truncate">{story?.user?.username}</p>
-                    
+                <p className="text-white text-xs font-semibold truncate">
+                  {story?.user?.fullName}
+                </p>
               </div>
             </>
           )}
         </CardContent>
       </Card>
-     {showPreview && (
-      <ShowStoryPreview
-        file={filePreview}
-        fileType={fileType}
-        onClose={handleClosePreview}
-        onPost= {handleCreateStoryPost}
-        isNewStory={isNewStory}
-        username = {isNewStory ? user?.username : story?.user?.username}
-        avatar = {isNewStory ? user?.profilePicture : story?.user?.profilePicture}
-        isLoading={loading}
-      
-      />
-     )}
 
-      
+      {showPreview && (
+        <ShowStoryPreview
+          file={filePreview}
+          fileType={fileType}
+          onClose={handleClosePreview}
+          onPost={handleCreateStoryPost}
+          isNewStory={isNewStory}
+          fullName={
+            isNewStory ? userAuth?.fullName || "" : story?.user?.fullName || ""
+          }
+          avatar={
+            isNewStory
+              ? userAuth?.avatarPhotoUrl || null
+              : story?.user?.avatarPhotoUrl || null
+          }
+          isLoading={isLoading}
+        />
+      )}
     </>
   );
 };

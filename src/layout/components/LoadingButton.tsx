@@ -3,7 +3,7 @@ import { Loader2 } from "lucide-react";
 
 interface LoadingButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "outline";
+  variant?: "primary" | "secondary" | "outline" | "facebook";
   fullWidth?: boolean;
   children: React.ReactNode;
   isLoading?: boolean;
@@ -22,10 +22,12 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({
     "py-3 px-4 rounded-full font-bold transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 relative";
 
   const variantClasses = {
-    primary: "bg-[#1DB954] hover:bg-[#1ed760] text-black focus:ring-[#1DB954]",
+    primary: "bg-[#1877F2] hover:bg-[#166FE5] text-white focus:ring-[#1877F2]",
     secondary: "bg-white hover:bg-gray-100 text-black focus:ring-white",
     outline:
       "bg-transparent border border-gray-400 text-white hover:border-white focus:ring-white",
+    facebook:
+      "bg-facebook hover:bg-facebook-dark text-white focus:ring-facebook",
   };
 
   const widthClass = fullWidth ? "w-full" : "";

@@ -3,7 +3,7 @@ import FriendRequest from "./components/FriendRequest";
 import FriendsSuggestion from "./components/FriendsSuggestion";
 import { useUserStore } from "@/stores/useUserStore";
 import { useAuthStore } from "@/stores/useAuthStore";
-import LeftSideBar from "@/layout/components/LeftSidebar";
+// import LeftSideBar from "@/layout/components/LeftSidebar";
 import { FriendCardSkeleton, NoFriendsMessage } from "@/layout/components/Skeleton";
 import { USER } from "@/utils/types";
 
@@ -13,7 +13,7 @@ export interface FriendComponentProps {
   onAction: (id: string) => void;
 }
 
-const Page = () => {
+const FriendPage = () => {
   const { userAuth } = useAuthStore();
   const { isLoading, followUser, getUserFriendsRequests, getSuggestedUsers } =
     useUserStore();
@@ -24,8 +24,8 @@ const Page = () => {
   useEffect(() => {
     const fetchData =async()=>{
       if (userAuth) {
-       const friendRequests = await getUserFriendsRequests(userAuth?.id);
-        const friendSuggestions = await getSuggestedUsers(userAuth?.id);
+       const friendRequests = await getUserFriendsRequests(userAuth?.id || "");
+        const friendSuggestions = await getSuggestedUsers(userAuth?.id || "");
 
         setFriendRequests(friendRequests);
         setFriendSuggestions(friendSuggestions);
@@ -37,13 +37,14 @@ const Page = () => {
 
   const handleFollowUser = async (opponentId: string) => {
     if (userAuth) {
-      await followUser(userAuth?.id, opponentId);
+      await followUser(userAuth?.id || "", opponentId);
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-[rgb(36,37,38)] ">
-      <LeftSideBar />
+      {/* <LeftSideBar /> */}
+      
       <main className="ml-0 md:ml-64 mt-16 p-6">
         <h1 className="text-2xl font-bold mb-6">Friends Requests</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6  ">
@@ -91,4 +92,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default FriendPage;

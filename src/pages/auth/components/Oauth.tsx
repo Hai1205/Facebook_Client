@@ -17,9 +17,12 @@ export interface UserData {
 }
 
 const GoogleLoginButton = () => {
-  const { loginWithGoogle } = useAuthStore();
+  const { loginGoogle } = useAuthStore();
 
   const navigate = useNavigate();
+
+  const clientId = import.meta.env.VITE_CLIENT_ID as string;
+  console.log(clientId);
 
   const handleSuccess = useCallback(
     (response: any) => {
@@ -44,14 +47,14 @@ const GoogleLoginButton = () => {
         formData.append("fullName", fullName);
         formData.append("avatarUrl", user.picture);
 
-        loginWithGoogle(formData);
+        loginGoogle(formData);
 
         navigate("/");
       } else {
         console.warn("No credential received from Google.");
       }
     },
-    [loginWithGoogle, navigate]
+    [loginGoogle, navigate]
   );
 
   useEffect(() => {
@@ -71,7 +74,7 @@ const GoogleLoginButton = () => {
     const initializeGoogleLogin = () => {
       if (window.google && window.google.accounts) {
         window.google.accounts.id.initialize({
-          clientid: import.meta.env.VITE_CLIENTid as string,
+          clientid: clientId,
           callback: handleSuccess,
         });
 
@@ -83,7 +86,7 @@ const GoogleLoginButton = () => {
     };
 
     loadGoogleScript();
-  }, [handleSuccess]);
+  }, [clientId, handleSuccess]);
 
   return (
     <div id="google-login-button" className="mb-4  flex justify-center"></div>

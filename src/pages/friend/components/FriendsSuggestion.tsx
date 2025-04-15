@@ -3,10 +3,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { motion } from "framer-motion";
 import { UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Loader from "@/layout/components/Loader";
+import Loader from "@/layout/components/navbar/components/Loader";
 import { FriendComponentProps } from "../FriendPage";
 
-const FriendsSuggestion = ({ friend, isLoading, onAction }: FriendComponentProps) => {
+const FriendsSuggestion = ({
+  friend,
+  isLoading,
+  onAction,
+}: FriendComponentProps) => {
   if (isLoading) {
     return <Loader />;
   }
@@ -21,13 +25,13 @@ const FriendsSuggestion = ({ friend, isLoading, onAction }: FriendComponentProps
       >
         <Avatar className="h-32 w-32 rounded mx-auto mb-4">
           {friend?.avatarPhotoUrl ? (
-            <AvatarImage src={friend?.avatarPhotoUrl} alt={friend?.username} />
+            <AvatarImage src={friend?.avatarPhotoUrl} alt={friend?.fullName} />
           ) : (
             <AvatarFallback>{friend?.fullName.substring(0, 2)}</AvatarFallback>
           )}
         </Avatar>
         <h3 className="text-lg font-semibold text-center mb-4 ">
-          {friend?.username}
+          {friend?.fullName}
         </h3>
 
         <div className="flex flex-col justify-between">

@@ -36,10 +36,7 @@ const PostComments = ({
     if (commentText.trim()) {
       onComment({
         text: commentText,
-        id: "",
         user: userAuth as USER,
-        createdAt: "",
-        updatedAt: "",
       });
       setCommentText("");
     }
@@ -57,7 +54,7 @@ const PostComments = ({
               {comment?.user?.avatarPhotoUrl ? (
                 <AvatarImage
                   src={comment?.user?.avatarPhotoUrl}
-                  alt={comment?.user?.username}
+                  alt={comment?.user?.fullName}
                 />
               ) : (
                 <AvatarFallback className="dark:bg-gray-400">
@@ -68,7 +65,7 @@ const PostComments = ({
 
             <div className="flex flex-col">
               <div className="rounded-lg p-2">
-                <p className="font-bold text-sm">{comment?.user?.username}</p>
+                <p className="font-bold text-sm">{comment?.user?.fullName}</p>
 
                 <p className="text-sm">{comment?.text}</p>
               </div>
@@ -82,7 +79,7 @@ const PostComments = ({
                   Reply
                 </Button>
 
-                <span>{formateDate(comment.createdAt)}</span>
+                <span>{formateDate(comment?.createdAt || "")}</span>
               </div>
             </div>
           </div>
@@ -111,7 +108,7 @@ const PostComments = ({
           {userAuth?.avatarPhotoUrl ? (
             <AvatarImage
               src={userAuth?.avatarPhotoUrl}
-              alt={userAuth?.username}
+              alt={userAuth?.fullName}
             />
           ) : (
             <AvatarFallback className="dark:bg-gray-400">

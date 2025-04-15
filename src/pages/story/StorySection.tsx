@@ -1,19 +1,30 @@
-import React, { useEffect, useRef, useState } from "react";
-import StoryCard from "./StoryCard";
+import { useCallback, useEffect, useRef, useState } from "react";
+// import StoryCard from "./StoryCard";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { usePostStore } from "@/store/usePostStore";
+// import { usePostStore } from "@/store/usePostStore";
 import { Button } from "@/components/ui/button";
+import { usePostStore } from "@/stores/usePostStore";
+import { STORY } from "@/utils/types";
+import StoryCard from "./components/StoryCard";
 
 const StorySection = () => {
+  const [stories, setStories] = useState<STORY[]>([]);
   const [scrollPosition, setScrollPosition] = useState(0);
   const [maxScroll, setMaxScroll] = useState(0);
-  const containerRef = useRef();
-  const { story, fetchStoryPost } = usePostStore();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { getAllStory } = usePostStore();
+
+  const fetchStories = useCallback(async () => {
+    const stories = await getAllStory();
+    if (stories) {
+      setStories(stories);
+    }
+  }, [getAllStory]);
 
   useEffect(() => {
-    fetchStoryPost();
-  }, [fetchStoryPost]);
+    fetchStories();
+  }, [fetchStories]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -26,9 +37,9 @@ const StorySection = () => {
       window.addEventListener("resize", updateMaxScroll);
       return () => window.removeEventListener("resize", updateMaxScroll);
     }
-  }, [story]);
+  }, []);
 
-  const scroll = (direction) => {
+  const scroll = (direction: string) => {
     const container = containerRef.current;
     if (container) {
       const scrollAmount = direction === "left" ? -200 : 200;
@@ -57,16 +68,17 @@ const StorySection = () => {
           dragConstraints={{
             right: 0,
             left:
-              -((story.length + 1) * 200) + containerRef.current?.offsetWidth,
+              -((stories.length + 1) * 200) +
+              (containerRef.current ? containerRef.current.offsetWidth : 0),
           }}
         >
           <StoryCard isAddStory={true} />
-          {story?.map((story) => (
+          {stories?.map((story) => (
             <StoryCard story={story} key={story.id} />
           ))}
         </motion.div>
 
-        {/* left side scrollbutton  */}
+        {/* left side scroll button  */}
         {scrollPosition > 0 && (
           <Button
             variant="outline"
@@ -78,7 +90,7 @@ const StorySection = () => {
           </Button>
         )}
 
-        {/* right side scrollbutton  */}
+        {/* right side scroll button  */}
 
         {scrollPosition < maxScroll && (
           <Button

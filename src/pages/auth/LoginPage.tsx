@@ -1,7 +1,6 @@
 import type React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AuthLayout from "../../layout/AuthLayout";
 import Input from "./components/Input";
 import LoadingButton from "../../layout/components/LoadingButton";
 import { useAuthStore } from "@/stores/useAuthStore";
@@ -10,7 +9,7 @@ import { GoogleLoginButton } from "@/pages/auth/components/Oauth";
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    username: "",
+    email: "",
     password: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -29,8 +28,8 @@ const LoginPage: React.FC = () => {
   const validate = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.username.trim()) {
-      newErrors.username = "Username is required";
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
     }
 
     if (!formData.password) {
@@ -50,7 +49,7 @@ const LoginPage: React.FC = () => {
     }
 
     const data = new FormData();
-    data.append("username", formData.username);
+    data.append("email", formData.email);
     data.append("password", formData.password);
 
     const { user, isVerified } = await login(data);
@@ -71,16 +70,20 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <AuthLayout title="Log in to Facebook">
-      <form onSubmit={handleSubmit} className="w-full max-w-md mx-auto">
+    <>
+      <h1 className="text-facebook text-2xl font-bold text-center mb-8">
+        Log in to Facebook
+      </h1>
+
+      <form onSubmit={handleSubmit} className="w-full mx-auto">
         <Input
-          label="Username"
+          label="Email"
           type="text"
-          name="username"
-          placeholder="Username"
-          value={formData.username}
+          name="email"
+          placeholder="Email"
+          value={formData.email}
           onChange={handleChange}
-          error={errors.username}
+          error={errors.email}
         />
 
         <Input
@@ -100,7 +103,7 @@ const LoginPage: React.FC = () => {
 
               if (!isLoading) navigate("/forgot-password");
             }}
-            className={`text-white hover:text-[#1DB954] text-sm underline cursor-pointer ${
+            className={`text-white hover:text-facebook text-sm underline cursor-pointer ${
               isLoading ? "pointer-events-none opacity-70" : ""
             }`}
           >
@@ -112,7 +115,7 @@ const LoginPage: React.FC = () => {
           type="submit"
           variant="primary"
           isLoading={isLoading}
-          className="w-full"
+          className="w-full login-button"
         >
           LOG IN
         </LoadingButton>
@@ -135,13 +138,13 @@ const LoginPage: React.FC = () => {
           Don't have an account?{" "}
           <a
             onClick={() => navigate("/register")}
-            className="text-white hover:text-[#1DB954] underline cursor-pointer"
+            className="text-white hover:text-facebook underline cursor-pointer"
           >
             Register for Facebook
           </a>
         </p>
       </div>
-    </AuthLayout>
+    </>
   );
 };
 

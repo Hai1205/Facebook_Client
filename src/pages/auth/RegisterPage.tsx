@@ -1,7 +1,6 @@
 import type React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AuthLayout from "../../layout/AuthLayout";
 import Input from "./components/Input";
 import LoadingButton from "../../layout/components/LoadingButton";
 import { useAuthStore } from "@/stores/useAuthStore";
@@ -10,7 +9,6 @@ import { GoogleLoginButton } from "@/pages/auth/components/Oauth";
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    username: "",
     email: "",
     password: "",
     fullName: "",
@@ -30,10 +28,6 @@ const RegisterPage: React.FC = () => {
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
-
-    if (!formData.username.trim()) {
-      newErrors.username = "Username is required";
-    }
 
     if (!formData.email.trim()) {
       newErrors.email = "Email is required";
@@ -58,15 +52,14 @@ const RegisterPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const data = new FormData();
-    data.append("fullName", formData.fullName);
-    data.append("username", formData.username);
-    data.append("email", formData.email);
-    data.append("password", formData.password);
-
-    if (validate()) {
+    if (!validate()) {
       return;
     }
+
+    const data = new FormData();
+    data.append("fullName", formData.fullName);
+    data.append("email", formData.email);
+    data.append("password", formData.password);
 
     const res = await register(data);
 
@@ -80,16 +73,20 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <AuthLayout title="Register for Facebook">
+    <>
+      <h1 className="text-[#1877F2] text-2xl font-bold text-center mb-8">
+        Register for Facebook
+      </h1>
+
       <form onSubmit={handleSubmit}>
         <Input
-          label="Username"
+          label="Full Name"
           type="text"
-          name="username"
-          placeholder="Create a username"
-          value={formData.username}
+          name="fullName"
+          placeholder="Enter your full name"
+          value={formData.fullName}
           onChange={handleChange}
-          error={errors.username}
+          error={errors.fullName}
         />
 
         <Input
@@ -116,10 +113,10 @@ const RegisterPage: React.FC = () => {
           type="submit"
           variant="primary"
           fullWidth
-          className="mt-4"
+          className="mt-4 bg-[#1877F2] hover:bg-[#166FE5]"
           isLoading={isLoading}
         >
-          Register
+          REGISTER
         </LoadingButton>
       </form>
 
@@ -144,7 +141,7 @@ const RegisterPage: React.FC = () => {
 
               if (!isLoading) navigate("/login");
             }}
-            className={`text-white hover:text-[#1DB954] underline cursor-pointer ${
+            className={`text-white hover:text-[#1877F2] underline cursor-pointer ${
               isLoading ? "pointer-events-none opacity-70" : ""
             }`}
           >
@@ -152,7 +149,7 @@ const RegisterPage: React.FC = () => {
           </a>
         </p>
       </div>
-    </AuthLayout>
+    </>
   );
 };
 

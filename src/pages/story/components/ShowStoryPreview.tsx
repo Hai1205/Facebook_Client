@@ -2,7 +2,17 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { AvatarFallback } from "@radix-ui/react-avatar";
 import { X } from "lucide-react";
-import React from "react";
+
+interface ShowStoryPreviewProps {
+  file: string | null;
+  fileType: string | null;
+  onClose: () => void;
+  onPost: () => void;
+  isNewStory: boolean;
+  fullName: string;
+  avatar: string | null;
+  isLoading: boolean;
+}
 
 const ShowStoryPreview = ({
   file,
@@ -10,11 +20,10 @@ const ShowStoryPreview = ({
   onClose,
   onPost,
   isNewStory,
-  username,
+  fullName,
   avatar,
   isLoading,
-}) => {
-  const userPlaceholder = username?.split(" ").map((name) => name[0]).join("");
+}: ShowStoryPreviewProps) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
       <div className="relative w-full max-w-md h-[70vh] flex flex-col  bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
@@ -25,34 +34,38 @@ const ShowStoryPreview = ({
         >
           <X className="h-6 w-6" />
         </Button>
+
         <div className="absolute top-4 left-4 z-10 flex items-center ">
           <Avatar className="w-10 h-10 mr-2">
             {avatar ? (
-              <AvatarImage src={avatar} alt={username} />
+              <AvatarImage src={avatar} alt={fullName} />
             ) : (
-              <AvatarFallback>{userPlaceholder}</AvatarFallback>
+              <AvatarFallback>{fullName.substring(0, 2)}</AvatarFallback>
             )}
           </Avatar>
+
           <span className="text-gray-700 dark:text-gray-200 font-semibold">
-            {username}
+            {fullName}
           </span>
         </div>
+        
         <div className="flex-grow flex items-center justify-center bg-gray-100 dark:bg-gray-900">
           {fileType === "image" ? (
             <img
-              src={file}
+              src={file || ""}
               alt="story_preview"
               className="max-w-full max-h-full object-contain"
             />
           ) : (
             <video
-              src={file}
+              src={file || ""}
               controls
               autoPlay
               className="max-w-full max-h-full object-contain"
             />
           )}
         </div>
+        
         {isNewStory && (
             <div className="absolute bottom-4 right-2 transform -translate-x-1/2">
                 <Button onClick={onPost} className="bg-blue-500 hover:bg-orange-500 text-white">{isLoading ? "Saving..." : "Share"}</Button>

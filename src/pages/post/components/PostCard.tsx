@@ -14,14 +14,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import PostComments from "./PostComments";
-import { POST } from "@/utils/types";
+import { COMMENT, POST } from "@/utils/types";
 import { formateDate, clientUrl } from "@/lib/utils";
 
 interface PostCardProps {
   post: POST;
   isLiked: boolean;
   onShare: () => void;
-  onComment: () => void;
+  onComment: (comment: COMMENT) => void;
   onLike: () => void;
 }
 
@@ -83,17 +83,17 @@ const PostCard = ({
                 {post?.user?.avatarPhotoUrl ? (
                   <AvatarImage
                     src={post?.user?.avatarPhotoUrl}
-                    alt={post?.user?.username}
+                    alt={post?.user?.fullName}
                   />
                 ) : (
                   <AvatarFallback className="dark:bg-gray-400">
-                    {post?.user?.username?.substring(0, 2)}
+                    {post?.user?.fullName?.substring(0, 2)}
                   </AvatarFallback>
                 )}
               </Avatar>
               <div>
                 <p className="font-semibold dark:text-white">
-                  {post?.user?.username}
+                  {post?.user?.fullName}
                 </p>
 
                 <p className="font-sm text-gray-500">

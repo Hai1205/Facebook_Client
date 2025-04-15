@@ -1,6 +1,5 @@
 export interface USER {
-	id: string;
-	username: string;
+	id?: string;
 	email: string;
 	gender: string;
 	fullName: string;
@@ -11,8 +10,8 @@ export interface USER {
 	following: USER[] | string[];
 	bio: BIO;
 	role: string;
-	createdAt: string;
-	updatedAt: string;
+	createdAt?: string;
+	updatedAt?: string;
 }
 
 export interface STAT {
@@ -22,7 +21,7 @@ export interface STAT {
 }
 
 export interface BIO {
-	id: string;
+	id?: string;
 	user: USER;
 	bioText: string;
 	liveIn: string;
@@ -31,12 +30,12 @@ export interface BIO {
 	education: string;
 	phone: string;
 	hometown: string;
-	createdAt: string;
-	updatedAt: string;
+	createdAt?: string;
+	updatedAt?: string;
 }
 
 export interface POST {
-	id: string;
+	id?: string;
 	user: USER;
 	content: string;
 	mediaUrl: string;
@@ -44,32 +43,51 @@ export interface POST {
 	likes: USER[] | string[];
 	comments: COMMENT[] | string[];
 	shares: USER[] | string[];
-	createdAt: string;
-	updatedAt: string;
+	createdAt?: string;
+	updatedAt?: string;
 }
 
 export interface STORY {
-	id: string;
+	id?: string;
 	user: USER;
 	mediaUrl: string;
 	mediaType: string;
-	createdAt: string;
-	updatedAt: string;
+	createdAt?: string;
+	updatedAt?: string;
 }
 
 export interface COMMENT {
-	id: string;
+	id?: string;
 	user: USER;
 	text: string;
-	createdAt: string;
-	updatedAt: string;
+	createdAt?: string;
+	updatedAt?: string;
 }
 
 export interface MESSAGE {
-	id: string;
-	senderId: string;
-	receiverId: string;
+	id?: string;
+	sender: USER;
+	receiver: USER;
 	content: string;
-	createdAt: string;
-	updatedAt: string;
+	createdAt?: string;
+	updatedAt?: string;
+}
+
+export interface NOTIFICATION {
+	id?: string;
+	from: USER;
+	to: USER;
+	type: string;
+	read: boolean;
+	createdAt?: string;
+	updatedAt?: string;
+}
+
+export interface FRIEND_REQUEST {
+	id?: string;
+	from: USER;
+	to: USER;
+	status: string;
+	createdAt?: string;
+	updatedAt?: string;
 }

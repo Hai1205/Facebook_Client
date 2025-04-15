@@ -86,11 +86,11 @@ const NewPostForm = ({
             {userAuth?.avatarPhotoUrl ? (
               <AvatarImage
                 src={userAuth?.avatarPhotoUrl}
-                alt={userAuth?.username}
+                alt={userAuth?.fullName}
               />
             ) : (
               <AvatarFallback className="dark:bg-gray-400">
-                {userAuth?.username?.substring(0, 2)}
+                {userAuth?.fullName?.substring(0, 2)}
               </AvatarFallback>
             )}
           </Avatar>
@@ -98,7 +98,7 @@ const NewPostForm = ({
           <Dialog open={isPostFormOpen} onOpenChange={setIsPostFormOpen}>
             <DialogTrigger className="w-full">
               <Input
-                placeholder={`what's on your mind, ${userAuth?.username}`}
+                placeholder={`what's on your mind, ${userAuth?.fullName}`}
                 readOnly
                 className="cursor-pointer rounded-full h-12  dark:bg-[rgb(58,59,60)] placeholder:text-gray-500 dark:placeholder:text-gray-400  "
               />
@@ -144,22 +144,22 @@ const NewPostForm = ({
                   {userAuth?.avatarPhotoUrl ? (
                     <AvatarImage
                       src={userAuth?.avatarPhotoUrl}
-                      alt={userAuth?.username}
+                      alt={userAuth?.fullName}
                     />
                   ) : (
                     <AvatarFallback>
-                      {userAuth?.username?.substring(0, 2)}
+                      {userAuth?.fullName?.substring(0, 2)}
                     </AvatarFallback>
                   )}
                 </Avatar>
 
                 <div>
-                  <p className="font-semibold">{userAuth?.username}</p>
+                  <p className="font-semibold">{userAuth?.fullName}</p>
                 </div>
               </div>
 
               <Textarea
-                placeholder={`what's on your mind? ${userAuth?.username}`}
+                placeholder={`what's on your mind? ${userAuth?.fullName}`}
                 className="min-h-[100px] text-lg"
                 value={postContent}
                 onChange={(e) => setPostContent(e.target.value)}

@@ -1,7 +1,6 @@
 import type React from "react";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import AuthLayout from "../../layout/AuthLayout";
 import Input from "./components/Input";
 import LoadingButton from "../../layout/components/LoadingButton";
 import { useAuthStore } from "@/stores/useAuthStore";
@@ -68,7 +67,11 @@ const ResetPasswordPage: React.FC = () => {
   };
 
   return (
-    <AuthLayout title="Reset your password">
+    <>
+      <h1 className="text-[#1877F2] text-2xl font-bold text-center mb-6">
+        Reset your password
+      </h1>
+
       <form onSubmit={handleSubmit}>
         <Input
           label="New password"
@@ -94,13 +97,13 @@ const ResetPasswordPage: React.FC = () => {
           type="submit"
           variant="primary"
           fullWidth
-          className="mt-6 mb-4"
+          className="mt-6 mb-4 bg-[#1877F2] hover:bg-[#166FE5]"
           isLoading={isLoading}
         >
           RESET PASSWORD
         </LoadingButton>
       </form>
-    </AuthLayout>
+    </>
   );
 };
 

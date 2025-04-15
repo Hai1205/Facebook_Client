@@ -97,7 +97,7 @@ const PostsContent = ({
                 </p>
 
                 <p className="font-sm text-gray-500">
-                  {formateDate(post?.createdAt)}
+                  {formateDate(post?.createdAt || "")}
                 </p>
               </div>
             </div>

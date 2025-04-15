@@ -6,32 +6,32 @@ import {
   CardTitle,
   CardFooter,
 } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { COUNTRY_CHOICE } from "@/utils/choice";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from "@/components/ui/select";
+// import { COUNTRY_CHOICE } from "@/utils/choice";
 import { TabsContent } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+// import { Textarea } from "@/components/ui/textarea";
 import { Save, User as UserIcon } from "lucide-react";
 import LoadingSpinner from "@/components/ui/loading";
-import { User } from "@/utils/types";
+import { USER } from "@/utils/types";
 
 interface GeneralTabProps {
-  userData: User;
-  handleInfoChange: (field: keyof User, value: string) => void;
+  userData: USER;
+  handleInfoChange: (field: keyof USER, value: string) => void;
   handleSaveInfo: () => void;
   isUserLoading: boolean;
   previewAvatar: string;
-  userAuth: User;
+  userAuth: USER;
   handleAvatarChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -49,7 +49,7 @@ const GeneralTab = ({
       <Card className="bg-zinc-900">
         <CardHeader>
           <CardTitle>General Settings</CardTitle>
-          <CardDescription>Manage your profile informations.</CardDescription>
+          <CardDescription>Manage your profile information.</CardDescription>
         </CardHeader>
 
         <CardContent className="h-[265px] space-y-6">
@@ -92,17 +92,13 @@ const GeneralTab = ({
                   </div>
                 </div>
 
-                {/* Username and email */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="grid gap-2">
-                    <Label>Username</Label>
-                    <Input value={userData?.username || ""} readOnly />
-                  </div>
+                {/* email */}
+                {/* <div className="grid grid-cols-2 gap-4"> */}
                   <div className="grid gap-2">
                     <Label>Email</Label>
                     <Input value={userData?.email || ""} readOnly />
                   </div>
-                </div>
+                {/* </div> */}
 
                 {/* Name */}
                 <div className="grid gap-2">
@@ -118,7 +114,7 @@ const GeneralTab = ({
                 </div>
 
                 {/* Social Links */}
-                <div className="space-y-3">
+                {/* <div className="space-y-3">
                   <Label>Social Media Links</Label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1">
@@ -174,10 +170,10 @@ const GeneralTab = ({
                       />
                     </div>
                   </div>
-                </div>
+                </div> */}
 
                 {/* Website (Optional) */}
-                <div className="grid gap-2">
+                {/* <div className="grid gap-2">
                   <Label htmlFor="edit-website">Website (Optional)</Label>
                   <Input
                     id="edit-website"
@@ -187,10 +183,10 @@ const GeneralTab = ({
                     }
                     placeholder="Enter website link"
                   />
-                </div>
+                </div> */}
 
                 {/* Country */}
-                <div className="grid gap-2">
+                {/* <div className="grid gap-2">
                   <Label htmlFor="edit-country">Country</Label>
                   <Select
                     value={userData?.country || ""}
@@ -209,10 +205,10 @@ const GeneralTab = ({
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
+                </div> */}
 
                 {/* Bio */}
-                <div className="grid gap-2">
+                {/* <div className="grid gap-2">
                   <Label htmlFor="edit-biography">Bio</Label>
                   <Textarea
                     id="edit-biography"
@@ -222,7 +218,7 @@ const GeneralTab = ({
                     }
                     rows={3}
                   />
-                </div>
+                </div> */}
               </div>
             )}
           </ScrollArea>

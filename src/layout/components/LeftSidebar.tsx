@@ -1,133 +1,126 @@
 import {
-  Bell,
   Home,
   LogOut,
-  MessageCircle,
   User,
   Users,
   Video,
+  FolderLock,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { useOpenStore } from "@/stores/useOpenStore";
+import { Separator } from "@/components/ui/separator";
 
 const LeftSideBar = () => {
   const navigate = useNavigate();
-  const { isSidebarOpen } = useOpenStore();
-  const { userAuth, logout } = useAuthStore();
-
-  // const handleNavigation = (path: string) => {
-  //   navigate(path);
-  //   if (isSidebarOpen) {
-  //     toggleSidebar();
-  //   }
-  // };
+  const { userAuth, isAdmin, logout } = useAuthStore();
 
   const handleLogout = async () => {
     const result = await logout();
     if (result?.status == "success") {
-      navigate("/user-login");
+      navigate("/login");
     }
   };
 
   return (
-    <aside
-      className={`fixed top-16 left-0 h-full w-64 p-4 transform transition-transform duration-200 ease-in-out md:translate-x-0 flex flex-col z-50 md:z-0 ${
-        isSidebarOpen
-          ? "translate-x-0 bg-white dark:bg-[rgb(36,37,38)] shadow-lg "
-          : " -translate-x-full"
-      } ${isSidebarOpen ? "md:hidden" : ""} md:bg-transparent md:shadow-none`}
-    >
-      <div className="flex flex-col h-full overflow-y-auto">
-        {/* navigation menu */}
-        <nav className="space-y-4 flex-grow">
-          <div className="flex items-center space-x-2 cursor-pointer ">
-            <Link to={`/user-profile/${userAuth?.id}`}>
-              <Avatar className="h-10 w-10">
-                {userAuth?.avatarPhotoUrl ? (
-                  <AvatarImage
-                    src={userAuth?.avatarPhotoUrl}
-                    alt={userAuth?.username}
-                  />
-                ) : (
-                  <AvatarFallback className="dark:bg-gray-400">
-                    {userAuth?.fullName.substring(0, 2)}
-                  </AvatarFallback>
-                )}
-              </Avatar>
-            </Link>
-            <span className="font-semibold">{userAuth?.username}</span>
-          </div>
-          <Button variant="ghost" className="full justify-start">
-            <Link to={"/"}>
-              <Home className="mr-4" /> Home
-            </Link>
-          </Button>
-          <Button variant="ghost" className="full justify-start">
-            <Link to={"/friends-list"}>
-              <Users className="mr-4" /> Friends
-            </Link>
-          </Button>
-          <Button variant="ghost" className="full justify-start">
-            <Link to={"/video-feed"}>
-              <Video className="mr-4" /> Video
-            </Link>
-          </Button>
-          <Button variant="ghost" className="full justify-start">
-            <Link to={`/user-profile/${userAuth?.id}`}>
-              <User className="mr-4" /> Profile
-            </Link>
-          </Button>
-          <Button variant="ghost" className="full justify-start">
-            <MessageCircle className="mr-4" /> Messages
-          </Button>
+    <div className="flex flex-col h-full text-white p-4">
+      {/* Avatar at top */}
+      <div className="ml-2 mb-6">
+        <Avatar className="h-10 w-10">
+          {userAuth?.avatarPhotoUrl ? (
+            <AvatarImage
+              src={userAuth?.avatarPhotoUrl}
+              alt={userAuth?.fullName}
+            />
+          ) : (
+            <AvatarFallback className="bg-gray-700">
+              {userAuth?.fullName?.substring(0, 2) || "U"}
+            </AvatarFallback>
+          )}
+        </Avatar>
+      </div>
 
-          <Button variant="ghost" className="full justify-start">
-            <Bell className="mr-4" /> Notification
-          </Button>
-        </nav>
+      {/* Main navigation */}
+      <div className="flex flex-col space-y-1 flex-grow">
+        {/* Phát triển xong thì tắt !isAdmin */}
+        {!isAdmin && (
+          <Link
+            to="/admin-dashboard"
+            className="flex items-center py-3 px-2 rounded-md hover:bg-gray-800"
+          >
+            <FolderLock className="h-6 w-6 mr-3" />
+            <span className="text-sm font-medium">Admin Dashboard</span>
+          </Link>
+        )}
 
-        {/* footer section */}
-        <div className="mb-16">
-          <Separator className="my-4" />
-          <div className="flex items-center space-x-2 mb-4 cursor-pointer ">
-            <Link to={`/user-profile/${userAuth?.id}`}>
-              <Avatar className="h-10 w-10">
-                {userAuth?.avatarPhotoUrl ? (
-                  <AvatarImage
-                    src={userAuth?.avatarPhotoUrl}
-                    alt={userAuth?.username}
-                  />
-                ) : (
-                  <AvatarFallback className="dark:bg-gray-400">
-                    {userAuth?.fullName.substring(0, 2)}
-                  </AvatarFallback>
-                )}
-              </Avatar>
-            </Link>
+        <Link
+          to="/"
+          className="flex items-center py-3 px-2 rounded-md hover:bg-gray-800"
+        >
+          <Home className="h-6 w-6 mr-3" />
+          <span className="text-sm font-medium">Home</span>
+        </Link>
 
-            <span className="font-semibold">{userAuth?.username}</span>
-          </div>
+        <Link
+          to="/friends-list"
+          className="flex items-center py-3 px-2 rounded-md hover:bg-gray-800"
+        >
+          <Users className="h-6 w-6 mr-3" />
+          <span className="text-sm font-medium">Friends</span>
+        </Link>
 
-          <div className="text-xs text-muted-foreground space-y-1">
-            <Button
-              variant="ghost"
-              className="cursor-pointer -ml-4 "
-              onClick={handleLogout}
-            >
-              <LogOut /> <span className="ml-2 font-bold text-md">Logout</span>
-            </Button>
+        <Link
+          to="/video-feed"
+          className="flex items-center py-3 px-2 rounded-md hover:bg-gray-800"
+        >
+          <Video className="h-6 w-6 mr-3" />
+          <span className="text-sm font-medium">Video</span>
+        </Link>
 
-            <p>Privacy · Terms · Advertising ·</p>
+        <Link
+          to={`/profile/${userAuth?.id}`}
+          className="flex items-center py-3 px-2 rounded-md hover:bg-gray-800"
+        >
+          <User className="h-6 w-6 mr-3" />
+          <span className="text-sm font-medium">Profile</span>
+        </Link>
+      </div>
 
-            <p>· Meta © {new Date().getFullYear()}</p>
-          </div>
+      {/* Footer with logout */}
+      <div className="mt-auto">
+        <Separator className="my-4" />
+
+        <div className="flex items-center mb-2">
+          <Avatar className="h-8 w-8 mr-2">
+            {userAuth?.avatarPhotoUrl ? (
+              <AvatarImage
+                src={userAuth?.avatarPhotoUrl}
+                alt={userAuth?.fullName}
+              />
+            ) : (
+              <AvatarFallback className="bg-gray-700">
+                {userAuth?.fullName?.substring(0, 2) || "U"}
+              </AvatarFallback>
+            )}
+          </Avatar>
+
+          <span className="text-sm">{userAuth?.fullName || "User"}</span>
+        </div>
+
+        <button
+          onClick={handleLogout}
+          className="flex items-center py-2 px-2 w-full rounded-md hover:bg-gray-800"
+        >
+          <LogOut className="h-5 w-5 mr-3" />
+          <span className="text-sm font-medium">Logout</span>
+        </button>
+
+        <div className="text-xs text-gray-400 mt-4">
+          <p>Privacy · Terms · Advertising</p>
+          <p>· Meta © {new Date().getFullYear()}</p>
         </div>
       </div>
-    </aside>
+    </div>
   );
 };
 

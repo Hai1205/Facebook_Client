@@ -50,12 +50,17 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+
+    /* Facebook colors */
+    --facebook-blue: 214 89% 52%;
+    --facebook-blue-hover: 214 89% 47%;
   }
+
   .dark {
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
-    --card:  0 0% 15.4%;
-    --card-foreground:  0 0% 15.4%;
+    --card: 0 0% 15.4%;
+    --card-foreground: 0 0% 15.4%;
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
     --primary: 0 0% 98%;
@@ -76,7 +81,12 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
-    --background: 0 0% 9.4%; /* This corresponds to rgb(24, 25, 26) */
+    --background: 0 0% 9.4%;
+    /* This corresponds to rgb(24, 25, 26) */
+
+    /* Facebook colors remain the same in dark mode */
+    --facebook-blue: 214 89% 52%;
+    --facebook-blue-hover: 214 89% 47%;
   }
 }
 
@@ -84,7 +94,43 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Facebook custom classes */
+.bg-facebook {
+  background-color: #1877F2;
+}
+
+.hover\:bg-facebook-dark:hover {
+  background-color: #166FE5;
+}
+
+.text-facebook {
+  color: #1877F2;
+}
+
+.hover\:text-facebook:hover {
+  color: #1877F2;
+}
+
+.border-facebook {
+  border-color: #1877F2;
+}
+
+.focus\:ring-facebook:focus {
+  --tw-ring-color: #1877F2;
+}
+
+/* Fix for login button color */
+.login-button {
+  background-color: #1877F2 !important;
+  color: white !important;
+}
+
+.login-button:hover {
+  background-color: #166FE5 !important;
 }

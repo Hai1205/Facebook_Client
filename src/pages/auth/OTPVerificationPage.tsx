@@ -1,24 +1,23 @@
 import type React from "react";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import AuthLayout from "../../layout/AuthLayout";
-import formatTime from "@/utils/service/formatTime";
 import LoadingButton from "../../layout/components/LoadingButton";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { formatTime } from "@/lib/utils";
 
 const OTPVerificationPage: React.FC = () => {
   const navigate = useNavigate();
-  
+
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
   const [error, setError] = useState("");
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-  
+
   // Countdown timer state - 5 minutes (300 seconds)
   const [timeLeft, setTimeLeft] = useState(300);
   const [isExpired, setIsExpired] = useState(false);
-  
+
   // Get email and isPasswordReset from location state
-  const location = useLocation(); 
+  const location = useLocation();
   const email = location.state?.email || "";
   const isPasswordReset = location.state?.isPasswordReset || false;
 
@@ -144,7 +143,11 @@ const OTPVerificationPage: React.FC = () => {
   };
 
   return (
-    <AuthLayout title="Enter verification code">
+    <>
+      <h1 className="text-[#1877F2] text-2xl font-bold text-center mb-6">
+        Enter verification code
+      </h1>
+
       <p className="text-gray-400 text-sm mb-2">
         We've sent a verification code to {email || "your email"}. Enter the
         code below to{" "}
@@ -173,7 +176,7 @@ const OTPVerificationPage: React.FC = () => {
               onPaste={index === 0 ? handlePaste : undefined}
               className={`w-12 h-12 text-center text-xl font-bold bg-[#282828] text-white border ${
                 isExpired ? "border-red-500" : "border-[#3E3E3E]"
-              } rounded-md focus:outline-none focus:ring-1 focus:ring-[#1DB954] focus:border-[#1DB954]`}
+              } rounded-md focus:outline-none focus:ring-1 focus:ring-[#1877F2] focus:border-[#1877F2]`}
               maxLength={1}
               disabled={isExpired}
             />
@@ -186,10 +189,10 @@ const OTPVerificationPage: React.FC = () => {
           type="submit"
           variant="primary"
           fullWidth
-          className="mt-6 mb-4"
+          className="mt-6 mb-4 bg-[#1877F2] hover:bg-[#166FE5]"
           isLoading={isLoading}
         >
-          VERIFYING
+          VERIFY
         </LoadingButton>
 
         <div className="text-center mb-4">
@@ -202,7 +205,7 @@ const OTPVerificationPage: React.FC = () => {
 
                 if (!isLoading) handleResendCode();
               }}
-              className={`text-white hover:text-[#1DB954] underline cursor-pointer ${
+              className={`text-white hover:text-[#1877F2] underline cursor-pointer ${
                 isLoading ? "pointer-events-none opacity-70" : ""
               }`}
             >
@@ -211,7 +214,7 @@ const OTPVerificationPage: React.FC = () => {
           </p>
         </div>
       </form>
-    </AuthLayout>
+    </>
   );
 };
 

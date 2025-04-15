@@ -6,7 +6,7 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { SidebarMenuAdmin } from "./components/SideBarMenuAdmin";
-import Header from "./components/Header";
+import Header from "./components/navbar/Header";
 
 const AdminLayout = () => {
   const [isMobile, setIsMobile] = useState(false);

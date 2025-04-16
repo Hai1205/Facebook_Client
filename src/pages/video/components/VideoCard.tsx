@@ -16,7 +16,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { COMMENT, POST, USER } from "@/utils/types";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { clientUrl } from "@/lib/utils";
+import { clientUrl, formateDateAgo } from "@/lib/utils";
 
 interface VideoCardProps {
   post: POST;
@@ -94,16 +94,14 @@ const VideoCard = ({
         <div className="flex items-center justify-between mb-4 px-4 mt-2 ">
           <div className="flex items-center">
             <Avatar className="h-10 w-10 rounded-full mr-3">
-              {post?.user?.avatarPhotoUrl ? (
-                <AvatarImage
-                  src={post?.user?.avatarPhotoUrl}
-                  alt={post?.user?.fullName}
-                />
-              ) : (
-                <AvatarFallback className="dark:bg-gray-400">
-                  {post?.user?.fullName?.substring(0, 2)}
-                </AvatarFallback>
-              )}
+              <AvatarImage
+                src={post?.user?.avatarPhotoUrl}
+                alt={post?.user?.fullName}
+              />
+
+              <AvatarFallback className="bg-gray-700">
+                {post?.user?.fullName?.substring(0, 2)}
+              </AvatarFallback>
             </Avatar>
 
             <div>
@@ -116,13 +114,15 @@ const VideoCard = ({
           <div className="flex items-center text-gray-500 dark:text-gray-400">
             <Clock className="h-4 w-4 mr-1" />
 
-            <span className="text-sm">{post?.createdAt}</span>
+            <span className="text-sm">
+              {formateDateAgo(post?.createdAt as string)}
+            </span>
           </div>
         </div>
 
         <div className="relative aspect-video bg-black mb-4">
           {post?.mediaUrl && (
-            <video controls className="w-full h-[500px] rounded-lg mb-4">
+            <video controls className="w-full h-[500px] mb-4">
               <source src={post?.mediaUrl} type="video/mp4" />
               Your browser does not support the video tag
             </video>
@@ -227,9 +227,7 @@ const VideoCard = ({
               transition={{ duration: 0.3 }}
             >
               <ScrollArea className="h-[300px] w-full rounded-md border p-4">
-                <VideoComments
-                  comments={(post?.comments as COMMENT[]) || []}
-                />
+                <VideoComments comments={(post?.comments as COMMENT[]) || []} />
               </ScrollArea>
 
               <div className="flex items-center mt-4 p-2">

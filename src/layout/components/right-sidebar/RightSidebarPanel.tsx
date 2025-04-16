@@ -1,20 +1,21 @@
 import { Panel, PanelResizeHandle } from "react-resizable-panels";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import RightSideBar from "../right-sidebar/RightSidebar";
+import RightSidebar from "./components/RightSidebar";
 
 const RightSidebarPanel = () => {
   return (
     <>
       <ResizeHandle />
+      
       <Panel
-        defaultSize={25}
+        defaultSize={20}
         minSize={20}
-        maxSize={35}
+        maxSize={20}
         order={3}
         collapsible={true}
       >
         <ScrollArea className="h-full border-l border-gray-800">
-          <RightSideBar />
+          <RightSidebar />
         </ScrollArea>
       </Panel>
     </>

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { COMMENT, POST, USER } from "@/utils/types";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { formateDate } from "@/lib/utils";
+import { formateDateAgo } from "@/lib/utils";
 
 interface PostCommentsProps {
   post: POST;
@@ -21,7 +21,7 @@ const PostComments = ({
   const [showAllComments, setShowAllComments] = useState(false);
   const [commentText, setCommentText] = useState("");
   const { userAuth } = useAuthStore();
-  
+
   const visibleComments: COMMENT[] = showAllComments
     ? (post?.comments?.map((comment) =>
         typeof comment === "string" ? { text: comment } : comment
@@ -79,7 +79,7 @@ const PostComments = ({
                   Reply
                 </Button>
 
-                <span>{formateDate(comment?.createdAt || "")}</span>
+                <span>{formateDateAgo(comment?.createdAt || "")}</span>
               </div>
             </div>
           </div>

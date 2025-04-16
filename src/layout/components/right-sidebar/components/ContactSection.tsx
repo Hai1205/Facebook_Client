@@ -2,15 +2,10 @@ import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { USER } from "@/utils/types";
 
 interface ContactSectionProps {
-  contacts: {
-    id: string;
-    fullName: string;
-    avatarPhotoUrl: string;
-    online: boolean;
-    active: number;
-  }[];
+    contacts: USER[];
 }
 
 export const ContactSection = ({ contacts }: ContactSectionProps) => {
@@ -74,19 +69,19 @@ export const ContactSection = ({ contacts }: ContactSectionProps) => {
                   />
 
                   <AvatarFallback className="bg-gray-600">
-                    {contact.fullName.charAt(0)}
+                    {contact.fullName.substring(0, 2)}
                   </AvatarFallback>
                 </Avatar>
 
-                {contact.online && (
+                {/* {contact.online && (
                   <div className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-green-500 border-2 border-gray-900" />
-                )}
+                )} */}
               </div>
 
               <div className="flex justify-between items-center flex-1">
                 <span className="text-sm font-medium">{contact.fullName}</span>
 
-                {contact.active === 0 ? (
+                {/* {contact.active === 0 ? (
                   <span className="h-2 w-2 rounded-full bg-green-500" />
                 ) : (
                   contact.active <= 10 && (
@@ -94,7 +89,7 @@ export const ContactSection = ({ contacts }: ContactSectionProps) => {
                       {contact.active}m
                     </span>
                   )
-                )}
+                )} */}
               </div>
             </div>
           ))

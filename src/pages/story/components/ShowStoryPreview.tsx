@@ -35,20 +35,20 @@ const ShowStoryPreview = ({
           <X className="h-6 w-6" />
         </Button>
 
-        <div className="absolute top-4 left-4 z-10 flex items-center ">
-          <Avatar className="w-10 h-10 mr-2">
-            {avatar ? (
-              <AvatarImage src={avatar} alt={fullName} />
-            ) : (
-              <AvatarFallback>{fullName.substring(0, 2)}</AvatarFallback>
-            )}
+        <div className="absolute top-4 left-4 z-10 flex items-center">
+          <Avatar className="w-10 h-10 mr-2 border-2 border-blue-500 rounded-full">
+            <AvatarImage src={avatar as string} alt={fullName} />
+
+            <AvatarFallback className="bg-gray-700">
+              {fullName.substring(0, 2)}
+            </AvatarFallback>
           </Avatar>
 
           <span className="text-gray-700 dark:text-gray-200 font-semibold">
             {fullName}
           </span>
         </div>
-        
+
         <div className="flex-grow flex items-center justify-center bg-gray-100 dark:bg-gray-900">
           {fileType === "image" ? (
             <img
@@ -65,11 +65,16 @@ const ShowStoryPreview = ({
             />
           )}
         </div>
-        
+
         {isNewStory && (
-            <div className="absolute bottom-4 right-2 transform -translate-x-1/2">
-                <Button onClick={onPost} className="bg-blue-500 hover:bg-orange-500 text-white">{isLoading ? "Saving..." : "Share"}</Button>
-                </div>
+          <div className="absolute bottom-4 right-2 transform -translate-x-1/2">
+            <Button
+              onClick={onPost}
+              className="bg-blue-500 hover:bg-orange-500 text-white"
+            >
+              {isLoading ? "Saving..." : "Share"}
+            </Button>
+          </div>
         )}
       </div>
     </div>

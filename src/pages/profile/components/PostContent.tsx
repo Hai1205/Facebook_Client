@@ -13,7 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { formateDate, clientUrl } from "@/lib/utils";
+import { formateDateAgo, clientUrl } from "@/lib/utils";
 import { COMMENT, POST } from "@/utils/types";
 import PostComments from "@/pages/post/components/PostComments";
 
@@ -97,7 +97,7 @@ const PostsContent = ({
                 </p>
 
                 <p className="font-sm text-gray-500">
-                  {formateDate(post?.createdAt || "")}
+                  {formateDateAgo(post?.createdAt || "")}
                 </p>
               </div>
             </div>
@@ -126,17 +126,20 @@ const PostsContent = ({
 
           <div className="flex justify-between items-center mb-4">
             <span className="text-sm text-gray-500 dark:text-gray-400 hover:border-b-2 border-gray-400 cursor-pointer ">
-            {post?.likes?.length} {post?.likes?.length === 1 ? 'like' : 'likes'}
+              {post?.likes?.length}{" "}
+              {post?.likes?.length === 1 ? "like" : "likes"}
             </span>
             <div className="flex gap-3">
               <span
                 className="text-sm text-gray-500 dark:text-gray-400 hover:border-b-2 border-gray-400 cursor-pointer "
                 onClick={() => setShowComments(!showComments)}
               >
-                {post?.comments?.length} {post?.comments?.length === 1 ? 'comment' : 'comments'}
+                {post?.comments?.length}{" "}
+                {post?.comments?.length === 1 ? "comment" : "comments"}
               </span>
               <span className="text-sm text-gray-500 dark:text-gray-400 hover:border-b-2 border-gray-400 cursor-pointer ">
-                {post?.shares?.length} {post?.shares?.length === 1 ? 'share' : 'shares'}
+                {post?.shares?.length}{" "}
+                {post?.shares?.length === 1 ? "share" : "shares"}
               </span>
             </div>
           </div>

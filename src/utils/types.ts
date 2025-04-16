@@ -6,8 +6,9 @@ export interface USER {
 	dateOfBirth: string;
 	avatarPhotoUrl: string;
 	coverPhotoUrl: string;
-	followers: USER[] | string[];
-	following: USER[] | string[];
+	followers: USER[];
+	following: USER[];
+	friends: USER[];
 	bio: BIO;
 	role: string;
 	createdAt?: string;
@@ -40,9 +41,9 @@ export interface POST {
 	content: string;
 	mediaUrl: string;
 	mediaType: string;
-	likes: USER[] | string[];
-	comments: COMMENT[] | string[];
-	shares: USER[] | string[];
+	likes: USER[];
+	comments: COMMENT[];
+	shares: USER[];
 	createdAt?: string;
 	updatedAt?: string;
 }

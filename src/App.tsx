@@ -46,7 +46,7 @@ function App() {
 
           <Route path="/profile/:userId" element={<ProfilePage />} />
 
-          <Route path="/friends-list" element={<FriendPage />} />
+          <Route path="/friend-requests" element={<FriendPage />} />
 
           <Route path="/video-feed" element={<VideoPage />} />
 

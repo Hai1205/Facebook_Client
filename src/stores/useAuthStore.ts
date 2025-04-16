@@ -19,6 +19,7 @@ import {
 	resetPassword,
 	sendOTP
 } from "@/utils/api/authApi";
+import { mockUsers } from "@/utils/fakeData";
 
 export interface AuthStore {
 	userAuth: USER | null;
@@ -46,9 +47,12 @@ export interface AuthStore {
 export const useAuthStore = create<AuthStore>()(
 	persist(
 		(set, get) => ({
-			userAuth: null,
-			isAuth: false,
-			isAdmin: false,
+			userAuth: mockUsers[0],
+			isAuth: true,
+			isAdmin: true,
+			// userAuth: null,
+			// isAuth: false,
+			// isAdmin: false,
 			isLoading: false,
 			error: null,
 			status: 0,

@@ -1,21 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft } from "lucide-react";
 import toast from "react-hot-toast";
 import { usePostStore } from "@/stores/usePostStore";
-import { useNavigate } from "react-router-dom";
 import { COMMENT, POST } from "@/utils/types";
 import { useAuthStore } from "@/stores/useAuthStore";
-import LeftSideBar from "@/layout/components/LeftSidebar";
 import VideoCard from "./components/VideoCard";
+import { mockPosts } from "@/utils/fakeData";
 
 const VideoPage = () => {
   const { getAllPost, likePost, sharePost, addCommentToPost } = usePostStore();
   const { userAuth } = useAuthStore();
 
-  const [posts, setPosts] = useState<POST[]>([]);
+  const [posts, setPosts] = useState<POST[]>(mockPosts);
+  // const [posts, setPosts] = useState<POST[]>([]);
   const [likePosts, setLikePosts] = useState(new Set());
-  const navigate = useNavigate();
 
   const fetchPosts = useCallback(async () => {
     const posts = await getAllPost();
@@ -58,11 +55,7 @@ const VideoPage = () => {
     await fetchPosts();
   };
 
-  const handleBack = () => {
-    navigate("/");
-  };
-
-  const videoPost = posts?.filter((post) => post.mediaType === "video");
+  const videoPosts = posts?.filter((post) => post.mediaType === "video");
 
   const handleComment = async (postId: string, comment: COMMENT) => {
     if (!userAuth?.id) {
@@ -85,23 +78,18 @@ const VideoPage = () => {
   };
 
   return (
-    <div className="mt-12 min-h-screen">
-      <LeftSideBar />
-
-      <main className="ml-0 md:ml-64 p-6">
-        <Button variant="ghost" className="mb-4" onClick={handleBack}>
-          <ChevronLeft className="mr-2 h-4 w-4" />
-          Back to feed
-        </Button>
-
-        <div className="max-w-3xl mx-auto">
-          {videoPost.map((post) => (
+    <div className="min-h-screen w-full flex justify-center">
+      <main className="ml-0 md:ml-0 p-6 max-w-3xl">
+        <div className="mx-auto">
+          {videoPosts.map((post) => (
             <VideoCard
               key={post?.id}
               post={post}
               isLiked={likePosts.has(post?.id || "")}
               onLike={() => handleLike(post?.id || "")}
-              onComment={(comment: COMMENT) => handleComment(post?.id || "", comment)}
+              onComment={(comment: COMMENT) =>
+                handleComment(post?.id || "", comment)
+              }
               onShare={() => handleShare(post?.id || "")}
             />
           ))}

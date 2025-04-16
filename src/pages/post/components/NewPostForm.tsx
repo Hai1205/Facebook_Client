@@ -68,7 +68,7 @@ const NewPostForm = ({
     if (selectedFile) {
       formData.append("media", selectedFile);
     }
-    const result = await createPost(userAuth?.id, formData);
+    const result = await createPost(userAuth?.id as string, formData);
 
     if (result) {
       setPostContent("");
@@ -82,17 +82,15 @@ const NewPostForm = ({
     <Card>
       <CardContent className="p-4">
         <div className="flex space-x-4">
-          <Avatar>
-            {userAuth?.avatarPhotoUrl ? (
+        <Avatar className="h-12 w-12">
               <AvatarImage
                 src={userAuth?.avatarPhotoUrl}
                 alt={userAuth?.fullName}
               />
-            ) : (
-              <AvatarFallback className="dark:bg-gray-400">
+
+              <AvatarFallback className="bg-gray-700">
                 {userAuth?.fullName?.substring(0, 2)}
               </AvatarFallback>
-            )}
           </Avatar>
 
           <Dialog open={isPostFormOpen} onOpenChange={setIsPostFormOpen}>

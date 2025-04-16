@@ -1,8 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-// import { usePostStore } from "@/store/usePostStore";
-// import userStore from "@/store/userStore";
 import { Plus } from "lucide-react";
 import { useRef, useState } from "react";
 import ShowStoryPreview from "./ShowStoryPreview";
@@ -48,7 +46,7 @@ const StoryCard = ({ isAddStory = false, story }: StoryCardProps) => {
     if (selectedFile) {
       formData.append("media", selectedFile);
     }
-    await createStory(userAuth?.id, formData);
+    await createStory(userAuth?.id as string, formData);
     resetStoryState();
   };
 
@@ -82,17 +80,15 @@ const StoryCard = ({ isAddStory = false, story }: StoryCardProps) => {
             <div className="w-full h-full flex flex-col">
               <div className="h-3/4 w-full relative border-b">
                 <Avatar className="w-full h-full rounded-none">
-                  {userAuth?.avatarPhotoUrl ? (
-                    <AvatarImage
-                      src={userAuth?.avatarPhotoUrl}
-                      alt={userAuth?.fullName}
-                      className="object-cover"
-                    />
-                  ) : (
-                    <p className="w-full h-full flex justify-center items-center text-4xl">
-                      {userAuth?.fullName.substring(0, 2)}
-                    </p>
-                  )}
+                  <AvatarImage
+                    src={userAuth?.avatarPhotoUrl}
+                    alt={userAuth?.fullName}
+                    className="object-cover"
+                  />
+
+                  <AvatarFallback className="bg-gray-700 !rounded-none">
+                    {userAuth?.fullName?.substring(0, 2)}
+                  </AvatarFallback>
                 </Avatar>
               </div>
 
@@ -100,7 +96,7 @@ const StoryCard = ({ isAddStory = false, story }: StoryCardProps) => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="p-0 h-8 w-8 rounded-full bg-blue-500 hover:bg-blue-600 "
+                  className="p-0 h-10 w-10 rounded-full bg-blue-600 hover:bg-blue-700 transition duration-200"
                   onClick={() => fileInputRef.current?.click()}
                 >
                   <Plus className="h-5 w-5 text-white" />
@@ -133,18 +129,17 @@ const StoryCard = ({ isAddStory = false, story }: StoryCardProps) => {
 
               <div className="absolute top-2 left-2 ring-2 ring-blue-500 rounded-full ">
                 <Avatar className="w-8 h-8">
-                  {story?.user?.avatarPhotoUrl ? (
-                    <AvatarImage
-                      src={story?.user?.avatarPhotoUrl}
-                      alt={story?.user?.fullName}
-                    />
-                  ) : (
-                    <AvatarFallback>
-                      {story?.user?.fullName.substring(0, 2)}
-                    </AvatarFallback>
-                  )}
+                  <AvatarImage
+                    src={story?.user?.avatarPhotoUrl}
+                    alt={story?.user?.fullName}
+                  />
+
+                  <AvatarFallback className="bg-gray-700">
+                    {story?.user?.fullName.substring(0, 2)}
+                  </AvatarFallback>
                 </Avatar>
               </div>
+
               <div className="absolute bottom-2 left-2 right-2">
                 <p className="text-white text-xs font-semibold truncate">
                   {story?.user?.fullName}

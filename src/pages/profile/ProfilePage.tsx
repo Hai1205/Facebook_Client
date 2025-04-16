@@ -3,38 +3,34 @@ import { useParams } from "react-router-dom";
 import ProfileHeader from "./components/ProfileHeader";
 import ProfileTabs from "./components/ProfileTabs";
 import { USER } from "@/utils/types";
-import { mockUsers } from "@/utils/fakeData";
-// import ProfileHeader from "../ProfileHeader";
-// import ProfileTabs from "../ProfileTabs";
-// import { useParams } from "next/navigation";
-// import { useUserStore } from "@/stores/useUserStore";
-// import { fetchUserProfile } from "@/service/user.service";
+import { useUserStore } from "@/stores/useUserStore";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { ProfileHeaderSkeleton } from "./components/ProfileHeaderSkeleton";
+// import { mockUsers } from "@/utils/fakeData";
 
 const ProfilePage = () => {
   const params = useParams();
   const userId = params.id;
-  const [profileData, setProfileData] = useState<USER | null>(mockUsers[0]);
-  // const [profileData, setProfileData] = useState<USER | null>(null);
+  const [profileData, setProfileData] = useState<USER | null>(null);
   const [isOwner, setIsOwner] = useState(true);
+  // const [profileData, setProfileData] = useState<USER | null>(mockUsers[0]);
   // const [isOwner, setIsOwner] = useState(false);
 
-  // const { getUser } = useUserStore();
+  const { getUser } = useUserStore();
+  const { userAuth } = useAuthStore();
 
   const fetchProfile = useCallback(async () => {
-    setProfileData(mockUsers[0]);
-    setIsOwner(true);
-  }, []);
+    if (userId) {
+      const currentUser = await getUser(userId);
 
-  // const fetchProfile = useCallback(async () => {
-  //   if (userId) {
-  //     const result = await getUser(userId);
+      if (currentUser) {
+        setProfileData(currentUser.profile);
 
-  //     if (result) {
-  //       setProfileData(result.profile);
-  //       setIsOwner(result.isOwner);
-  //     }
-  //   }
-  // }, [userId, getUser]);
+        const isMyProfile = currentUser?.id === userAuth?.id;
+        setIsOwner(isMyProfile);
+      }
+    }
+  }, [userId, getUser, userAuth]);
 
   useEffect(() => {
     if (userId) {
@@ -43,20 +39,20 @@ const ProfilePage = () => {
   }, [fetchProfile, userId]);
 
   if (!profileData) {
-    return <div>Loading...</div>;
+    return <ProfileHeaderSkeleton />;
   }
 
   return (
     <div className="w-full">
       <ProfileHeader
-        profileData={profileData}
+        profileData={profileData as USER}
         isOwner={isOwner}
         userId={userId}
         setProfileData={setProfileData}
       />
 
       <ProfileTabs
-        profileData={profileData}
+        profileData={profileData as USER}
         isOwner={isOwner}
         userId={userId}
       />

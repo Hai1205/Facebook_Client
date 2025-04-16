@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { formateDate } from "@/lib/utils";
+import { formateDateAgo } from "@/lib/utils";
 import { COMMENT } from "@/utils/types";
 
 interface VideoCommentsProps {
@@ -40,8 +40,8 @@ const VideoComments = ({ comments }: VideoCommentsProps) => {
               <Button variant="ghost" size="sm">
                 Reply
               </Button>
-              
-              <span>{formateDate(comment.createdAt)}</span>
+
+              <span>{formateDateAgo(comment.createdAt)}</span>
             </div>
           </div>
         </div>

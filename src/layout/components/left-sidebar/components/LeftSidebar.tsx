@@ -1,11 +1,4 @@
-import {
-  Home,
-  LogOut,
-  User,
-  Users,
-  Video,
-  FolderLock,
-} from "lucide-react";
+import { Home, LogOut, User, Users, Video, FolderLock } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuthStore } from "@/stores/useAuthStore";
@@ -25,25 +18,33 @@ const LeftSideBar = () => {
   return (
     <div className="flex flex-col h-full text-white p-4">
       {/* Avatar at top */}
-      <div className="ml-2 mb-6">
+      <div className="ml-2 mb-6 flex items-center gap-2">
         <Avatar className="h-10 w-10">
-          {userAuth?.avatarPhotoUrl ? (
-            <AvatarImage
-              src={userAuth?.avatarPhotoUrl}
-              alt={userAuth?.fullName}
-            />
-          ) : (
-            <AvatarFallback className="bg-gray-700">
-              {userAuth?.fullName?.substring(0, 2) || "U"}
-            </AvatarFallback>
-          )}
+          <AvatarImage
+            src={userAuth?.avatarPhotoUrl}
+            alt={userAuth?.fullName}
+          />
+
+          <AvatarFallback className="bg-gray-700">
+            {userAuth?.fullName?.substring(0, 2) || "U"}
+            {/* <User className="h-5 w-5" /> */}
+          </AvatarFallback>
         </Avatar>
+
+        <span className="text-sm">{userAuth?.fullName || "User"}</span>
       </div>
 
       {/* Main navigation */}
       <div className="flex flex-col space-y-1 flex-grow">
-        {/* Phát triển xong thì tắt !isAdmin */}
-        {!isAdmin && (
+        <Link
+          to="/"
+          className="flex items-center py-3 px-2 rounded-md hover:bg-gray-800"
+        >
+          <Home className="h-6 w-6 mr-3" />
+          <span className="text-sm font-medium">Home</span>
+        </Link>
+
+        {isAdmin && (
           <Link
             to="/admin-dashboard"
             className="flex items-center py-3 px-2 rounded-md hover:bg-gray-800"
@@ -54,15 +55,7 @@ const LeftSideBar = () => {
         )}
 
         <Link
-          to="/"
-          className="flex items-center py-3 px-2 rounded-md hover:bg-gray-800"
-        >
-          <Home className="h-6 w-6 mr-3" />
-          <span className="text-sm font-medium">Home</span>
-        </Link>
-
-        <Link
-          to="/friends-list"
+          to="/friend-requests"
           className="flex items-center py-3 px-2 rounded-md hover:bg-gray-800"
         >
           <Users className="h-6 w-6 mr-3" />
@@ -92,16 +85,14 @@ const LeftSideBar = () => {
 
         <div className="flex items-center mb-2">
           <Avatar className="h-8 w-8 mr-2">
-            {userAuth?.avatarPhotoUrl ? (
-              <AvatarImage
-                src={userAuth?.avatarPhotoUrl}
-                alt={userAuth?.fullName}
-              />
-            ) : (
-              <AvatarFallback className="bg-gray-700">
-                {userAuth?.fullName?.substring(0, 2) || "U"}
-              </AvatarFallback>
-            )}
+            <AvatarImage
+              src={userAuth?.avatarPhotoUrl}
+              alt={userAuth?.fullName}
+            />
+
+            <AvatarFallback className="bg-gray-700">
+              {userAuth?.fullName?.substring(0, 2) || "U"}
+            </AvatarFallback>
           </Avatar>
 
           <span className="text-sm">{userAuth?.fullName || "User"}</span>

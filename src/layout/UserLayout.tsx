@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { useAuthStore } from "@/stores/useAuthStore";
 import Header from "./components/navbar/Header";
 import { PanelGroup } from "react-resizable-panels";
-import LeftSidebarPanel from "./components/panels/LeftSidebarPanel";
-import MainContentPanel from "./components/panels/MainContentPanel";
-import RightSidebarPanel from "./components/panels/RightSidebarPanel";
-import MobileLayout from "./components/panels/MobileLayout";
+import MainContentPanel from "./components/MainContentPanel";
+import MobileLayout from "./MobileLayout";
+import RightSidebarPanel from "./components/right-sidebar/RightSidebarPanel";
+import LeftSidebarPanel from "./components/left-sidebar/LeftSidebarPanel";
 
 const UserLayout = () => {
   const { isAuth } = useAuthStore();
@@ -31,9 +31,11 @@ const UserLayout = () => {
       <div className="flex-1 pt-16 h-[calc(100vh-64px)]">
         {!isMobile ? (
           <PanelGroup direction="horizontal" className="h-full">
-            {!isAuth && <LeftSidebarPanel />}
-            {!isAuth && <MainContentPanel />}
-            {!isAuth && <RightSidebarPanel />}
+            {isAuth && <LeftSidebarPanel />}
+            
+            <MainContentPanel />
+
+            {isAuth && <RightSidebarPanel />}
           </PanelGroup>
         ) : (
           <MobileLayout />

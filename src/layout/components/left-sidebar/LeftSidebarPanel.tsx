@@ -1,14 +1,14 @@
 import { Panel, PanelResizeHandle } from "react-resizable-panels";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import LeftSideBar from "../LeftSidebar";
+import LeftSideBar from "../left-sidebar/components/LeftSidebar";
 
 const LeftSidebarPanel = () => {
   return (
     <>
       <Panel
-        defaultSize={20}
+        defaultSize={15}
         minSize={15}
-        maxSize={30}
+        maxSize={15}
         order={1}
         collapsible={true}
       >

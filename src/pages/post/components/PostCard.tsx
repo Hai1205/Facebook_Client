@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import PostComments from "./PostComments";
 import { COMMENT, POST } from "@/utils/types";
-import { formateDate, clientUrl } from "@/lib/utils";
+import { formateDateAgo, clientUrl } from "@/lib/utils";
 
 interface PostCardProps {
   post: POST;
@@ -97,7 +97,7 @@ const PostCard = ({
                 </p>
 
                 <p className="font-sm text-gray-500">
-                  {formateDate(post?.createdAt)}
+                  {formateDateAgo(post?.createdAt)}
                 </p>
               </div>
             </div>
@@ -126,7 +126,8 @@ const PostCard = ({
 
           <div className="flex justify-between items-center mb-4">
             <span className="text-sm text-gray-500 dark:text-gray-400 hover:border-b-2 border-gray-400 cursor-pointer ">
-            {post?.likes?.length} {post?.likes?.length === 1 ? 'like' : 'likes'}
+              {post?.likes?.length}{" "}
+              {post?.likes?.length === 1 ? "like" : "likes"}
             </span>
 
             <div className="flex gap-3">
@@ -134,11 +135,13 @@ const PostCard = ({
                 className="text-sm text-gray-500 dark:text-gray-400 hover:border-b-2 border-gray-400 cursor-pointer "
                 onClick={() => setShowComments(!showComments)}
               >
-                {post?.comments?.length} {post?.comments?.length === 1 ? 'comment' : 'comments'}
+                {post?.comments?.length}{" "}
+                {post?.comments?.length === 1 ? "comment" : "comments"}
               </span>
 
               <span className="text-sm text-gray-500 dark:text-gray-400 hover:border-b-2 border-gray-400 cursor-pointer ">
-                {post?.shares?.length} {post?.shares?.length === 1 ? 'share' : 'shares'}
+                {post?.shares?.length}{" "}
+                {post?.shares?.length === 1 ? "share" : "shares"}
               </span>
             </div>
           </div>

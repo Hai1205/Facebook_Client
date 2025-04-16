@@ -1,11 +1,8 @@
 import { Gift } from "lucide-react";
+import { USER } from "@/utils/types";
 
 interface Birthday {
-  birthdays: {
-    id: string;
-    fullName: string;
-    avatarPhotoUrl: string;
-  }[];
+    birthdays: USER[];
 }
 
 export const BirthdaySection = ({ birthdays }: Birthday) => (

@@ -20,6 +20,8 @@ import FriendPage from "./pages/friend/FriendPage";
 import VideoPage from "./pages/video/VideoPage";
 import PrivateRoute from "./layout/components/protected-route/PrivateRoute";
 import SettingPage from "./pages/settings/SettingPage";
+import { IncomingCallNotification } from "./pages/chat/VoiceCallComponents/components/IncomingCallNotification";
+import { CallManager } from "./pages/chat/CallManager";
 
 function App() {
   return (
@@ -87,6 +89,9 @@ function App() {
         theme="light"
         transition={Slide}
       />
+
+      <CallManager />
+      <IncomingCallNotification />
     </Router>
   );
 }

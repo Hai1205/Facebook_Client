@@ -6,13 +6,6 @@ import React, { useState } from "react";
 import GeneralTab from "@/pages/settings/components/GeneralTab";
 import SecurityTab from "@/pages/settings/components/SecurityTab";
 import { USER } from "@/utils/types";
-// import ArtistApplicationTab from "./components/ArtistApplicationTab";
-// import { ArtistApplication, User as USER } from "@/utils/types";
-
-export interface SongSample {
-  title: string;
-  file?: File | null;
-}
 
 export interface ChangePassword {
   currentPassword: string;
@@ -38,33 +31,8 @@ const SettingPage = () => {
     rePassword: "",
   });
 
-  // const [songData, setSongData] = useState<SongSample[]>([
-  //   { title: "", file: null },
-  //   { title: "", file: null },
-  //   { title: "", file: null },
-  // ]);
   const [previewAvatar, setPreviewAvatar] = useState<string>("");
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
-
-  // Initialize userData when userAuth is available or changes
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     if (!userAuth) {
-  //       return;
-  //     }
-
-  //     const res = await getArtistApplication(userAuth.id);
-  //     if(!res){
-  //       return;
-  //     }
-
-  //     setApplicationData(res)
-  //     setSongData(res.songs || [])
-  //     setPreviewAvatar(userAuth.avatarUrl || "");
-  //   }
-
-  //   fetchData();
-  // }, [getArtistApplication, userAuth]);
 
   const handleInfoChange = (field: keyof USER, value: string | File | null) => {
     setUserData((prev) => (prev ? { ...prev, [field]: value } : prev));
@@ -79,33 +47,6 @@ const SettingPage = () => {
       [field]: value,
     }));
   };
-
-  // const handleApplicationChange = (
-  //   name: string,
-  //   value: string | File | null
-  // ) => {
-  //   if (name.startsWith("song")) {
-  //     const index = parseInt(name.match(/\d+/)?.[0] || "0", 10) - 1; // Extract song index (e.g., song1Title -> index 0)
-  //     const field = name.replace(/\d+/, ""); // Extract field name (e.g., song1Title -> title)
-
-  //     setSongData((prev) => {
-  //       const updatedSongs = [...prev];
-  //       if (!updatedSongs[index]) {
-  //         updatedSongs[index] = { title: "", file: null }; // Initialize if undefined
-  //       }
-  //       if (field === "File") {
-  //         updatedSongs[index].file = value as File;
-  //       } else {
-  //         updatedSongs[index] = { ...updatedSongs[index], [field]: value };
-  //       }
-  //       return updatedSongs;
-  //     });
-  //   } else {
-  //     setApplicationData((prev) =>
-  //       prev ? { ...prev, [name as keyof ArtistApplication]: value } : prev
-  //     );
-  //   }
-  // };
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -158,29 +99,6 @@ const SettingPage = () => {
     }
   };
 
-  // const handleRequireApplication = () => {
-  //   if (userData && userAuth) {
-  //     const formData = new FormData();
-  //     formData.append("achievements", applicationData?.achievements || "");
-  //     formData.append("reason", applicationData?.reason || "");
-  //     formData.append("song1Title", songData[0].title || "");
-  //     formData.append("song2Title", songData[1].title || "");
-  //     formData.append("song3Title", songData[2].title || "");
-
-  //     if (songData[0].file) {
-  //       formData.append("song1Audio", songData[0].file);
-  //     }
-  //     if (songData[1].file) {
-  //       formData.append("song2Audio", songData[1].file);
-  //     }
-  //     if (songData[2].file) {
-  //       formData.append("song3Audio", songData[2].file);
-  //     }
-
-  //     requireUpdateUserToArtist(userAuth.id, formData);
-  //   }
-  // };
-
   return (
     <div className="space-y-4">
       <div>
@@ -205,16 +123,6 @@ const SettingPage = () => {
             <span className="hidden sm:inline-block">Security</span>
           </TabsTrigger>
 
-          {/* {!(isArtist || isAdmin) && (
-            <TabsTrigger
-              value="application"
-              className="flex items-center gap-2"
-            >
-              <Mic2 className="h-4 w-4" />
-
-              <span className="hidden sm:inline-block">Apply to Artist</span>
-            </TabsTrigger>
-          )} */}
         </TabsList>
 
         {userData && userAuth && (
@@ -235,14 +143,6 @@ const SettingPage = () => {
           handleChangePassword={handleChangePassword}
           isAuthLoading={isAuthLoading}
         />
-
-        {/* <ArtistApplicationTab
-          applicationData={applicationData}
-          songData={songData}
-          handleApplicationChange={handleApplicationChange}
-          handleRequireApplication={handleRequireApplication}
-          isUserLoading={isUserLoading}
-        /> */}
       </Tabs>
     </div>
   );

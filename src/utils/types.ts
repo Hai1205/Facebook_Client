@@ -92,3 +92,10 @@ export interface FRIEND_REQUEST {
 	createdAt?: string;
 	updatedAt?: string;
 }
+
+export interface User {
+	id: string;
+	name: string;
+	avatar: string;
+  }
+  

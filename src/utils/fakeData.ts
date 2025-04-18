@@ -584,11 +584,7 @@ export const mockMessages = [
 export const mockUserChats = [
     {
         id: "1",
-        user: {
-            id: "user1",
-            name: "John Doe",
-            avatar: "/placeholder.svg?height=40&width=40",
-        },
+        user: mockUsers[1],
         lastMessage: "Hey, how are you doing?",
         time: "2m",
         unread: true,
@@ -596,11 +592,7 @@ export const mockUserChats = [
     },
     {
         id: "2",
-        user: {
-            id: "user2",
-            name: "Jane Smith",
-            avatar: "/placeholder.svg?height=40&width=40",
-        },
+        user: mockUsers[2],
         lastMessage: "Can we meet tomorrow?",
         time: "1h",
         unread: true,
@@ -608,11 +600,7 @@ export const mockUserChats = [
     },
     {
         id: "3",
-        user: {
-            id: "user3",
-            name: "Mike Johnson",
-            avatar: "/placeholder.svg?height=40&width=40",
-        },
+        user: mockUsers[3],
         lastMessage: "Thanks for your help!",
         time: "3h",
         unread: true,
@@ -620,11 +608,7 @@ export const mockUserChats = [
     },
     {
         id: "4",
-        user: {
-            id: "user4",
-            name: "Sarah Williams",
-            avatar: "/placeholder.svg?height=40&width=40",
-        },
+        user: mockUsers[4],
         lastMessage: "I'll send you the files later",
         time: "1d",
         unread: false,
@@ -632,11 +616,7 @@ export const mockUserChats = [
     },
     {
         id: "5",
-        user: {
-            id: "user5",
-            name: "David Brown",
-            avatar: "/placeholder.svg?height=40&width=40",
-        },
+        user: mockUsers[5],
         lastMessage: "See you at the meeting",
         time: "2d",
         unread: false,
@@ -644,11 +624,7 @@ export const mockUserChats = [
     },
     {
         id: "6",
-        user: {
-            id: "user6",
-            name: "John ci",
-            avatar: "/placeholder.svg?height=40&width=40",
-        },
+        user: mockUsers[6],
         lastMessage: "See you at the meeting",
         time: "2d",
         unread: false,

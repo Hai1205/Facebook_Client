@@ -16,13 +16,17 @@ export interface FriendRequestStore {
     reset: () => any;
 }
 
+const initialState = {
+    status: 0,
+    message: null,
+    isLoading: false,
+    error: null,
+}
+
 export const useFriendRequestStore = create<FriendRequestStore>()(
     persist(
         (set) => ({
-            isLoading: false,
-            error: null,
-            status: 0,
-            message: null,
+            ...initialState,
 
             getAllFriendRequest: async () => {
                 set({ isLoading: true, error: null });
@@ -43,13 +47,13 @@ export const useFriendRequestStore = create<FriendRequestStore>()(
                     set({ isLoading: false });
                 }
             },
-            
+
             deleteFriendRequest: async (notiId: string) => {
                 set({ isLoading: true, error: null });
-                
+
                 try {
                     await deleteFriendRequest(notiId);
-                    
+
                     return true;
                 } catch (error: any) {
                     console.error(error)
@@ -81,7 +85,7 @@ export const useFriendRequestStore = create<FriendRequestStore>()(
                     set({ isLoading: false });
                 }
             },
-            
+
             getUserFriendRequests: async (userId: string) => {
                 set({ isLoading: true, error: null });
 
@@ -102,14 +106,7 @@ export const useFriendRequestStore = create<FriendRequestStore>()(
                 }
             },
 
-            reset: () => {
-                set({
-                    status: 0,
-                    message: null,
-                    isLoading: false,
-                    error: null
-                });
-            },
+            reset: () => { set({ ...initialState }); },
         }),
 
         {

@@ -16,13 +16,17 @@ interface StatStore {
     reset: () => void;
 }
 
+const initialState = {
+	isLoading: false,
+	error: null,
+	status: 0,
+	message: null,
+}
+
 export const useStatStore = create<StatStore>()(
     persist(
         (set) => ({
-            isLoading: false,
-            error: null,
-            status: 0,
-            message: null,
+            ...initialState,
 
             getGeneralStat: async () => {
                 set({ isLoading: true, error: null });
@@ -84,14 +88,7 @@ export const useStatStore = create<StatStore>()(
                 }
             },
 
-            reset: () => {
-                set({
-                    isLoading: false,
-                    error: null,
-                    status: 0,
-                    message: null,
-                })
-            },
+            reset: () => { set({ ...initialState }); },
         }),
 
         {

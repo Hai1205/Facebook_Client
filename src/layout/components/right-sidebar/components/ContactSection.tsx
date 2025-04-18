@@ -3,18 +3,48 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { USER } from "@/utils/types";
+import { ChatContainer } from "../../../../pages/chat/ChatContainer";
+import { useNavigate } from "react-router-dom";
+import { useOpenStore } from "@/stores/useOpenStore";
 
 interface ContactSectionProps {
-    contacts: USER[];
+  contacts: USER[];
 }
 
 export const ContactSection = ({ contacts }: ContactSectionProps) => {
+  const navigate = useNavigate();
+  const { setActiveTab } = useOpenStore();
+
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [activeChats, setActiveChats] = useState<USER[]>([]);
 
   const filteredContacts = contacts.filter((contact) =>
     contact.fullName.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const startChat = (user: USER) => {
+    if (activeChats.some((chat) => chat.id === user.id)) {
+      setActiveChats([
+        user,
+        ...activeChats.filter((chat) => chat.id !== user.id),
+      ]);
+    } else {
+      setActiveChats((prev) => {
+        const newChats = [user, ...prev.filter((chat) => chat.id !== user.id)];
+        return newChats.slice(0, 4);
+      });
+    }
+  };
+
+  const closeChat = (userId: string) => {
+    setActiveChats(activeChats.filter((chat) => chat.id !== userId));
+  };
+
+  const handleNavigation = (path: string, name: string) => {
+    setActiveTab(name);
+    navigate(path);
+  };
 
   return (
     <div>
@@ -23,12 +53,12 @@ export const ContactSection = ({ contacts }: ContactSectionProps) => {
 
         <div className="flex space-x-2">
           {!isSearchOpen ? (
-              <button
-                className="text-gray-400 hover:bg-gray-800 p-1 rounded-full"
-                onClick={() => setIsSearchOpen(true)}
-              >
-                <Search className="h-4 w-4" />
-              </button>
+            <button
+              className="text-gray-400 hover:bg-gray-800 p-1 rounded-full"
+              onClick={() => setIsSearchOpen(true)}
+            >
+              <Search className="h-4 w-4" />
+            </button>
           ) : (
             <button
               className="text-gray-400 hover:bg-gray-800 p-1 rounded-full"
@@ -61,9 +91,15 @@ export const ContactSection = ({ contacts }: ContactSectionProps) => {
             <div
               key={contact.id}
               className="flex items-center space-x-3 p-2 hover:bg-gray-800 rounded-lg cursor-pointer"
+              onClick={() => startChat(contact)}
             >
               <div className="relative">
-                <Avatar className="h-8 w-8">
+                <Avatar
+                  className="h-8 w-8"
+                  onClick={() =>
+                    handleNavigation(`/profile/${contact.id}`, "profile")
+                  }
+                >
                   <AvatarImage
                     src={contact.avatarPhotoUrl || "/placeholder.svg"}
                   />
@@ -79,7 +115,14 @@ export const ContactSection = ({ contacts }: ContactSectionProps) => {
               </div>
 
               <div className="flex justify-between items-center flex-1">
-                <span className="text-sm font-medium">{contact.fullName}</span>
+                <span
+                  className="text-sm font-medium"
+                  onClick={() =>
+                    handleNavigation(`/profile/${contact.id}`, "profile")
+                  }
+                >
+                  {contact.fullName}
+                </span>
 
                 {/* {contact.active === 0 ? (
                   <span className="h-2 w-2 rounded-full bg-green-500" />
@@ -94,11 +137,11 @@ export const ContactSection = ({ contacts }: ContactSectionProps) => {
             </div>
           ))
         ) : (
-          <div className="text-gray-400 text-center py-2">
-            No contact found
-          </div>
+          <div className="text-gray-400 text-center py-2">No contact found</div>
         )}
       </div>
+
+      <ChatContainer activeChats={activeChats} closeChat={closeChat} />
     </div>
   );
 };

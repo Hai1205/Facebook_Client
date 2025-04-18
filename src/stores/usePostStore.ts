@@ -37,13 +37,17 @@ export interface PostStore {
   reset: () => any;
 }
 
+const initialState = {
+	status: 0,
+	message: null,
+	isLoading: false,
+	error: null,
+}     
+
 export const usePostStore = create<PostStore>()(
   persist(
     (set) => ({
-      status: 0,
-      message: null,
-      isLoading: false,
-      error: null,
+      ...initialState,    
 
       getAllPost: async () => {
         set({ isLoading: true, error: null });
@@ -256,14 +260,7 @@ export const usePostStore = create<PostStore>()(
         }
       },
 
-      reset: () => {
-        set({
-          status: 0,
-          message: null,
-          isLoading: false,
-          error: null,
-        });
-      },
+      reset: () => { set({ ...initialState }); },
     }),
 
     {

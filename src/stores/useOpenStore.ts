@@ -1,27 +1,32 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-export interface OpenStore {
+export interface useOpenStoreProps {
 	isSidebarOpen : boolean;
+	activeTab: string;
 	
     toggleSidebar: () => void;
+	setActiveTab: (tab: string) => void;
 	reset: () => void;
 }
 
-export const useOpenStore = create<OpenStore>()(
+const initialState = {
+	isSidebarOpen: false,
+	activeTab: "home",
+}
+
+export const useOpenStore = create<useOpenStoreProps>()(
 	persist(
 		(set, get) => ({
-			isSidebarOpen: false,
+			...initialState,
 			
             toggleSidebar: ()=>{
 				set({ isSidebarOpen: !get().isSidebarOpen });
             },
 
-			reset: () => {
-				set({
-					isSidebarOpen: false,
-				});
-			}
+			setActiveTab: (tab) => set({ activeTab: tab }),
+
+			reset: () => { set({ ...initialState }); },
 		}),
 
 		{

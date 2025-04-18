@@ -16,13 +16,17 @@ export interface NotiStore {
     reset: () => any;
 }
 
+const initialState = {
+    status: 0,
+    message: null,
+    isLoading: false,
+    error: null,
+}
+
 export const useNotiStore = create<NotiStore>()(
     persist(
         (set) => ({
-            isLoading: false,
-            error: null,
-            status: 0,
-            message: null,
+            ...initialState,
 
             getAllNoti: async () => {
                 set({ isLoading: true, error: null });
@@ -102,14 +106,7 @@ export const useNotiStore = create<NotiStore>()(
                 }
             },
 
-            reset: () => {
-                set({
-                    status: 0,
-                    message: null,
-                    isLoading: false,
-                    error: null
-                });
-            },
+            reset: () => { set({ ...initialState }); },
         }),
 
         {

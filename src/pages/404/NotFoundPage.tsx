@@ -1,9 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { Facebook, Home, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useOpenStore } from "@/stores/useOpenStore";
 
 export default function NotFoundPage() {
   const navigate = useNavigate();
+  const { setActiveTab } = useOpenStore();
 
   return (
     <div className="min-h-screen bg-[#121212] flex items-center justify-center">
@@ -31,7 +33,9 @@ export default function NotFoundPage() {
         {/* Action buttons */}
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Button
-            onClick={() => navigate(-1)}
+            onClick={() => {
+              navigate(-1);
+            }}
             variant="outline"
             className="border-gray-600 text-gray-300 hover:bg-gray-700 w-full sm:w-auto"
           >
@@ -40,7 +44,10 @@ export default function NotFoundPage() {
           </Button>
 
           <Button
-            onClick={() => navigate("/")}
+            onClick={() => {
+              navigate("/");
+              setActiveTab("home");
+            }}
             className="bg-[#1877F2] hover:bg-[#166FE5] text-white w-full sm:w-auto"
           >
             <Home className="mr-2 h-4 w-4" />

@@ -20,6 +20,9 @@ import {
 	sendOTP
 } from "@/utils/api/authApi";
 import { mockUsers } from "@/utils/fakeData";
+import { useNotiStore } from "./useNotiStore";
+import { useFriendRequestStore } from "./useFriendRequestStore";
+import { useCallStore } from "./useCallStore";
 
 export interface AuthStore {
 	userAuth: USER | null;
@@ -44,19 +47,23 @@ export interface AuthStore {
 	reset: () => any;
 }
 
+const initialState = {
+	userAuth: mockUsers[0],
+	isAuth: true,
+	isAdmin: true,
+	// userAuth: null,
+	// isAuth: false,
+	// isAdmin: false,
+	isLoading: false,
+	error: null,
+	status: 0,
+	message: null,
+}
+
 export const useAuthStore = create<AuthStore>()(
 	persist(
 		(set, get) => ({
-			userAuth: mockUsers[0],
-			isAuth: true,
-			isAdmin: true,
-			// userAuth: null,
-			// isAuth: false,
-			// isAdmin: false,
-			isLoading: false,
-			error: null,
-			status: 0,
-			message: null,
+			...initialState,
 
 			checkAdmin: async () => {
 				set({ isLoading: true, error: null });
@@ -277,20 +284,15 @@ export const useAuthStore = create<AuthStore>()(
 			},
 
 			reset: () => {
-				set({
-					userAuth: null,
-					status: 0,
-					message: null,
-					isAdmin: false,
-					isAuth: false,
-					isLoading: false,
-					error: null
-				});
+				set({ ...initialState });
 
-				useUserStore.getState().reset();
-				useStatStore.getState().reset();
-				usePostStore.getState().reset();
+				useCallStore.getState().reset();
+				useFriendRequestStore.getState().reset();
+				useNotiStore.getState().reset();
 				useOpenStore.getState().reset();
+				usePostStore.getState().reset();
+				useStatStore.getState().reset();
+				useUserStore.getState().reset();
 				useUserBioStore.getState().reset();
 			},
 		}),

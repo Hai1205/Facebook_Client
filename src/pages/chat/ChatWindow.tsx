@@ -16,13 +16,10 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { mockMessages } from "@/utils/fakeData";
 import { VideoCallWindow } from "./VideoCallWindow";
 import { VoiceCallWindow } from "./VoiceCallWindow";
+import { USER } from "@/utils/types";
 
 interface ChatWindowProps {
-  user: {
-    id: string;
-    name: string;
-    avatar: string;
-  };
+  user: USER;
   onClose: () => void;
   isMinimized: boolean;
   onToggleMinimize: () => void;
@@ -126,14 +123,14 @@ export function ChatWindow({
         <div className="p-2 flex items-center justify-between border-b border-gray-700 cursor-pointer">
           <div className="flex items-center">
             <Avatar className="h-8 w-8 mr-2">
-              <AvatarImage src={user.avatar} />
+              <AvatarImage src={user.avatarPhotoUrl} />
               <AvatarFallback className="bg-blue-600">
-                {user.name.substring(0, 2)}
+                {user.fullName.substring(0, 2)}
               </AvatarFallback>
             </Avatar>
 
             <div>
-              <p className="font-semibold text-sm">{user.name}</p>
+              <p className="font-semibold text-sm">{user.fullName}</p>
               <p className="text-xs text-green-500">Active now</p>
             </div>
           </div>
@@ -188,9 +185,9 @@ export function ChatWindow({
                 >
                   {message.sender === "user" && (
                     <Avatar className="h-8 w-8 mr-2 mt-1 flex-shrink-0">
-                      <AvatarImage src={user.avatar} />
+                      <AvatarImage src={user.avatarPhotoUrl} />
                       <AvatarFallback className="bg-blue-600">
-                        {user.name.substring(0, 2)}
+                        {user.fullName.substring(0, 2)}
                       </AvatarFallback>
                     </Avatar>
                   )}

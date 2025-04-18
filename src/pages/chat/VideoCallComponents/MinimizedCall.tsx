@@ -1,8 +1,8 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User } from "../VideoCallWindow";
+import { USER } from "@/utils/types";
 
 interface MinimizedCallProps {
-  user: User;
+  user: USER;
   isVideoOn: boolean;
   callStatus: "ringing" | "connected" | "ended";
   callDuration: number;
@@ -30,16 +30,16 @@ export function MinimizedCall({
           {isVideoOn ? (
             <div className="w-full h-full bg-gray-700">
               <img
-                src={user.avatar || "/placeholder.svg?height=48&width=80"}
+                src={user.avatarPhotoUrl || "/placeholder.svg?height=48&width=80"}
                 alt="Video preview"
                 className="w-full h-full object-cover"
               />
             </div>
           ) : (
             <Avatar className="h-8 w-8">
-              <AvatarImage src={user.avatar || "/placeholder.svg"} />
+              <AvatarImage src={user.avatarPhotoUrl || "/placeholder.svg"} />
               <AvatarFallback className="bg-blue-600">
-                {user.name.substring(0, 2)}
+                {user.fullName.substring(0, 2)}
               </AvatarFallback>
             </Avatar>
           )}
@@ -52,7 +52,7 @@ export function MinimizedCall({
 
       <div>
         <p className="text-sm font-medium">
-          {isGroupCall ? "Group call" : user.name}
+          {isGroupCall ? "Group call" : user.fullName}
         </p>
 
         <p className="text-xs text-green-500">

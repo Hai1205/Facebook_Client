@@ -1,18 +1,42 @@
-import { Home, LogOut, User, Users, Video, FolderLock } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Home, LogOut, Users, Video, FolderLock } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { Separator } from "@/components/ui/separator";
+import { useOpenStore } from "@/stores/useOpenStore";
 
 const LeftSideBar = () => {
   const navigate = useNavigate();
-  const { userAuth, isAdmin, logout } = useAuthStore();
+  const { userAuth, isAdmin, isAuth, logout } = useAuthStore();
+  const { setActiveTab } = useOpenStore();
 
   const handleLogout = async () => {
     const result = await logout();
-    if (result?.status == "success") {
-      navigate("/login");
+    if (result) {
+      handleNavigation("/login", "login");
     }
+  };
+
+  const navItems = [
+    { icon: Home, path: "/", name: "home" },
+    ...(isAdmin
+      ? [
+          {
+            icon: FolderLock,
+            path: "/admin-dashboard",
+            name: "admin-dashboard",
+          },
+        ]
+      : []),
+    { icon: Video, path: "/video-feed", name: "video" },
+    ...(isAuth
+      ? [{ icon: Users, path: "/friend-requests", name: "friends" }]
+      : []),
+  ];
+
+  const handleNavigation = (path: string, name: string) => {
+    setActiveTab(name);
+    navigate(path);
   };
 
   return (
@@ -35,48 +59,17 @@ const LeftSideBar = () => {
       </div>
 
       {/* Main navigation */}
-      <div className="flex flex-col space-y-1 flex-grow">
-        <Link
-          to="/"
-          className="flex items-center py-3 px-2 rounded-md hover:bg-gray-800"
-        >
-          <Home className="h-6 w-6 mr-3" />
-          <span className="text-sm font-medium">Home</span>
-        </Link>
-
-        {isAdmin && (
-          <Link
-            to="/admin-dashboard"
-            className="flex items-center py-3 px-2 rounded-md hover:bg-gray-800"
+      <div className="flex flex-col space-y-1 flex-grow gap-4">
+        {navItems.map(({ icon: Icon, path, name }) => (
+          <button
+            key={name}
+            className={`flex items-center p-3 text-gray-400 hover:text-white hover:bg-gray-800 rounded-md`}
+            onClick={() => handleNavigation(path, name)}
           >
-            <FolderLock className="h-6 w-6 mr-3" />
-            <span className="text-sm font-medium">Admin Dashboard</span>
-          </Link>
-        )}
-
-        <Link
-          to="/friend-requests"
-          className="flex items-center py-3 px-2 rounded-md hover:bg-gray-800"
-        >
-          <Users className="h-6 w-6 mr-3" />
-          <span className="text-sm font-medium">Friends</span>
-        </Link>
-
-        <Link
-          to="/video-feed"
-          className="flex items-center py-3 px-2 rounded-md hover:bg-gray-800"
-        >
-          <Video className="h-6 w-6 mr-3" />
-          <span className="text-sm font-medium">Video</span>
-        </Link>
-
-        <Link
-          to={`/profile/${userAuth?.id}`}
-          className="flex items-center py-3 px-2 rounded-md hover:bg-gray-800"
-        >
-          <User className="h-6 w-6 mr-3" />
-          <span className="text-sm font-medium">Profile</span>
-        </Link>
+            <Icon className="h-6 w-6 mr-2" />
+            <span className="text-sm">{name}</span>
+          </button> 
+        ))}
       </div>
 
       {/* Footer with logout */}

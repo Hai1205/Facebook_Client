@@ -1,8 +1,8 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User } from "../VideoCallWindow";
+import { USER } from "@/utils/types";
 
 interface MinimizedCallProps {
-  user: User;
+  user: USER;
   callStatus: "ringing" | "connected" | "ended";
   callDuration: number;
   formatDuration: (seconds: number) => string;
@@ -22,13 +22,13 @@ export function MinimizedCall({
       onClick={() => setMinimized(false)}
     >
       <Avatar className="h-10 w-10">
-        <AvatarImage src={user.avatar || "/placeholder.svg"} />
+        <AvatarImage src={user.avatarPhotoUrl || "/placeholder.svg"} />
         <AvatarFallback className="bg-blue-600">
-          {user.name.charAt(0)}
+          {user.fullName.substring(0, 2)}
         </AvatarFallback>
       </Avatar>
       <div className="pr-2">
-        <p className="text-sm font-medium">{user.name}</p>
+        <p className="text-sm font-medium">{user.fullName}</p>
         <p className="text-xs text-green-500">
           {callStatus === "connected"
             ? formatDuration(callDuration)

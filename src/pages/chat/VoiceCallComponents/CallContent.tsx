@@ -1,9 +1,9 @@
-import { User } from "lucide-react";
+import { USER } from "@/utils/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User as UserType } from "../VideoCallWindow";
+import { User } from "lucide-react";
 
 interface CallContentProps {
-  user: UserType;
+  user: USER;
   callStatus: "ringing" | "connected" | "ended";
   callDuration: number;
   isMuted: boolean;
@@ -21,11 +21,11 @@ export function CallContent({
     <div className="p-8 flex flex-col items-center justify-center">
       <div className="relative">
         <div className="h-32 w-32 rounded-full bg-gray-700 flex items-center justify-center mb-4 border-4 border-blue-600">
-          {user.avatar ? (
+          {user.avatarPhotoUrl ? (
             <Avatar className="h-full w-full">
-              <AvatarImage src={user.avatar || "/placeholder.svg"} />
+              <AvatarImage src={user.avatarPhotoUrl || "/placeholder.svg"} />
               <AvatarFallback className="bg-blue-600 text-4xl">
-                {user.name.charAt(0)}
+                {user.fullName.substring(0, 2)}
               </AvatarFallback>
             </Avatar>
           ) : (
@@ -35,7 +35,7 @@ export function CallContent({
         <div className="absolute bottom-3 right-3 h-5 w-5 rounded-full bg-green-500 border-2 border-gray-800"></div>
       </div>
 
-      <h2 className="text-xl font-bold mb-1">{user.name}</h2>
+        <h2 className="text-xl font-bold mb-1">{user.fullName}</h2>
 
       {callStatus === "ringing" ? (
         <p className="text-gray-400 animate-pulse">Calling...</p>

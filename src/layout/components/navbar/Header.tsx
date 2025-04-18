@@ -22,31 +22,31 @@ import {
   Video,
   User,
   FolderLock,
+  Settings,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { NotificationsDropdown } from "@/layout/components/navbar/components/notification/NotificationsDropdown";
-import { MessagesDropdown } from "@/layout/components/navbar/components/message/MessagesDropdown";
+import { NotificationsDropdown } from "@/pages/notification/NotificationsDropdown";
+import { MessagesDropdown } from "@/pages/chat/MessagesDropdown";
 import Loader from "./components/Loader";
-import { ChatContainer } from "./components/message/ChatContainer";
+import { ChatContainer } from "../../../pages/chat/ChatContainer";
+import { useOpenStore } from "@/stores/useOpenStore";
 
 const Header = () => {
   const { userAuth, isAuth, isAdmin, logout } = useAuthStore();
   const { isLoading, getAllUser } = useUserStore();
+  const { activeTab, setActiveTab } = useOpenStore();
 
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [users, setUsers] = useState<USER[]>([]);
   const [filterUsers, setFilterUsers] = useState<USER[]>([]);
-  const [activeTab, setActiveTab] = useState("home");
   const searchRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
   const [showNotifications, setShowNotifications] = useState(false);
   const [showMessages, setShowMessages] = useState(false);
-  const [activeChats, setActiveChats] = useState<
-    { id: string; name: string; avatar: string }[]
-  >([]);
+  const [activeChats, setActiveChats] = useState<USER[]>([]);
 
   const toggleNotifications = () => {
     setShowNotifications(!showNotifications);
@@ -58,7 +58,7 @@ const Header = () => {
     if (showNotifications) setShowNotifications(false);
   };
 
-  const startChat = (user: { id: string; name: string; avatar: string }) => {
+  const startChat = (user: USER) => {
     if (activeChats.some((chat) => chat.id === user.id)) {
       setActiveChats([
         user,
@@ -86,7 +86,7 @@ const Header = () => {
   const handleLogout = async () => {
     const result = await logout();
     if (result) {
-      navigate("/user-login");
+      handleNavigation("/login", "login");
     }
   };
 
@@ -165,11 +165,12 @@ const Header = () => {
           {/* Left: Logo and Search */}
           <div className="flex items-center gap-4">
             {/* Facebook Logo */}
-            <Link to="/">
-              <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-2xl">
-                f
-              </div>
-            </Link>
+            <button
+              className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-2xl"
+              onClick={() => handleNavigation("/", "home")}
+            >
+              f
+            </button>
 
             {/* Search Bar */}
             <div className="relative" ref={searchRef}>
@@ -221,22 +222,26 @@ const Header = () => {
           </div>
 
           {/* Center: Navigation Icons (visible on desktop) */}
-          <nav className="hidden md:flex items-center justify-center gap-40 absolute left-1/2 transform -translate-x-1/2">
+          <div className="flex md:flex items-center justify-center gap-4 md:gap-10 absolute left-1/2 transform -translate-x-1/2">
             {navItems.map(({ icon: Icon, path, name }) => (
               <button
                 key={name}
-                className={`relative p-3 text-gray-400 hover:text-white hover:bg-gray-800 rounded-md ${
+                className={`relative p-2 md:p-3 text-gray-400 hover:text-white hover:bg-gray-800 rounded-md ${
                   activeTab === name ? "text-blue-500" : ""
                 }`}
                 onClick={() => handleNavigation(path, name)}
               >
-                <Icon className="h-6 w-6" />
+                <Icon
+                  className={`h-5 md:h-6 w-5 md:w-6 ${
+                    activeTab === name ? "text-blue-500" : ""
+                  }`}
+                />
                 {activeTab === name && (
                   <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500 rounded-t-md" />
                 )}
               </button>
             ))}
-          </nav>
+          </div>
 
           {/* Right: User Menu */}
           <div className="flex items-center gap-2">
@@ -267,6 +272,7 @@ const Header = () => {
                   >
                     <MessageCircle className="h-5 w-5" />
                   </Button>
+
                   {showMessages && <MessagesDropdown onChatStart={startChat} />}
                 </div>
 
@@ -299,16 +305,18 @@ const Header = () => {
 
                     <DropdownMenuItem
                       className="cursor-pointer hover:bg-gray-700"
-                      onClick={() => navigate(`/profile/${userAuth?.id}`)}
+                      onClick={() =>
+                        handleNavigation(`/profile/${userAuth?.id}`, "profile")
+                      }
                     >
                       <User className="mr-2 h-4 w-4" /> Profile
                     </DropdownMenuItem>
 
                     <DropdownMenuItem
                       className="cursor-pointer hover:bg-gray-700"
-                      onClick={() => navigate("/settings")}
+                      onClick={() => handleNavigation(`/settings`, "settings")}
                     >
-                      Settings
+                      <Settings className="mr-2 h-4 w-4" /> Settings
                     </DropdownMenuItem>
 
                     <DropdownMenuSeparator className="bg-gray-700" />

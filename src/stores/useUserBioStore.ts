@@ -19,13 +19,17 @@ export interface UserBioStore {
     reset: () => any;
 }
 
+const initialState = {
+    status: 0,
+    message: null,
+    isLoading: false,
+    error: null,
+}
+
 export const useUserBioStore = create<UserBioStore>()(
     persist(
         (set) => ({
-            isLoading: false,
-            error: null,
-            status: 0,
-            message: null,
+            ...initialState,
 
             updateUserBio: async (userId: string, formData: FormData) => {
                 set({ isLoading: true, error: null });
@@ -85,14 +89,7 @@ export const useUserBioStore = create<UserBioStore>()(
                 }
             },
 
-            reset: () => {
-                set({
-                    status: 0,
-                    message: null,
-                    isLoading: false,
-                    error: null
-                });
-            },
+            reset: () => { set({ ...initialState }); },
         }),
 
         {

@@ -1,13 +1,13 @@
 import { User, Video } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User as UserType } from "../VideoCallWindow";
+import { USER } from "@/utils/types";
 
 interface CallContentProps {
   callStatus: "ringing" | "connected" | "ended";
   isVideoOn: boolean;
-  user: UserType;
+  user: USER;
   isGroupCall: boolean;
-  activeParticipants: UserType[];
+  activeParticipants: USER[];
 }
 
 export function CallContent({
@@ -32,12 +32,12 @@ export function CallContent({
             ) : (
               <div className="flex flex-col items-center justify-center">
                 <Avatar className="h-32 w-32 mb-4">
-                  <AvatarImage src={user.avatar || "/placeholder.svg"} />
+                  <AvatarImage src={user.avatarPhotoUrl || "/placeholder.svg"} />
                   <AvatarFallback className="bg-blue-600 text-4xl">
-                    {user.name.substring(0, 2)}
+                    {user.fullName.substring(0, 2)}
                   </AvatarFallback>
                 </Avatar>
-                <h3 className="text-xl font-semibold">{user.name}</h3>
+                <h3 className="text-xl font-semibold">{user.fullName}</h3>
                 <p className="text-gray-400">Camera off</p>
               </div>
             )}
@@ -71,14 +71,14 @@ export function CallContent({
                 >
                   <Avatar className="h-8 w-8">
                     <AvatarImage
-                      src={participant.avatar || "/placeholder.svg"}
+                      src={participant.avatarPhotoUrl || "/placeholder.svg"}
                     />
                     <AvatarFallback className="bg-blue-600">
-                      {participant.name.charAt(0)}
+                      {participant.fullName.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
                   <span className="text-sm font-medium">
-                    {participant.name}
+                    {participant.fullName}
                   </span>
                   {index === 0 && (
                     <span className="text-xs bg-blue-600 px-1.5 py-0.5 rounded">
@@ -97,13 +97,13 @@ export function CallContent({
       <div className="flex-1 bg-gray-900 relative w-full">
         <div className="h-full w-full flex flex-col items-center justify-center">
           <Avatar className="h-32 w-32 mb-4">
-            <AvatarImage src={user.avatar || "/placeholder.svg"} />
+            <AvatarImage src={user.avatarPhotoUrl || "/placeholder.svg"} />
             <AvatarFallback className="bg-blue-600 text-4xl">
-              {user.name.substring(0, 2)}
+              {user.fullName.substring(0, 2)}
             </AvatarFallback>
           </Avatar>
           <h2 className="text-2xl font-bold mb-2">
-            {isGroupCall ? "Group Call" : user.name}
+            {isGroupCall ? "Group Call" : user.fullName}
           </h2>
           <p className="text-gray-400 text-lg animate-pulse mb-8">Calling...</p>
           {/* Ringing animation */}

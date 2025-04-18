@@ -1,14 +1,9 @@
 import { useState } from "react";
 import { ChatWindow } from "./ChatWindow";
-
-interface ChatUser {
-  id: string;
-  name: string;
-  avatar: string;
-}
+import { USER } from "@/utils/types";
 
 interface ChatContainerProps {
-  activeChats: ChatUser[];
+  activeChats: USER[];
   closeChat: (userId: string) => void;
 }
 
@@ -42,9 +37,9 @@ export function ChatContainer({ activeChats, closeChat }: ChatContainerProps) {
             <ChatWindow
               key={user.id}
               user={user}
-              onClose={() => closeChat(user.id)}
-              isMinimized={minimizedChats[user.id] || false}
-              onToggleMinimize={() => toggleMinimize(user.id)}
+              onClose={() => closeChat(user.id as string)}
+              isMinimized={minimizedChats[user.id as string] || false}
+              onToggleMinimize={() => toggleMinimize(user.id as string)}
             />
           </div>
         );

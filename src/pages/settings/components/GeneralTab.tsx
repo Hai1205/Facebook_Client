@@ -6,21 +6,12 @@ import {
   CardTitle,
   CardFooter,
 } from "@/components/ui/card";
-// import {
-//   Select,
-//   SelectContent,
-//   SelectItem,
-//   SelectTrigger,
-//   SelectValue,
-// } from "@/components/ui/select";
-// import { COUNTRY_CHOICE } from "@/utils/choice";
 import { TabsContent } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-// import { Textarea } from "@/components/ui/textarea";
 import { Save, User as UserIcon } from "lucide-react";
 import LoadingSpinner from "@/components/ui/loading";
 import { USER } from "@/utils/types";
@@ -52,8 +43,8 @@ const GeneralTab = ({
           <CardDescription>Manage your profile information.</CardDescription>
         </CardHeader>
 
-        <CardContent className="h-[265px] space-y-6">
-          <ScrollArea className="h-[35vh] pr-4 mt-4">
+        <CardContent className="h-[350px] space-y-6">
+          <ScrollArea className="h-full pr-4 mt-4">
             {userAuth && (
               <div className="grid gap-4">
                 {/* Avatar */}
@@ -73,7 +64,7 @@ const GeneralTab = ({
                       <Button
                         variant="secondary"
                         size="sm"
-                        className="bg-[#1DB954] text-white hover:bg-[#1ed760]"
+                        className="bg-[#1877F2] text-white hover:bg-[#1a6fbf]"
                         onClick={() =>
                           document.getElementById("avatar-input")?.click()
                         }
@@ -93,12 +84,10 @@ const GeneralTab = ({
                 </div>
 
                 {/* email */}
-                {/* <div className="grid grid-cols-2 gap-4"> */}
                   <div className="grid gap-2">
                     <Label>Email</Label>
                     <Input value={userData?.email || ""} readOnly />
                   </div>
-                {/* </div> */}
 
                 {/* Name */}
                 <div className="grid gap-2">
@@ -228,7 +217,7 @@ const GeneralTab = ({
           <Button
             onClick={handleSaveInfo}
             disabled={isUserLoading}
-            className="gap-1"
+            className="gap-1 text-white bg-blue-600 hover:bg-blue-700"
           >
             {isUserLoading ? (
               <>

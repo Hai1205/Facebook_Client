@@ -36,13 +36,17 @@ interface UserStore {
     reset: () => any;
 }
 
+const initialState = {
+    isLoading: false,
+    error: null,
+    status: 0,
+    message: null,
+}
+
 export const useUserStore = create<UserStore>()(
     persist(
         (set) => ({
-            isLoading: false,
-            error: null,
-            status: 0,
-            message: null,
+            ...initialState,
 
             getAllUser: async () => {
                 set({ isLoading: true, error: null });
@@ -270,14 +274,10 @@ export const useUserStore = create<UserStore>()(
             },
 
             reset: () => {
-                set({
-                    isLoading: false,
-                    error: null,
-                    status: 0,
-                    message: null,
-                });
+                set({ ...initialState });
             },
         }),
+
         {
             name: "user-storage",
             storage: createJSONStorage(() => sessionStorage),

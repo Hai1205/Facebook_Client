@@ -45,7 +45,7 @@ const SecurityTab = ({
           </CardDescription>
         </CardHeader>
 
-        <CardContent className="h-[280px] space-y-4">
+        <CardContent className="h-[366px] space-y-4">
           <div className="space-y-1">
             <Label htmlFor="current-password">Current Password</Label>
             <Input
@@ -90,7 +90,7 @@ const SecurityTab = ({
           <Button
             onClick={handleChangePassword}
             disabled={isAuthLoading}
-            className="gap-1"
+            className="gap-1 text-white bg-blue-600 hover:bg-blue-700"
           >
             {isAuthLoading ? (
               <>

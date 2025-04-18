@@ -4,18 +4,15 @@ import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useEffect, useState } from "react";
 import { mockUserChats } from "@/utils/fakeData";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { USER } from "@/utils/types";
 
 interface MessagesDropdownProps {
-  onChatStart: (user: { id: string; name: string; avatar: string }) => void;
+  onChatStart: (user: USER) => void;
 }
 
 interface CHAT {
   id: string;
-  user: {
-    id: string;
-    name: string;
-    avatar: string;
-  };
+  user: USER;
   lastMessage: string;
   time: string;
   unread: boolean;
@@ -57,7 +54,7 @@ export function MessagesDropdown({ onChatStart }: MessagesDropdownProps) {
       <ScrollArea className="max-h-96 h-[80vh] overflow-hidden">
         {chats
           .filter((chat) =>
-            chat.user.name.toLowerCase().includes(searchTerm.toLowerCase())
+            chat.user.fullName.toLowerCase().includes(searchTerm.toLowerCase())
           )
           .map((chat) => (
             <div
@@ -69,7 +66,7 @@ export function MessagesDropdown({ onChatStart }: MessagesDropdownProps) {
             >
               <div className="mr-3 relative">
                 <Avatar className="h-10 w-10">
-                  <AvatarImage src={chat.user.avatar} />
+                  <AvatarImage src={chat.user.avatarPhotoUrl} />
 
                   <AvatarFallback className="bg-gray-600">
                     <User className="h-5 w-5" />
@@ -83,7 +80,7 @@ export function MessagesDropdown({ onChatStart }: MessagesDropdownProps) {
 
               <div className="flex-1 min-w-0">
                 <div className="flex justify-between items-center">
-                  <p className="font-semibold truncate">{chat.user.name}</p>
+                  <p className="font-semibold truncate">{chat.user.fullName}</p>
 
                   <p className="text-xs text-gray-400">{chat.time}</p>
                 </div>

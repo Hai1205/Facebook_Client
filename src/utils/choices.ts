@@ -4,7 +4,6 @@ export interface CHOICE {
 }
 
 export const ROLE_CHOICE: CHOICE[] = [
-    { value: "CELEBRITY", label: "Celebrity" },
     { value: "ADMIN", label: "Admin" },
     { value: "USER", label: "User" },
 ];
@@ -15,9 +14,9 @@ export const MEDIA_TYPE_CHOICE: CHOICE[] = [
 ];
 
 export const GENDER_CHOICE: CHOICE[] = [
-    { value: 'male', label: 'Male' },
-    { value: 'female', label: 'Female' },
-    { value: 'other', label: 'Other' },
+  { value: "MALE", label: "Male" },
+  { value: "FEMALE", label: "Female" },
+  { value: "OTHER", label: "Other" },
 ];
 
 export const TAB_LIST_CHOICE: CHOICE[] = [
@@ -54,17 +53,22 @@ export const COUNTRY_CHOICE: CHOICE[] = [
 ];
 
 export const STATUS_CHOICE: CHOICE[] = [
-    { value: "active", label: "Active" },
-    { value: "lock", label: "Lock" },
-    { value: "pending", label: "Pending" },
+    { value: "ACTIVE", label: "Active" },
+    { value: "LOCK", label: "Lock" },
+    { value: "PENDING", label: "Pending" },
 ];
 
-// export const REJECTION_REASON_CHOICE: CHOICE[] = [
-//     { value: "Insufficient content", label: "Insufficient content" },
-//     { value: "Quality issues", label: "Quality issues" },
-//     { value: "Incomplete profile", label: "Incomplete profile" },
-//     { value: "Copyright concerns", label: "Copyright concerns" },
-//     { value: "Not a good fit", label: "Not a good fit" },
-//     { value: "Other (please specify)", label: "Other (please specify)" },
-// ];
+export const PRIVACY_CHOICE: CHOICE[] = [
+    { value: "PUBLIC", label: "Public" },
+    { value: "PRIVATE", label: "Private" },
+];
+
+export const REJECTION_REASON_CHOICE: CHOICE[] = [
+    { value: "Insufficient content", label: "Insufficient content" },
+    { value: "Quality issues", label: "Quality issues" },
+    { value: "Incomplete profile", label: "Incomplete profile" },
+    { value: "Copyright concerns", label: "Copyright concerns" },
+    { value: "Not a good fit", label: "Not a good fit" },
+    { value: "Other (please specify)", label: "Other (please specify)" },
+];
 

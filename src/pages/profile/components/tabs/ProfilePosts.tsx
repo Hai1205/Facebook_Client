@@ -1,4 +1,4 @@
-import { COMMENT, POST } from "@/utils/types";
+import { COMMENT, POST } from "@/utils/interface";
 import PostsContent from "../PostContent";
 import ProfileIntro from "./ProfileIntro";
 import NewPostForm from "@/pages/post/components/NewPostForm";

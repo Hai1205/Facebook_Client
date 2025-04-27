@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useUserStore } from "@/stores/useUserStore";
-import { USER } from "@/utils/types";
+import { USER } from "@/utils/interface";
 import {
   Bell,
   Home,
@@ -143,7 +143,7 @@ const Header = () => {
       ? [
           {
             icon: FolderLock,
-            path: "/admin-dashboard",
+            path: "/admin/dashboard",
             name: "admin-dashboard",
           },
         ]
@@ -154,9 +154,9 @@ const Header = () => {
       : []),
   ];
 
-  if (isLoading) {
-    return <Loader />;
-  }
+  // if (isLoading) {
+  //   return <Loader />;
+  // }
 
   return (
     <>

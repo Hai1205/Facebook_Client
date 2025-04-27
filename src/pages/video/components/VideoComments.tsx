@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { formateDateAgo } from "@/lib/utils";
-import { COMMENT } from "@/utils/types";
+import { COMMENT } from "@/utils/interface";
 
 interface VideoCommentsProps {
   comments: COMMENT[];

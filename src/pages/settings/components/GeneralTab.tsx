@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Save, User as UserIcon } from "lucide-react";
 import LoadingSpinner from "@/components/ui/loading";
-import { USER } from "@/utils/types";
+import { USER } from "@/utils/interface";
 
 interface GeneralTabProps {
   userData: USER;
@@ -84,10 +84,10 @@ const GeneralTab = ({
                 </div>
 
                 {/* email */}
-                  <div className="grid gap-2">
-                    <Label>Email</Label>
-                    <Input value={userData?.email || ""} readOnly />
-                  </div>
+                <div className="grid gap-2">
+                  <Label>Email</Label>
+                  <Input value={userData?.email || ""} readOnly />
+                </div>
 
                 {/* Name */}
                 <div className="grid gap-2">

@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { formatDateInDDMMYYY } from "@/lib/utils";
-import { USER } from "@/utils/types";
+import { USER } from "@/utils/interface";
 import {
   Briefcase,
   Cake,

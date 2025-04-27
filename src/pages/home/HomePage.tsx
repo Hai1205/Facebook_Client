@@ -4,8 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import StorySection from "../story/StorySection";
 import NewPostForm from "../post/components/NewPostForm";
-import PostCard from "../post/components/PostCard";
-import { COMMENT, POST } from "@/utils/types";
+import PostCard from "../post/PostCard";
+import { COMMENT, POST } from "@/utils/interface";
 
 const HomePage = () => {
   const [posts, setPosts] = useState<POST[]>([]);

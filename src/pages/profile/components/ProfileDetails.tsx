@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { COMMENT, POST, USER } from "@/utils/types";
+import { COMMENT, POST, USER } from "@/utils/interface";
 import { usePostStore } from "@/stores/usePostStore";
 import MutualFriends from "./MutualFriends";
 import EditBio from "./EditBio";

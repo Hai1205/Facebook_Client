@@ -14,7 +14,7 @@ import VideoComments from "./VideoComments";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
-import { COMMENT, POST, USER } from "@/utils/types";
+import { COMMENT, POST, USER } from "@/utils/interface";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { clientUrl, formateDateAgo } from "@/lib/utils";
 

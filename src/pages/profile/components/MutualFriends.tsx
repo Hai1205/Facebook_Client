@@ -11,11 +11,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal, UserX } from "lucide-react";
 import { useUserStore } from "@/stores/useUserStore";
-import { USER } from "@/utils/types";
+import { USER } from "@/utils/interface";
 
 interface MutualFriendsProps {
-  userId: string | undefined,
-  isOwner: boolean,
+  userId: string | undefined;
+  isOwner: boolean;
 }
 
 const MutualFriends = ({ userId, isOwner }: MutualFriendsProps) => {
@@ -24,15 +24,15 @@ const MutualFriends = ({ userId, isOwner }: MutualFriendsProps) => {
   const [mutualFriends, setMutualFriends] = useState<USER[]>([]);
 
   useEffect(() => {
-    const fetchData = async()=>{
+    const fetchData = async () => {
       if (userId) {
         const result = await getUserMutualFriends(userId);
 
-        if(result){
+        if (result) {
           setMutualFriends(result);
         }
       }
-    }
+    };
 
     fetchData();
   }, [getUserMutualFriends, userId, setMutualFriends]);
@@ -57,7 +57,7 @@ const MutualFriends = ({ userId, isOwner }: MutualFriendsProps) => {
           <h2 className="text-xl font-semibold mb-4 dark:text-gray-300">
             Mutual Friends
           </h2>
-        
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {mutualFriends?.map((friend) => (
               <div
@@ -77,25 +77,28 @@ const MutualFriends = ({ userId, isOwner }: MutualFriendsProps) => {
                       </AvatarFallback>
                     )}
                   </Avatar>
-                
+
                   <div>
                     <p className="font-semibold dark:text-gray-100">
                       {friend?.fullName}
                     </p>
-               
+
                     <p className="text-sm text-gray-400">
-                    {friend?.followers?.length} {friend?.followers?.length === 1 ? 'follower' : 'followers'}
+                      {friend?.followers?.length}{" "}
+                      {friend?.followers?.length === 1
+                        ? "follower"
+                        : "followers"}
                     </p>
                   </div>
                 </div>
-              
+
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon">
                       <MoreHorizontal className="h-4 w-4 text-gray-300" />
                     </Button>
                   </DropdownMenuTrigger>
-                 
+
                   {isOwner && (
                     <DropdownMenuContent
                       align="end"
@@ -107,7 +110,7 @@ const MutualFriends = ({ userId, isOwner }: MutualFriendsProps) => {
                         await handleUnfollow(friend?.id);
 
                         const result = await getUserMutualFriends(userId);
-                        if(result){
+                        if (result) {
                           setMutualFriends(result);
                         }
                       }}

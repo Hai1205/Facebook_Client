@@ -4,7 +4,7 @@ import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useEffect, useState } from "react";
 import { mockUserChats } from "@/utils/fakeData";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { USER } from "@/utils/types";
+import { USER } from "@/utils/interface";
 
 interface MessagesDropdownProps {
   onChatStart: (user: USER) => void;
@@ -84,7 +84,7 @@ export function MessagesDropdown({ onChatStart }: MessagesDropdownProps) {
 
                   <p className="text-xs text-gray-400">{chat.time}</p>
                 </div>
-                
+
                 <p className="text-sm text-gray-400 truncate">
                   {chat.lastMessage}
                 </p>

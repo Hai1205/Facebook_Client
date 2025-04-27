@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePostStore } from "@/stores/usePostStore";
-import { STORY } from "@/utils/types";
+import { STORY } from "@/utils/interface";
 import StoryCard from "./components/StoryCard";
 import { mockStories } from "@/utils/fakeData";
 

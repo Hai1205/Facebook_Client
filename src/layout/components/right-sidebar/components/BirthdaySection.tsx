@@ -1,8 +1,8 @@
 import { Gift } from "lucide-react";
-import { USER } from "@/utils/types";
+import { USER } from "@/utils/interface";
 
 interface Birthday {
-    birthdays: USER[];
+  birthdays: USER[];
 }
 
 export const BirthdaySection = ({ birthdays }: Birthday) => (
@@ -25,7 +25,7 @@ export const BirthdaySection = ({ birthdays }: Birthday) => (
               }`}
             </span>
           )}
-          
+
           {birthdays.length > 0 && <span> have birthdays today.</span>}
         </p>
       </div>

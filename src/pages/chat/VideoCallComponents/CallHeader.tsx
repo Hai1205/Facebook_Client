@@ -1,5 +1,5 @@
 import { Minus, Maximize2, Minimize2, X } from "lucide-react";
-import { USER } from "@/utils/types";
+import { USER } from "@/utils/interface";
 
 interface CallHeaderProps {
   isGroupCall: boolean;
@@ -28,7 +28,9 @@ export function CallHeader({
     <div className="p-3 flex items-center justify-between bg-gray-800 border-b border-gray-700">
       <div className="flex items-center">
         <h3 className="text-lg font-semibold">
-          {isGroupCall ? "Group video call" : "Video call with " + user.fullName}
+          {isGroupCall
+            ? "Group video call"
+            : "Video call with " + user.fullName}
         </h3>
 
         {callStatus === "connected" && (

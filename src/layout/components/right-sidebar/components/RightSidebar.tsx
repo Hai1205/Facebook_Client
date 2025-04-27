@@ -10,7 +10,7 @@ import {
   mockUsers,
 } from "@/utils/fakeData";
 import { useEffect, useState } from "react";
-import { FRIEND_REQUEST, USER } from "@/utils/types";
+import { FRIEND_REQUEST, USER } from "@/utils/interface";
 import { getUsersWithBirthdayToday } from "@/lib/utils";
 
 export default function RightSidebar() {

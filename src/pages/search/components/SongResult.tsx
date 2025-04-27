@@ -1,5 +1,5 @@
 import { Loader2, Music } from "lucide-react";
-import { Song } from "@/utils/types";
+import { Song } from "@/utils/interface";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
 

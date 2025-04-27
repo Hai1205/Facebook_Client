@@ -11,19 +11,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { User } from "@/utils/types";
+import { USER } from "@/utils/interface";
 import { useUserStore } from "@/stores/useUserStore";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { COUNTRY_CHOICE, STATUS_CHOICE } from "@/utils/choice";
 import LoadingSpinner from "@/components/ui/loading";
-import { Save, UserIcon } from "lucide-react";
+import { Image, Save, UserIcon } from "lucide-react";
+import { GENDER_CHOICE, ROLE_CHOICE, STATUS_CHOICE } from "@/utils/choices";
 
 interface EditUserDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  user: User | null;
-  onUserUpdated: (updatedUser: User) => void;
+  user: USER | null;
+  onUserUpdated: (updatedUser: USER) => void;
 }
 
 const EditUserDialog = ({
@@ -32,7 +31,7 @@ const EditUserDialog = ({
   user,
   onUserUpdated,
 }: EditUserDialogProps) => {
-  const [userData, setUserData] = useState<User | null>(null);
+  const [userData, setUserData] = useState<USER | null>(null);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [previewAvatar, setPreviewAvatar] = useState<string>("");
   const { updateUser } = useUserStore();
@@ -45,11 +44,11 @@ const EditUserDialog = ({
       setPreviewAvatar("");
     } else {
       setUserData(user);
-      setPreviewAvatar(user?.avatarUrl || "");
+      setPreviewAvatar(user?.avatarPhotoUrl || "");
     }
   }, [isOpen, user]);
 
-  const handleChange = (field: keyof User, value: string) => {
+  const handleChange = (field: keyof USER, value: string) => {
     setUserData((prev) => (prev ? { ...prev, [field]: value } : prev));
   };
 
@@ -74,20 +73,13 @@ const EditUserDialog = ({
       formData.append("fullName", userData.fullName);
       formData.append("role", userData.role);
       formData.append("status", userData.status);
-      formData.append("country", userData.country);
-      formData.append("biography", userData.biography || "");
-      formData.append("website", userData.website || "");
-      formData.append("instagram", userData.instagram || "");
-      formData.append("twitter", userData.twitter || "");
-      formData.append("facebook", userData.facebook || "");
-      formData.append("youtube", userData.youtube || "");
 
       if (avatarFile) {
         formData.append("avatar", avatarFile);
       }
 
       setIsLoading(true);
-      const res = await updateUser(user.id, formData);
+      const res = await updateUser(user.id as string, formData);
       setIsLoading(false);
 
       if (!res) {
@@ -129,7 +121,7 @@ const EditUserDialog = ({
                   as="h3"
                   className="text-lg font-medium leading-6 text-white"
                 >
-                  Edit User
+                  Edit USER
                 </Dialog.Title>
 
                 <ScrollArea className="h-[60vh] pr-4 mt-4">
@@ -156,7 +148,47 @@ const EditUserDialog = ({
                             <Button
                               variant="secondary"
                               size="sm"
-                              className="bg-[#1DB954] text-white hover:bg-[#1ed760]"
+                              className="bg-blue-600 hover:bg-blue-700 text-white"
+                              onClick={() =>
+                                document.getElementById("avatar-input")?.click()
+                              }
+                            >
+                              Change
+                            </Button>
+
+                            <input
+                              id="avatar-input"
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={handleAvatarChange}
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* COVER */}
+                      <div className="flex items-center justify-center col-span-1 row-span-3">
+                        <div className="relative w-full h-40 overflow-hidden flex items-center justify-center bg-[#282828]">
+                          <Avatar className="rounded-none object-cover w-full h-full">
+                            <AvatarImage
+                              src={
+                                previewAvatar
+                                  ? previewAvatar
+                                  : "/placeholder.svg"
+                              }
+                              alt={userData.fullName}
+                            />
+                            <AvatarFallback>
+                              <Image className="h 20" />
+                            </AvatarFallback>
+                          </Avatar>
+
+                          <div className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 flex items-center justify-center transition-opacity">
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              className="bg-blue-600 hover:bg-blue-700 text-white"
                               onClick={() =>
                                 document.getElementById("avatar-input")?.click()
                               }
@@ -203,127 +235,43 @@ const EditUserDialog = ({
                             </SelectTrigger>
 
                             <SelectContent>
-                              <SelectItem value="admin">Admin</SelectItem>
-
-                              <SelectItem value="user">User</SelectItem>
-
-                              <SelectItem value="artist">Artist</SelectItem>
+                              {ROLE_CHOICE.map((item) => (
+                                <SelectItem key={item.value} value={item.value}>
+                                  {item.label}
+                                </SelectItem>
+                              ))}
                             </SelectContent>
                           </Select>
                         </div>
                       </div>
-
-                      {/* Social Links */}
-                      <div className="grid gap-4">
-                        <div className="grid gap-2">
-                          <Label htmlFor="edit-website">Website</Label>
-
-                          <Input
-                            id="edit-website"
-                            value={userData.website || ""}
-                            onChange={(e) =>
-                              handleChange("website", e.target.value)
-                            }
-                            placeholder="https://example.com"
-                          />
-                        </div>
-
-                        <div className="grid gap-2">
-                          <Label htmlFor="edit-instagram">Instagram</Label>
-
-                          <Input
-                            id="edit-instagram"
-                            value={userData.instagram || ""}
-                            onChange={(e) =>
-                              handleChange("instagram", e.target.value)
-                            }
-                            placeholder="Instagram username"
-                          />
-                        </div>
-
-                        <div className="grid gap-2">
-                          <Label htmlFor="edit-twitter">Twitter</Label>
-
-                          <Input
-                            id="edit-twitter"
-                            value={userData.twitter || ""}
-                            onChange={(e) =>
-                              handleChange("twitter", e.target.value)
-                            }
-                            placeholder="Twitter username"
-                          />
-                        </div>
-
-                        <div className="grid gap-2">
-                          <Label htmlFor="edit-facebook">Facebook</Label>
-
-                          <Input
-                            id="edit-facebook"
-                            value={userData.facebook || ""}
-                            onChange={(e) =>
-                              handleChange("facebook", e.target.value)
-                            }
-                            placeholder="Facebook username"
-                          />
-                        </div>
-
-                        <div className="grid gap-2">
-                          <Label htmlFor="edit-youtube">YouTube</Label>
-
-                          <Input
-                            id="edit-youtube"
-                            value={userData.youtube || ""}
-                            onChange={(e) =>
-                              handleChange("youtube", e.target.value)
-                            }
-                            placeholder="YouTube channel"
-                          />
-                        </div>
-                      </div>
-
-                      {/* Country */}
-                      <div className="grid gap-2">
-                        <Label htmlFor="edit-country">Country</Label>
-
-                        <Select
-                          value={userData.country}
-                          onValueChange={(value) =>
-                            handleChange("country", value)
-                          }
-                        >
-                          <SelectTrigger id="edit-country">
-                            <SelectValue placeholder="Select country" />
-                          </SelectTrigger>
-
-                          <SelectContent>
-                            {COUNTRY_CHOICE.map((item) => (
-                              <SelectItem key={item.value} value={item.value}>
-                                {item.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      {/* Bio */}
-                      <div className="grid gap-2">
-                        <Label htmlFor="edit-biography">Bio</Label>
-
-                        <Textarea
-                          id="edit-biography"
-                          value={userData.biography ?? ""}
-                          onChange={(e) =>
-                            handleChange("biography", e.target.value)
-                          }
-                          rows={3}
-                        />
-                      </div>
                     </div>
                   )}
 
+                  {/* Gender */}
+                  <div className="grid gap-2 mt-3">
+                    <Label htmlFor="edit-gender">Gender</Label>
+
+                    <Select
+                      value={userData?.gender}
+                      onValueChange={(value) => handleChange("gender", value)}
+                    >
+                      <SelectTrigger id="edit-gender">
+                        <SelectValue placeholder="Select gender" />
+                      </SelectTrigger>
+
+                      <SelectContent>
+                        {GENDER_CHOICE.map((item) => (
+                          <SelectItem key={item.value} value={item.value}>
+                            {item.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
                   {/* Status */}
-                  <div className="grid gap-2">
-                    <Label htmlFor="edit-country">Status</Label>
+                  <div className="grid gap-2 mt-3">
+                    <Label htmlFor="edit-status">Status</Label>
 
                     <Select
                       value={userData?.status}
@@ -356,7 +304,7 @@ const EditUserDialog = ({
 
                   <Button
                     onClick={handleSaveEdit}
-                    className="bg-[#1DB954] hover:bg-[#1ed760] text-white"
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
                     disabled={isLoading}
                   >
                     {isLoading ? (

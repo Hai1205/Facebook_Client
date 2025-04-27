@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ChatWindow } from "./ChatWindow";
-import { USER } from "@/utils/types";
+import { USER } from "@/utils/interface";
 
 interface ChatContainerProps {
   activeChats: USER[];

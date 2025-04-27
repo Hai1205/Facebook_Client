@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Users } from "lucide-react";
-import { FRIEND_REQUEST } from "@/utils/types";
+import { FRIEND_REQUEST } from "@/utils/interface";
 import { countMutualFriends } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 

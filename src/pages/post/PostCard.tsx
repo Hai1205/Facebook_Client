@@ -13,8 +13,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import PostComments from "./PostComments";
-import { COMMENT, POST } from "@/utils/types";
+import PostComments from "./components/PostComments";
+import { COMMENT, POST } from "@/utils/interface";
 import { formateDateAgo, clientUrl } from "@/lib/utils";
 
 interface PostCardProps {
@@ -97,7 +97,7 @@ const PostCard = ({
                 </p>
 
                 <p className="font-sm text-gray-500">
-                  {formateDateAgo(post?.createdAt)}
+                  {formateDateAgo(post?.createdAt as string)}
                 </p>
               </div>
             </div>
@@ -109,7 +109,7 @@ const PostCard = ({
 
           <p className="mb-4">{post?.content}</p>
 
-          {post?.mediaUrl && post.mediaType === "image" && (
+          {post?.mediaUrl && post.mediaType === "IMAGE" && (
             <img
               src={post?.mediaUrl}
               alt="post_image"
@@ -117,7 +117,7 @@ const PostCard = ({
             />
           )}
 
-          {post?.mediaUrl && post.mediaType === "video" && (
+          {post?.mediaUrl && post.mediaType === "VIDEO" && (
             <video controls className="w-full h-[500px] rounded-lg mb-4">
               <source src={post?.mediaUrl} type="video/mp4" />
               Your browser does not support the video tag

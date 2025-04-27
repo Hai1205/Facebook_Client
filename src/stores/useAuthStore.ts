@@ -1,12 +1,11 @@
 import { toast } from "react-toastify";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { USER } from "@/utils/types";
+import { USER } from "@/utils/interface";
 import { usePostStore } from './usePostStore';
 import { useUserStore } from "./useUserStore";
 import { useStatStore } from "./useStatStore";
 import { useOpenStore } from "./useOpenStore";
-import { useUserBioStore } from "./useUserBioStore";
 import {
 	changePassword,
 	checkAdmin,
@@ -21,7 +20,6 @@ import {
 } from "@/utils/api/authApi";
 import { mockUsers } from "@/utils/fakeData";
 import { useNotiStore } from "./useNotiStore";
-import { useFriendRequestStore } from "./useFriendRequestStore";
 import { useCallStore } from "./useCallStore";
 
 export interface AuthStore {
@@ -287,13 +285,11 @@ export const useAuthStore = create<AuthStore>()(
 				set({ ...initialState });
 
 				useCallStore.getState().reset();
-				useFriendRequestStore.getState().reset();
 				useNotiStore.getState().reset();
 				useOpenStore.getState().reset();
 				usePostStore.getState().reset();
 				useStatStore.getState().reset();
 				useUserStore.getState().reset();
-				useUserBioStore.getState().reset();
 			},
 		}),
 

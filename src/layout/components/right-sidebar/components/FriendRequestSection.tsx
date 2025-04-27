@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { countMutualFriends, formateDateAgo } from "@/lib/utils";
 import { useOpenStore } from "@/stores/useOpenStore";
-import { FRIEND_REQUEST } from "@/utils/types";
+import { FRIEND_REQUEST } from "@/utils/interface";
 import { Link } from "react-router-dom";
 
 interface FriendRequestSectionProps {

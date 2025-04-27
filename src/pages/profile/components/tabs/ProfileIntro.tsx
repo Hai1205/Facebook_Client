@@ -8,7 +8,7 @@ import {
   GraduationCap,
   Rss,
 } from "lucide-react";
-import { USER } from "@/utils/types";
+import { USER } from "@/utils/interface";
 
 interface ProfileIntroProps {
   profileData: USER;

@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
-import { POST } from "@/utils/types";
+import { POST } from "@/utils/interface";
 
 interface ProfilePhotosProps {
   posts: POST[];

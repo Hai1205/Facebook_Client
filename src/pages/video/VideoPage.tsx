@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { usePostStore } from "@/stores/usePostStore";
-import { COMMENT, POST } from "@/utils/types";
+import { COMMENT, POST } from "@/utils/interface";
 import { useAuthStore } from "@/stores/useAuthStore";
 import VideoCard from "./components/VideoCard";
 import { mockPosts } from "@/utils/fakeData";

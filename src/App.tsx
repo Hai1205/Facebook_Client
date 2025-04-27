@@ -10,18 +10,19 @@ import HomePage from "@/pages/home/HomePage";
 import NotFoundPage from "@/pages/404/NotFoundPage";
 import AuthRoute from "./layout/components/protected-route/AuthRoute";
 import ProfilePage from "./pages/profile/ProfilePage";
-import UserLayout from "./layout/UserLayout";
 import AuthLayout from "./layout/AuthLayout";
-// import AdminLayout from "./layout/AdminLayout";
-// import AdminRoute from "./layout/components/AdminRoute";
-// import AdminDashboardPage from "./pages/admin/adminDashboard/AdminDashboardPage";
-// import UserManagementPage from "./pages/admin/userManagement/UserManagementPage";
 import FriendPage from "./pages/friend/FriendPage";
 import VideoPage from "./pages/video/VideoPage";
 import PrivateRoute from "./layout/components/protected-route/PrivateRoute";
 import SettingPage from "./pages/settings/SettingPage";
 import { IncomingCallNotification } from "./pages/chat/VoiceCallComponents/components/IncomingCallNotification";
 import { CallManager } from "./pages/chat/CallManager";
+import AdminRoute from "./layout/components/protected-route/AdminRoute";
+import AdminDashboardPage from "./pages/admin/adminDashboard/AdminDashboardPage";
+import UserManagementPage from "./pages/admin/userManagement/UserManagementPage";
+import ReportManagementPage from "./pages/admin/reportManagement/ReportManagementPage";
+import PostManagementPage from "./pages/admin/postManagement/PostManagementPage";
+import Layout from "./layout/Layout";
 
 function App() {
   return (
@@ -41,7 +42,7 @@ function App() {
           </Route>
         </Route>
 
-        <Route path="/" element={<UserLayout />}>
+        <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
 
           {/* <Route path="/search" element={<SearchResult />} /> */}
@@ -61,17 +62,17 @@ function App() {
           </Route>
         </Route>
 
-        {/* <Route path="/admin-dashboard" element={<AdminLayout />}>
+        <Route path="/admin" element={<Layout />}>
           <Route element={<AdminRoute />}>
-            <Route index element={<AdminDashboardPage />} />
+            <Route path="dashboard" index element={<AdminDashboardPage />} />
 
             <Route path="user-management" element={<UserManagementPage />} />
 
-            <Route path="search" element={<SearchResult />} />
+            <Route path="post-management" element={<PostManagementPage />} />
 
-            <Route path="song-management" element={<SongManagementPage />} />
+            <Route path="report-management" element={<ReportManagementPage />} />
           </Route>
-        </Route> */}
+        </Route>
 
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

@@ -43,15 +43,3 @@ export const forgotPassword = async (formData: FormData): Promise<any> => {
 export const resetPassword = async (userId: string): Promise<any> => {
   return await axiosInstance.put(`${endpoint}/reset-password/${userId}`);
 };
-
-// export const checkArtist = async (): Promise<any> => {
-//   return await axiosInstance.post(`${endpoint}/check-artist/`)
-// }
-
-// export const refreshToken = async (): Promise<any> => {
-//   return await axiosInstance.post(`${endpoint}/refresh-token/`)
-// }
-
-// export const registerAdmin = async (formData: FormData): Promise<any> => {
-//   return await axiosInstance.post(`${endpoint}/register-admin`, formData);
-// };

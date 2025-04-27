@@ -2,7 +2,7 @@ import { toast } from "react-toastify";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import {
-  addCommentToPost,
+  commentPost,
   createPost,
   createStory,
   deletePost,
@@ -12,6 +12,15 @@ import {
   getUserPosts,
   likePost,
   sharePost,
+  searchPosts,
+  report,
+  searchReports,
+  deleteReport,
+  resolveReport,
+  updatePost,
+  getAllReport,
+  getUserStoryFeed,
+  getUserFeed,
 } from "@/utils/api/postApi";
 
 export interface PostStore {
@@ -22,18 +31,27 @@ export interface PostStore {
 
   getAllPost: () => Promise<any>;
   getAllStory: () => Promise<any>;
+  getAllReport: () => Promise<any>;
   getUserPosts: (userId: string) => Promise<any>;
+  getUserFeed: (userId: string) => Promise<any>;
+  getUserStoryFeed: (userId: string) => Promise<any>;
   createPost: (userId: string, formData: FormData) => Promise<any>;
   createStory: (userId: string, formData: FormData) => Promise<any>;
   deletePost: (postId: string) => Promise<any>;
   deleteStory: (storyId: string) => Promise<any>;
   likePost: (postId: string, userId: string) => Promise<any>;
-  addCommentToPost: (
+  commentPost: (
     postId: string,
     userId: string,
-    text: string
+    formData: FormData
   ) => Promise<any>;
   sharePost: (postId: string, userId: string) => Promise<any>;
+  searchPosts: (query: string) => Promise<any>;
+  report: (userId: string, postId: string, formData: FormData) => Promise<any>;
+  resolveReport: (contentId: string, formData: FormData) => Promise<any>;
+  deleteReport: (reportId: string) => Promise<any>;
+  searchReports: (query: string) => Promise<any>;
+  updatePost: (postId: string, formData: FormData) => Promise<any>;
   reset: () => any;
 }
 
@@ -89,6 +107,26 @@ export const usePostStore = create<PostStore>()(
         }
       },
       
+      getAllReport: async () => {
+        set({ isLoading: true, error: null });
+        
+        try {
+          const response = await getAllReport();
+          const { reports } = response.data;
+
+          return reports;
+        } catch (error: any) {
+          console.error(error);
+          const { message } = error.response.data;
+          set({ error: message });
+          
+          toast.error(message);
+          return false;
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+      
       getUserPosts: async (userId: string) => {
         set({ isLoading: true, error: null });
 
@@ -97,6 +135,46 @@ export const usePostStore = create<PostStore>()(
           const { posts } = response.data;
 
           return posts;
+        } catch (error: any) {
+          console.error(error);
+          const { message } = error.response.data;
+          set({ error: message });
+
+          toast.error(message);
+          return false;
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      getUserFeed: async (userId: string) => {
+        set({ isLoading: true, error: null });
+
+        try {
+          const response = await getUserFeed(userId);
+          const { posts } = response.data;
+
+          return posts;
+        } catch (error: any) {
+          console.error(error);
+          const { message } = error.response.data;
+          set({ error: message });
+
+          toast.error(message);
+          return false;
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+      
+      getUserStoryFeed: async (userId: string) => {
+        set({ isLoading: true, error: null });
+
+        try {
+          const response = await getUserStoryFeed(userId);
+          const { stories } = response.data;
+
+          return stories;
         } catch (error: any) {
           console.error(error);
           const { message } = error.response.data;
@@ -214,15 +292,15 @@ export const usePostStore = create<PostStore>()(
         }
       },
 
-      addCommentToPost: async (
+      commentPost: async (
         postId: string,
         userId: string,
-        text: string
+        formData: FormData
       ) => {
         set({ isLoading: true, error: null });
 
         try {
-          const response = await addCommentToPost(postId, userId, text);
+          const response = await commentPost(postId, userId, formData);
           const { message } = response.data;
 
           toast.success(message);
@@ -249,6 +327,130 @@ export const usePostStore = create<PostStore>()(
           toast.success(message);
           return true;
         } catch (error: any) {
+          console.error(error);
+          const { message } = error.response.data;
+          set({ error: message });
+
+          toast.error(message);
+          return false;
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      searchPosts: async (query: string) => {
+        set({ isLoading: true, error: null });
+
+        try {
+          const response = await searchPosts(query);
+          const { posts } = response.data;
+
+          return posts;
+        } catch (error: any) {
+          console.error(error);
+          const { message } = error.response.data;
+          set({ error: message });
+
+          toast.error(message);
+          return false;
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      report: async (postId: string, userId: string, formData: FormData) => {
+        set({ isLoading: true, error: null });
+
+        try {
+          const response = await report(userId, postId, formData);
+          const { message } = response.data;
+
+          toast.success(message);
+          return true;
+        } catch (error: any) {
+          console.error(error);
+          const { message } = error.response.data;
+          set({ error: message });
+
+          toast.error(message);
+          return false;
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      resolveReport: async (contentId: string, formData: FormData) => {
+        set({ isLoading: true, error: null });
+
+        try {
+          const response = await resolveReport(contentId, formData);
+          const { message } = response.data;
+
+          toast.success(message);
+          return true;
+        } catch (error: any) {
+          console.error(error);
+          const { message } = error.response.data;
+          set({ error: message });
+
+          toast.error(message);
+          return false;
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      deleteReport: async (reportId: string) => {
+        set({ isLoading: true, error: null });
+
+        try {
+          const response = await deleteReport(reportId);
+          const { message } = response.data;
+
+          toast.success(message);
+          return true;
+        } catch (error: any) {
+          console.error(error);
+          const { message } = error.response.data;
+          set({ error: message });
+
+          toast.error(message);
+          return false;
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      searchReports: async (query: string) => {
+        set({ isLoading: true, error: null });
+
+        try {
+          const response = await searchReports(query);
+          const { reports } = response.data;
+
+          return reports;
+        } catch (error: any) {
+          console.error(error);
+          const { message } = error.response.data;
+          set({ error: message });
+
+          toast.error(message);
+          return false;
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      updatePost: async (postId: string, formData: FormData) => {
+        set({ isLoading: true, error: null });
+
+        try { 
+          const response = await updatePost(postId, formData);
+          const { message } = response.data;
+
+          toast.success(message);
+          return true;
+        } catch (error: any) {  
           console.error(error);
           const { message } = error.response.data;
           set({ error: message });

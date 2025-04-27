@@ -12,7 +12,7 @@ import { SongResults } from "./components/SongResult";
 import { AlbumResults } from "./components/AlbumResult";
 import { UserResults } from "./components/UserResult";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Album, Song, User } from "@/utils/types";
+import { Album, Song, User } from "@/utils/interface";
 
 export default function SearchResult() {
   const [searchParams, setSearchParams] = useSearchParams();

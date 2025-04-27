@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { USER } from "@/utils/types";
+import { USER } from "@/utils/interface";
 
 interface MinimizedCallProps {
   user: USER;

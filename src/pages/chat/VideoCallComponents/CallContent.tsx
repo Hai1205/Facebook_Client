@@ -1,6 +1,6 @@
 import { User, Video } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { USER } from "@/utils/types";
+import { USER } from "@/utils/interface";
 
 interface CallContentProps {
   callStatus: "ringing" | "connected" | "ended";
@@ -32,7 +32,9 @@ export function CallContent({
             ) : (
               <div className="flex flex-col items-center justify-center">
                 <Avatar className="h-32 w-32 mb-4">
-                  <AvatarImage src={user.avatarPhotoUrl || "/placeholder.svg"} />
+                  <AvatarImage
+                    src={user.avatarPhotoUrl || "/placeholder.svg"}
+                  />
                   <AvatarFallback className="bg-blue-600 text-4xl">
                     {user.fullName.substring(0, 2)}
                   </AvatarFallback>

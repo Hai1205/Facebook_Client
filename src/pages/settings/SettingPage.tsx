@@ -5,7 +5,7 @@ import { useUserStore } from "@/stores/useUserStore";
 import React, { useState } from "react";
 import GeneralTab from "@/pages/settings/components/GeneralTab";
 import SecurityTab from "@/pages/settings/components/SecurityTab";
-import { USER } from "@/utils/types";
+import { USER } from "@/utils/interface";
 
 export interface ChangePassword {
   currentPassword: string;
@@ -14,15 +14,8 @@ export interface ChangePassword {
 }
 
 const SettingPage = () => {
-  const {
-    userAuth,
-    isLoading: isAuthLoading,
-    changePassword,
-  } = useAuthStore();
-  const {
-    isLoading: isUserLoading,
-    updateUser,
-  } = useUserStore();
+  const { userAuth, isLoading: isAuthLoading, changePassword } = useAuthStore();
+  const { isLoading: isUserLoading, updateUser } = useUserStore();
 
   const [userData, setUserData] = useState<USER | null>(userAuth);
   const [changePasswordData, setChangePasswordData] = useState<ChangePassword>({
@@ -122,7 +115,6 @@ const SettingPage = () => {
 
             <span className="hidden sm:inline-block">Security</span>
           </TabsTrigger>
-
         </TabsList>
 
         {userData && userAuth && (

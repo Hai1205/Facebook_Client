@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { USER } from "@/utils/types";
+import { USER } from "@/utils/interface";
 
 interface MinimizedCallProps {
   user: USER;
@@ -30,7 +30,9 @@ export function MinimizedCall({
           {isVideoOn ? (
             <div className="w-full h-full bg-gray-700">
               <img
-                src={user.avatarPhotoUrl || "/placeholder.svg?height=48&width=80"}
+                src={
+                  user.avatarPhotoUrl || "/placeholder.svg?height=48&width=80"
+                }
                 alt="Video preview"
                 className="w-full h-full object-cover"
               />

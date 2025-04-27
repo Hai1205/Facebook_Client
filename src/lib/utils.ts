@@ -1,7 +1,7 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { formatDistanceToNow, parseISO } from 'date-fns'
-import { USER } from "@/utils/types";
+import { USER } from "@/utils/interface";
 
 export const serverUrl = import.meta.env.VITE_SERVER_URL as string;
 
@@ -57,4 +57,16 @@ export const getUsersWithBirthdayToday = (users: USER[]): USER[] => {
     const dobDate = dob.getDate();
     return dobMonth === todayMonth && dobDate === todayDate;
   });
+}
+
+export const formatNumberStyle = (value: number): string => {
+  if (value < 1_000) {
+    return value.toString();
+  } else if (value < 1_000_000) {
+    return (value / 1_000).toFixed(value >= 10_000 ? 0 : 1).replace('.', ',') + 'K';
+  } else if (value < 1_000_000_000) {
+    return (value / 1_000_000).toFixed(value >= 10_000_000 ? 0 : 1).replace('.', ',') + 'M';
+  } else {
+    return (value / 1_000_000_000).toFixed(value >= 10_000_000_000 ? 0 : 1).replace('.', ',') + 'B';
+  }
 }

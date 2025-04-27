@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useCallStore } from "@/stores/useCallStore";
-import { USER } from "@/utils/types";
+import { USER } from "@/utils/interface";
 import { CallButton } from "./CallButton";
 import { mockUsers } from "@/utils/fakeData";
 

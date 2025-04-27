@@ -14,10 +14,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useForm } from "react-hook-form";
-import { USER } from "@/utils/types";
+import { USER } from "@/utils/interface";
 import { useUserBioStore } from "@/stores/useUserBioStore";
 import { useUserStore } from "@/stores/useUserStore";
-import { GENDER_CHOICE, CHOICE } from "@/utils/choice";
+import { GENDER_CHOICE, CHOICE } from "@/utils/choices";
 
 interface ProfileHeaderProps {
   userId: string | undefined;

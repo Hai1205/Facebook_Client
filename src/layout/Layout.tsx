@@ -7,7 +7,7 @@ import MobileLayout from "./MobileLayout";
 import RightSidebarPanel from "./components/right-sidebar/RightSidebarPanel";
 import LeftSidebarPanel from "./components/left-sidebar/LeftSidebarPanel";
 
-const UserLayout = () => {
+const Layout = () => {
   const { isAuth } = useAuthStore();
   const [isMobile, setIsMobile] = useState(false);
 
@@ -45,4 +45,4 @@ const UserLayout = () => {
   );
 };
 
-export default UserLayout;
+export default Layout;

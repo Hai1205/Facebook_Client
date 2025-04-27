@@ -1,8 +1,7 @@
 import { Phone, Video } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCallStore } from "@/stores/useCallStore";
-import { USER } from "@/utils/types";
-
+import { USER } from "@/utils/interface";
 
 interface CallButtonProps {
   user: USER;

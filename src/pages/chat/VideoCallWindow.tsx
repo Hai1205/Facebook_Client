@@ -15,7 +15,7 @@ import {
 import { Avatar } from "@/components/ui/avatar";
 import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useCallStore } from "@/stores/useCallStore";
-import { USER } from "@/utils/types";
+import { USER } from "@/utils/interface";
 
 interface VideoCallWindowProps {
   user: USER;

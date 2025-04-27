@@ -16,7 +16,9 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { mockMessages } from "@/utils/fakeData";
 import { VideoCallWindow } from "./VideoCallWindow";
 import { VoiceCallWindow } from "./VoiceCallWindow";
-import { USER } from "@/utils/types";
+import { USER } from "@/utils/interface";
+
+type SENDER = "user" | "me";
 
 interface ChatWindowProps {
   user: USER;
@@ -53,7 +55,7 @@ export function ChatWindow({
     const fetchUsers = async () => {
       const result = mockMessages.map((msg) => ({
         ...msg,
-        sender: msg.sender as "user" | "me",
+        sender: msg.sender as SENDER,
       }));
       setMessages(result);
     };

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { mockFriendRequests } from "@/utils/fakeData";
-import { FRIEND_REQUEST } from "@/utils/types";
+import { FRIEND_REQUEST } from "@/utils/interface";
 import FriendRequestCard from "./components/FriendRequestCard";
 
 export default function FriendRequests() {

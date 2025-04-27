@@ -11,7 +11,7 @@ import {
 import { Avatar } from "@/components/ui/avatar";
 import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useCallStore } from "@/stores/useCallStore";
-import { USER } from "@/utils/types";
+import { USER } from "@/utils/interface";
 
 interface VoiceCallWindowProps {
   user: USER;
@@ -113,7 +113,9 @@ export function VoiceCallWindow({
             <div className="h-32 w-32 rounded-full bg-gray-700 flex items-center justify-center mb-4 border-4 border-blue-600">
               {user.avatarPhotoUrl ? (
                 <Avatar className="h-full w-full">
-                  <AvatarImage src={user.avatarPhotoUrl || "/placeholder.svg"} />
+                  <AvatarImage
+                    src={user.avatarPhotoUrl || "/placeholder.svg"}
+                  />
                   <AvatarFallback className="bg-blue-600 text-4xl">
                     {user.fullName.substring(0, 2)}
                   </AvatarFallback>

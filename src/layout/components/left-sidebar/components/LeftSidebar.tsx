@@ -1,14 +1,68 @@
-import { Home, LogOut, Users, Video, FolderLock } from "lucide-react";
+import {
+  Home,
+  LogOut,
+  Users,
+  Video,
+  FolderLock,
+  BarChart3,
+  Flag,
+  FileText,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { Separator } from "@/components/ui/separator";
 import { useOpenStore } from "@/stores/useOpenStore";
+import { useEffect, useState } from "react";
 
 const LeftSideBar = () => {
   const navigate = useNavigate();
   const { userAuth, isAdmin, isAuth, logout } = useAuthStore();
   const { setActiveTab } = useOpenStore();
+
+  const [nav, setNav] = useState<any[]>([]);
+
+  const isAdminUrl = window.location.pathname.includes("/admin");
+
+  useEffect(() => {
+    const navItems = [
+      { icon: Home, path: "/", name: "Home" },
+      ...(isAdmin
+        ? [
+            {
+              icon: FolderLock,
+              path: "/admin/dashboard",
+              name: "Admin Dashboard",
+            },
+          ]
+        : []),
+      { icon: Video, path: "/video-feed", name: "Video" },
+      ...(isAuth
+        ? [{ icon: Users, path: "/friend-requests", name: "Friends" }]
+        : []),
+    ];
+
+    const navAdminItems = [
+      { icon: BarChart3, path: "/admin/dashboard", name: "Dashboard" },
+      { icon: Users, path: "/admin/user-management", name: "User Management" },
+      {
+        icon: FileText,
+        path: "/admin/post-management",
+        name: "Post Management",
+      },
+      {
+        icon: Flag,
+        path: "/admin/report-management",
+        name: "Report Management",
+      },
+    ];
+
+    if (isAdmin && isAdminUrl) {
+      setNav(navAdminItems);
+    } else {
+      setNav(navItems);
+    }
+  }, [isAdmin, isAdminUrl, isAuth]);
 
   const handleLogout = async () => {
     const result = await logout();
@@ -17,26 +71,11 @@ const LeftSideBar = () => {
     }
   };
 
-  const navItems = [
-    { icon: Home, path: "/", name: "home" },
-    ...(isAdmin
-      ? [
-          {
-            icon: FolderLock,
-            path: "/admin-dashboard",
-            name: "admin-dashboard",
-          },
-        ]
-      : []),
-    { icon: Video, path: "/video-feed", name: "video" },
-    ...(isAuth
-      ? [{ icon: Users, path: "/friend-requests", name: "friends" }]
-      : []),
-  ];
-
   const handleNavigation = (path: string, name: string) => {
-    setActiveTab(name);
     navigate(path);
+    if (!isAdminUrl) {
+      setActiveTab(name);
+    }
   };
 
   return (
@@ -60,7 +99,7 @@ const LeftSideBar = () => {
 
       {/* Main navigation */}
       <div className="flex flex-col space-y-1 flex-grow gap-4">
-        {navItems.map(({ icon: Icon, path, name }) => (
+        {nav.map(({ icon: Icon, path, name }) => (
           <button
             key={name}
             className={`flex items-center p-3 text-gray-400 hover:text-white hover:bg-gray-800 rounded-md`}
@@ -68,7 +107,7 @@ const LeftSideBar = () => {
           >
             <Icon className="h-6 w-6 mr-2" />
             <span className="text-sm">{name}</span>
-          </button> 
+          </button>
         ))}
       </div>
 

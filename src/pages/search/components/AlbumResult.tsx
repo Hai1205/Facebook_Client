@@ -1,5 +1,5 @@
 import { Disc3, Disc, Loader2 } from "lucide-react";
-import { Album } from "@/utils/types";
+import { Album } from "@/utils/interface";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
 

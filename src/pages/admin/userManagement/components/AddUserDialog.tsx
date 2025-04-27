@@ -18,7 +18,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { useUserStore } from "@/stores/useUserStore";
-import { User } from "@/utils/types";
+import { USER } from "@/utils/interface";
 import LoadingSpinner from "@/components/ui/loading";
 import { Save, UserIcon } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -26,7 +26,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 interface AddUserDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  onUserAdded: (user: User) => void;
+  onUserAdded: (user: USER) => void;
 }
 
 const AddUserDialog = ({
@@ -39,7 +39,6 @@ const AddUserDialog = ({
   const [avatar, setAvatar] = useState<File | null>(null);
 
   const [userData, setUserData] = useState({
-    username: "",
     fullName: "",
     password: "",
     email: "",
@@ -48,7 +47,6 @@ const AddUserDialog = ({
 
   const [errors, setErrors] = useState({
     email: "",
-    username: "",
     fullName: "",
     password: "",
     role: "",
@@ -62,7 +60,6 @@ const AddUserDialog = ({
   const handleCreateUser = async () => {
     setErrors({
       email: "",
-      username: "",
       fullName: "",
       password: "",
       role: "",
@@ -72,7 +69,6 @@ const AddUserDialog = ({
     let hasError = false;
     const newErrors = {
       email: "",
-      username: "",
       fullName: "",
       password: "",
       role: "",
@@ -85,10 +81,6 @@ const AddUserDialog = ({
     }
     if (!userData.email.trim()) {
       newErrors.email = "Email is required";
-      hasError = true;
-    }
-    if (!userData.username.trim()) {
-      newErrors.username = "Username is required";
       hasError = true;
     }
     if (!userData.fullName.trim()) {
@@ -110,7 +102,6 @@ const AddUserDialog = ({
     }
 
     const formData = new FormData();
-    formData.append("username", userData.username);
     formData.append("fullName", userData.fullName);
     formData.append("password", userData.password);
     formData.append("email", userData.email);
@@ -125,7 +116,6 @@ const AddUserDialog = ({
       onUserAdded(user);
 
       setUserData({
-        username: "",
         fullName: "",
         password: "",
         email: "",
@@ -149,7 +139,7 @@ const AddUserDialog = ({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[525px] bg-[#121212]">
         <DialogHeader>
-          <DialogTitle>Add New User</DialogTitle>
+          <DialogTitle>Add New USER</DialogTitle>
 
           <DialogDescription>
             Create a new user account in the system.
@@ -212,20 +202,6 @@ const AddUserDialog = ({
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="username">Username</Label>
-            <Input
-              id="username"
-              type="username"
-              placeholder="Enter username"
-              value={userData?.username}
-              onChange={(e) => createUserData("username", e.target.value)}
-            />
-            {errors.username && (
-              <span className="text-sm text-red-500">{errors.username}</span>
-            )}
-          </div>
-
-          <div className="grid gap-2">
             <Label htmlFor="fullName">Full Name</Label>
             <Input
               id="fullName"
@@ -266,7 +242,7 @@ const AddUserDialog = ({
                   value="user"
                   className="cursor-pointer hover:bg-accent hover:text-accent-foreground"
                 >
-                  User
+                  USER
                 </SelectItem>
                 <SelectItem
                   value="artist"
@@ -293,7 +269,6 @@ const AddUserDialog = ({
             variant="outline"
             onClick={() => {
               setUserData({
-                username: "",
                 fullName: "",
                 password: "",
                 email: "",

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { USER } from "@/utils/types";
+import { USER } from "@/utils/interface";
 import { ChatContainer } from "../../../../pages/chat/ChatContainer";
 import { useNavigate } from "react-router-dom";
 import { useOpenStore } from "@/stores/useOpenStore";

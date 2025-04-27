@@ -1,0 +1,16 @@
+// export const COLORS = {
+//     PUBLIC: "green",
+//     PRIVATE: "gray",
+//     IMAGE: "blue",
+//     VIDEO: "purple",
+//     ACTIVE: "green",
+//     LOCK: "red",
+//     PENDING: "yellow",
+//     ADMIN: "blue",
+//     USER: "violet",
+//     ACCEPT: "green",
+//     REJECT: "red",
+//     POST: "orange",
+//     STORY: "indigo",
+//     COMMENT: "fuchsia",
+// };

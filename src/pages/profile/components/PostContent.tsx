@@ -14,7 +14,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { formateDateAgo, clientUrl } from "@/lib/utils";
-import { COMMENT, POST } from "@/utils/types";
+import { COMMENT, POST } from "@/utils/interface";
 import PostComments from "@/pages/post/components/PostComments";
 
 interface PostContentProps {

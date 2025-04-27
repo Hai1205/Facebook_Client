@@ -1,8 +1,10 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import ProfileDetails from "./ProfileDetails";
-import { USER } from "@/utils/types";
-import { CHOICE, TAB_LIST_CHOICE } from "@/utils/choice";
+import { USER } from "@/utils/interface";
+import { CHOICE, TAB_LIST_CHOICE } from "@/utils/choices";
+
+type PROFILE_TAB = "posts" | "about" | "friends" | "photos";
 
 interface ProfileTabsProps {
   userId: string | undefined;
@@ -10,11 +12,7 @@ interface ProfileTabsProps {
   isOwner: boolean;
 }
 
-const ProfileTabs = ({
-  userId,
-  profileData,
-  isOwner,
-}: ProfileTabsProps) => {
+const ProfileTabs = ({ userId, profileData, isOwner }: ProfileTabsProps) => {
   const [activeTab, setActiveTab] = useState("posts");
 
   return (
@@ -34,7 +32,7 @@ const ProfileTabs = ({
 
         <div className="mt-6">
           <ProfileDetails
-            activeTab={activeTab as "posts" | "about" | "friends" | "photos"}
+            activeTab={activeTab as PROFILE_TAB}
             profileData={profileData}
             userId={userId}
             isOwner={isOwner}

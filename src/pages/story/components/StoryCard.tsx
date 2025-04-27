@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Plus } from "lucide-react";
 import { useRef, useState } from "react";
 import ShowStoryPreview from "./ShowStoryPreview";
-import { STORY } from "@/utils/types";
+import { STORY } from "@/utils/interface";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { usePostStore } from "@/stores/usePostStore";
 

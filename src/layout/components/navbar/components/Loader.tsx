@@ -1,7 +1,10 @@
 import { motion } from "framer-motion";
 
+type REPEAT_TYPE = "reverse" | "loop" | "mirror";
+
+
 export default function Loader() {
-  const REPEAT_TYPE = "reverse";
+  const type = "reverse";
 
   const dotVariants = {
     hidden: { opacity: 0.3, scale: 0.5 },
@@ -11,7 +14,7 @@ export default function Loader() {
       transition: {
         delay: i * 0.2,
         repeat: Infinity,
-        repeatType: REPEAT_TYPE as "reverse" | "loop" | "mirror",
+        repeatType: type as REPEAT_TYPE,
         duration: 0.6,
       },
     }),

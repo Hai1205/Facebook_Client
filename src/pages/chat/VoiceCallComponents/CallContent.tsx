@@ -1,4 +1,4 @@
-import { USER } from "@/utils/types";
+import { USER } from "@/utils/interface";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User } from "lucide-react";
 
@@ -35,7 +35,7 @@ export function CallContent({
         <div className="absolute bottom-3 right-3 h-5 w-5 rounded-full bg-green-500 border-2 border-gray-800"></div>
       </div>
 
-        <h2 className="text-xl font-bold mb-1">{user.fullName}</h2>
+      <h2 className="text-xl font-bold mb-1">{user.fullName}</h2>
 
       {callStatus === "ringing" ? (
         <p className="text-gray-400 animate-pulse">Calling...</p>

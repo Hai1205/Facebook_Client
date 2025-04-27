@@ -1,101 +1,11 @@
-export interface USER {
-	id?: string;
-	email: string;
-	gender: string;
-	fullName: string;
-	dateOfBirth: string;
-	avatarPhotoUrl: string;
-	coverPhotoUrl: string;
-	followers: USER[];
-	following: USER[];
-	friends: USER[];
-	bio: BIO;
-	role: string;
-	createdAt?: string;
-	updatedAt?: string;
-}
+export type USER_STATUS = "ACTIVE" | "LOCK" | "PENDING";
 
-export interface STAT {
-	totalPosts: number;
-	totalUsers: number;
-	totalCelebrities: number;
-}
+export type USER_ROLE = "USER" | "ADMIN";
 
-export interface BIO {
-	id?: string;
-	user: USER;
-	bioText: string;
-	liveIn: string;
-	relationship: string;
-	workplace: string;
-	education: string;
-	phone: string;
-	hometown: string;
-	createdAt?: string;
-	updatedAt?: string;
-}
+export type MEDIA_TYPE = "IMAGE" | "VIDEO";
 
-export interface POST {
-	id?: string;
-	user: USER;
-	content: string;
-	mediaUrl: string;
-	mediaType: string;
-	likes: USER[];
-	comments: COMMENT[];
-	shares: USER[];
-	createdAt?: string;
-	updatedAt?: string;
-}
+export type PRIVACY = "PUBLIC" | "PRIVATE";
 
-export interface STORY {
-	id?: string;
-	user: USER;
-	mediaUrl: string;
-	mediaType: string;
-	createdAt?: string;
-	updatedAt?: string;
-}
+export type REPORT_TYPE = "POST" | "STORY" | "COMMENT" | "USER";
 
-export interface COMMENT {
-	id?: string;
-	user: USER;
-	text: string;
-	createdAt?: string;
-	updatedAt?: string;
-}
-
-export interface MESSAGE {
-	id?: string;
-	sender: USER;
-	receiver: USER;
-	content: string;
-	createdAt?: string;
-	updatedAt?: string;
-}
-
-export interface NOTIFICATION {
-	id?: string;
-	from: USER;
-	to: USER;
-	type: string;
-	read: boolean;
-	createdAt?: string;
-	updatedAt?: string;
-}
-
-export interface FRIEND_REQUEST {
-	id?: string;
-	from: USER;
-	to: USER;
-	status: string;
-	createdAt?: string;
-	updatedAt?: string;
-}
-
-export interface User {
-	id: string;
-	name: string;
-	avatar: string;
-  }
-  
+export type REPORT_STATUS = "ACCEPT" | "PENDING" | "REJECT";

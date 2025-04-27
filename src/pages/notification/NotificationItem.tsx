@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDateInDDMMYYY } from "@/lib/utils";
-import { NOTIFICATION } from "@/utils/types";
+import { NOTIFICATION } from "@/utils/interface";
 import { MessageSquareMore, ThumbsUp, UserRoundPlus } from "lucide-react";
 
 interface NotificationItemProps {
@@ -50,7 +50,7 @@ export const NotificationItem = ({ notification }: NotificationItemProps) => (
           ? " liked your post"
           : " commented on your post"}
       </p>
-      
+
       <p className="text-xs text-gray-400 mt-1">
         {formatDateInDDMMYYY(notification?.createdAt || "")}
       </p>

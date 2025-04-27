@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { NOTIFICATION } from "@/utils/types";
+import { NOTIFICATION } from "@/utils/interface";
 import { useNotiStore } from "@/stores/useNotiStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { NotificationItem } from "./NotificationItem";

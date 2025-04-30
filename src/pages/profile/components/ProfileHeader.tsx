@@ -1,23 +1,24 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { AnimatePresence } from "framer-motion";
-import { Camera, PenLine, Save, Upload, X } from "lucide-react";
+import { Camera, PenLine, Save, Upload, X, BadgeCheck } from "lucide-react";
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useForm } from "react-hook-form";
+// import { Label } from "@/components/ui/label";
+// import { Input } from "@/components/ui/input";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from "@/components/ui/select";
+// import { useForm } from "react-hook-form";
 import { USER } from "@/utils/interface";
-import { useUserBioStore } from "@/stores/useUserBioStore";
 import { useUserStore } from "@/stores/useUserStore";
-import { GENDER_CHOICE, CHOICE } from "@/utils/choices";
+// import { GENDER_CHOICE, CHOICE } from "@/utils/choices";
+import EditUserDialog from "@/pages/admin/userManagement/components/EditUserDialog";
+import { formatNumberStyle } from "@/lib/utils";
 
 interface ProfileHeaderProps {
   userId: string | undefined;
@@ -37,57 +38,46 @@ const ProfileHeader = ({
   const [coverPhotoPreview, setCoverPhotoPreview] = useState<string | null>(
     null
   );
-  const [profilePicturePreview, setProfilePicturePreview] = useState<
-    string | null
-  >(null);
-  const [profilePictureFile, setProfilePictureFile] = useState<string | null>(
-    null
-  );
+  // const [profilePicturePreview, setProfilePicturePreview] = useState<
+  //   string | null
+  // >(null);
+  // const [profilePictureFile, setProfilePictureFile] = useState<string | null>(
+  //   null
+  // );
   const [coverPhotoFile, setCoverPhotoFile] = useState<string | null>(null);
-  const { isLoading, updateUserBio, updateCoverPhoto } = useUserBioStore();
-  const { getUser } = useUserStore();
+  const { isLoading, updateCoverPhoto } = useUserStore();
 
-  const { register, handleSubmit, setValue } = useForm({
-    defaultValues: {
-      fullName: profileData?.fullName,
-      dateOfBirth: profileData?.dateOfBirth?.split("T")[0],
-      gender: profileData?.gender,
-    },
-  });
+  // const { register, handleSubmit, setValue } = useForm({
+  //   defaultValues: {
+  //     fullName: profileData?.fullName,
+  //     dateOfBirth: profileData?.dateOfBirth?.split("T")[0],
+  //     gender: profileData?.gender,
+  //   },
+  // });
 
-  const profileImageInputRef = useRef<HTMLInputElement | null>(null);
+  // const profileImageInputRef = useRef<HTMLInputElement | null>(null);
   const coverImageInputRef = useRef<HTMLInputElement | null>(null);
 
-  const onSubmitProfile = async (data: any) => {
-    if (!userId) {
-      return;
-    }
+  // const onSubmitProfile = async (data: any) => {
+  //   if (!userId) {
+  //     return;
+  //   }
 
-    const formData = new FormData();
-    formData.append("fullName", data.fullName);
-    formData.append("dateOfBirth", data.dateOfBirth);
-    formData.append("gender", data.gender);
+  //   const formData = new FormData();
+  //   formData.append("fullName", data.fullName);
+  //   formData.append("dateOfBirth", data.dateOfBirth);
+  //   formData.append("gender", data.gender);
 
-    if (profilePictureFile) {
-      formData.append("profilePicture", profilePictureFile);
-    }
+  //   if (profilePictureFile) {
+  //     formData.append("profilePicture", profilePictureFile);
+  //   }
 
-    const updateProfile = await updateUserBio(userId, formData);
-    setProfileData({ ...profileData, ...updateProfile });
-    setIsEditProfileModel(false);
-    setProfilePicturePreview(null);
-    await getUser(userId);
-  };
-
-  const handleProfilePictureChange = (e: any) => {
-    const file = e.target.files[0];
-    if (file) {
-      setProfilePictureFile(file);
-
-      const previewUrl = URL.createObjectURL(file);
-      setProfilePicturePreview(previewUrl);
-    }
-  };
+  //   const updateProfile = await updateUserBio(userId, formData);
+  //   setProfileData({ ...profileData, ...updateProfile });
+  //   setIsEditProfileModel(false);
+  //   setProfilePicturePreview(null);
+  //   await getUser(userId);
+  // };
 
   const onSubmitCoverPhoto = async (e: any) => {
     e.preventDefault();
@@ -119,6 +109,16 @@ const ProfileHeader = ({
     }
   };
 
+  // const handleProfilePictureChange = (e: any) => {
+  //   const file = e.target.files[0];
+  //   if (file) {
+  //     setProfilePictureFile(file);
+
+  //     const previewUrl = URL.createObjectURL(file);
+  //     setProfilePicturePreview(previewUrl);
+  //   }
+  // };
+
   return (
     <div className="relative">
       <div className="relative h-64 md:h-80 bg-gray-300 overflow-hidden ">
@@ -130,12 +130,12 @@ const ProfileHeader = ({
 
         {isOwner && (
           <Button
-            className="absolute bottom-4 right-4 flex items-center"
+            className="absolute bottom-4 right-4 flex items-center z-20"
             variant="secondary"
             size="sm"
             onClick={() => setIsEditCoverModel(true)}
           >
-            <Camera className=" mr-0 md:mr-2 h-4 w-4" />
+            <Camera className="mr-0 md:mr-2 h-4 w-4" />
             <span className="hidden md:block">Edit Cover Photo</span>
           </Button>
         )}
@@ -159,18 +159,29 @@ const ProfileHeader = ({
           </Avatar>
 
           <div className="mt-4 mdLmt-0 text-center md:text-left flex-grow">
-            <h1 className="text-3xl font-bold">{profileData?.fullName}</h1>
+            <h1 className="text-3xl font-bold flex items-center">
+              {profileData?.fullName}
+
+              {profileData.followers.length > 5000 && (
+                <BadgeCheck
+                  className="ml-2 h-6 w-6 text-[#1877F2]"
+                />
+              )}
+            </h1>
 
             <p className="text-gray-400 font-semibold">
-              {profileData?.followers?.length}{" "}
-              {profileData?.followers?.length === 1 ? "follower" : "followers"}
+              {formatNumberStyle(profileData?.followers?.length)}{" "}
+
+              {profileData?.followers?.length > 1 ? "followers" : "follower"}
             </p>
           </div>
 
           {isOwner && (
             <Button
-              className="mt-4 md:mt-0 cursor-pointer"
-              onClick={() => setIsEditProfileModel(true)}
+              className="mt-4 md:mt-0 cursor-pointer bg-[#1877F2] hover:bg-[#166FE5] text-white"
+              onClick={() => {
+                setIsEditProfileModel(true);
+              }}
             >
               <PenLine className="w-4 h-4 mr-2" />
               Edit Profile
@@ -180,117 +191,11 @@ const ProfileHeader = ({
       </div>
 
       {/* edit profile model */}
-      <AnimatePresence>
-        {isEditProfileModel && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-          >
-            <motion.div
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
-              className=" bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md"
-            >
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                  Edit Profile
-                </h2>
-
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setIsEditProfileModel(false)}
-                >
-                  <X className="w-4 h-4" />
-                </Button>
-              </div>
-
-              <form
-                className="space-y-4"
-                onSubmit={handleSubmit(onSubmitProfile)}
-              >
-                <div className="flex flex-col items-center mb-4">
-                  <Avatar className="w-24 h-24 border-4 border-white dark:border-gray-700 mb-2">
-                    <AvatarImage
-                      src={profilePicturePreview || profileData?.avatarPhotoUrl}
-                      alt={profileData?.fullName}
-                    />
-
-                    <AvatarFallback className="dark:bg-gray-400">
-                      {profileData?.fullName?.substring(0, 2)}
-                    </AvatarFallback>
-                  </Avatar>
-
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    ref={profileImageInputRef}
-                    onChange={handleProfilePictureChange}
-                  />
-
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => profileImageInputRef.current?.click()}
-                  >
-                    <Upload className="h-4 w-4 mr-2" />
-                    Change Profile Picture
-                  </Button>
-                </div>
-
-                <div>
-                  <Label htmlFor="fullName">Full Name</Label>
-
-                  <Input id="fullName" {...register("fullName")} />
-                </div>
-
-                <div>
-                  <Label htmlFor="dateOfBirth">Date of Birth</Label>
-
-                  <Input
-                    id="dateOfBirth"
-                    type="date"
-                    {...register("dateOfBirth")}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="gender">Gender</Label>
-
-                  <Select
-                    onValueChange={(value) => setValue("gender", value)}
-                    defaultValue={profileData?.gender}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select gender" />
-                    </SelectTrigger>
-
-                    <SelectContent>
-                      {GENDER_CHOICE.map((item: CHOICE) => (
-                        <SelectItem key={item.value} value={item.value}>
-                          {item.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <Button
-                  type="submit"
-                  className="w-full bg-blue-600 hover:bg-blue-400 text-white"
-                >
-                  <Save className="w-4 h-4 mr-2" />{" "}
-                  {isLoading ? "Saving..." : "Save"}
-                </Button>
-              </form>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <EditUserDialog
+        isOpen={isEditProfileModel}
+        onOpenChange={setIsEditProfileModel}
+        user={profileData}
+      />
 
       {/* edit cover model */}
       <AnimatePresence>
@@ -343,7 +248,9 @@ const ProfileHeader = ({
                     type="button"
                     variant="outline"
                     size="sm"
-                    onClick={() => coverImageInputRef.current?.click()}
+                    onClick={() => {
+                      coverImageInputRef.current?.click();
+                    }}
                   >
                     <Upload className="h-4 w-4 mr-2" />
                     Select New Cover Photo

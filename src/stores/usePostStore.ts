@@ -48,7 +48,7 @@ export interface PostStore {
   sharePost: (postId: string, userId: string) => Promise<any>;
   searchPosts: (query: string) => Promise<any>;
   report: (userId: string, postId: string, formData: FormData) => Promise<any>;
-  resolveReport: (contentId: string, formData: FormData) => Promise<any>;
+  resolveReport: (reportId: string, formData: FormData) => Promise<any>;
   deleteReport: (reportId: string) => Promise<any>;
   searchReports: (query: string) => Promise<any>;
   updatePost: (postId: string, formData: FormData) => Promise<any>;
@@ -379,11 +379,11 @@ export const usePostStore = create<PostStore>()(
         }
       },
 
-      resolveReport: async (contentId: string, formData: FormData) => {
+      resolveReport: async (reportId: string, formData: FormData) => {
         set({ isLoading: true, error: null });
 
         try {
-          const response = await resolveReport(contentId, formData);
+          const response = await resolveReport(reportId, formData);
           const { message } = response.data;
 
           toast.success(message);

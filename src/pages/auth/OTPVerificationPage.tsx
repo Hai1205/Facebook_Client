@@ -100,8 +100,9 @@ const OTPVerificationPage: React.FC = () => {
       return;
     }
 
-    const otpString = otp.join("");
-    const res = await checkOTP(email, otpString);
+    const data = new FormData();
+    data.append(`otp`, otp.join(""));
+    const res = await checkOTP(email, data);
 
     if (!res) {
       setOtp(Array(6).fill(""));

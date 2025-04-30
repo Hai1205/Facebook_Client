@@ -200,7 +200,7 @@ export default function UserManagementPage() {
         <div className="flex items-center gap-2">
           <Button
             size="sm"
-            className="bg-blue-600 hover:bg-blue-700 text-white h-8 gap-1"
+            className="bg-blue-600 hover:bg-[#166FE5] text-white h-8 gap-1"
             onClick={() => setIsAddUserOpen(true)}
           >
             <UserPlus className="h-4 w-4" />
@@ -260,7 +260,7 @@ export default function UserManagementPage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="h-8 gap-1 bg-blue-600 hover:bg-blue-700 text-white"
+                    className="h-8 gap-1 bg-blue-600 hover:bg-[#166FE5] text-white"
                     onClick={clearFilters}
                   >
                     <RefreshCw className="h-4 w-4" />
@@ -275,7 +275,7 @@ export default function UserManagementPage() {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="h-8 gap-1 bg-blue-600 hover:bg-blue-700 text-white"
+                        className="h-8 gap-1 bg-blue-600 hover:bg-[#166FE5] text-white"
                         onClick={() => setOpenMenuFilters((prev) => !prev)}
                       >
                         <Filter className="h-4 w-4" />

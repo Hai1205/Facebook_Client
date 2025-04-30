@@ -8,7 +8,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useUserBioStore } from "@/stores/useUserBioStore";
+import { useUserStore } from "@/stores/useUserStore";
 import { Save } from "lucide-react";
 import { useForm } from "react-hook-form";
 
@@ -33,7 +33,7 @@ const EditBio = ({
     defaultValues: initialData,
   });
 
-  const { updateUserBio } = useUserBioStore();
+  const { updateUserBio } = useUserStore();
 
   const handleEditBio = async (data: FormData) => {
     if (!userId) {
@@ -133,7 +133,10 @@ const EditBio = ({
           </div>
          
           <DialogFooter>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button 
+            type="submit" 
+            disabled={isSubmitting}
+            className="bg-[#1877F2] hover:bg-[#166FE5] text-white">
               <Save className="w-4 h-4 mr-2" />{" "}
               {isSubmitting ? "Saving..." : "save"}
             </Button>

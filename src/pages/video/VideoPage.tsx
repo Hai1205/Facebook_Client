@@ -4,14 +4,12 @@ import { usePostStore } from "@/stores/usePostStore";
 import { COMMENT, POST } from "@/utils/interface";
 import { useAuthStore } from "@/stores/useAuthStore";
 import VideoCard from "./components/VideoCard";
-import { mockPosts } from "@/utils/fakeData";
 
 const VideoPage = () => {
-  const { getAllPost, likePost, sharePost, addCommentToPost } = usePostStore();
+  const { getAllPost, likePost, sharePost, commentPost } = usePostStore();
   const { userAuth } = useAuthStore();
 
-  const [posts, setPosts] = useState<POST[]>(mockPosts);
-  // const [posts, setPosts] = useState<POST[]>([]);
+  const [posts, setPosts] = useState<POST[]>([]);
   const [likePosts, setLikePosts] = useState(new Set());
 
   const fetchPosts = useCallback(async () => {
@@ -55,7 +53,7 @@ const VideoPage = () => {
     await fetchPosts();
   };
 
-  const videoPosts = posts?.filter((post) => post.mediaType === "video");
+  const videoPosts = posts?.filter((post) => post.mediaType === "VIDEO");
 
   const handleComment = async (postId: string, comment: COMMENT) => {
     if (!userAuth?.id) {
@@ -63,7 +61,10 @@ const VideoPage = () => {
       return;
     }
 
-    await addCommentToPost(postId, userAuth?.id, comment?.text);
+    const formData = new FormData();
+    formData.append("text", comment?.text);
+
+    await commentPost(postId, userAuth?.id, formData);
     await fetchPosts();
   };
 

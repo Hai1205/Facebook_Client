@@ -73,7 +73,7 @@ export const FriendRequestSection = ({
                   <div className="flex space-x-2 mt-2">
                     <Button
                       size="sm"
-                      className="bg-blue-600 hover:bg-blue-700 text-white text-xs h-8 px-3 rounded-md"
+                      className="bg-blue-600 hover:bg-[#166FE5] text-white text-xs h-8 px-3 rounded-md"
                       onClick={() => onAccept(request.id as string)}
                     >
                       Accept

@@ -52,13 +52,13 @@ const LoginPage: React.FC = () => {
     data.append("email", formData.email);
     data.append("password", formData.password);
 
-    const { user, isVerified } = await login(data);
+    const { user, isActive } = await login(data);
 
     if (!user) {
       return;
     }
 
-    if (!isVerified) {
+    if (!isActive) {
       navigate("/verify-otp", {
         state: { email: user?.email, isPasswordReset: false },
       });
@@ -123,7 +123,7 @@ const LoginPage: React.FC = () => {
 
       <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-600"></div>
+          <div className="w-full border-t border-gray-600" />
         </div>
 
         <div className="relative flex justify-center">

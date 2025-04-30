@@ -18,7 +18,6 @@ import {
 	resetPassword,
 	sendOTP
 } from "@/utils/api/authApi";
-import { mockUsers } from "@/utils/fakeData";
 import { useNotiStore } from "./useNotiStore";
 import { useCallStore } from "./useCallStore";
 
@@ -33,7 +32,7 @@ export interface AuthStore {
 
 	checkAdmin: () => Promise<any>;
 	sendOTP: (email: string) => Promise<any>;
-	checkOTP: (email: string, OTP: string) => Promise<any>;
+	checkOTP: (email: string, formData: FormData) => Promise<any>;
 	register: (formData: FormData) => Promise<any>;
 	login: (formData: FormData) => Promise<any>;
 	loginGoogle: (formData: FormData) => Promise<any>;
@@ -46,12 +45,9 @@ export interface AuthStore {
 }
 
 const initialState = {
-	userAuth: mockUsers[0],
-	isAuth: true,
-	isAdmin: true,
-	// userAuth: null,
-	// isAuth: false,
-	// isAdmin: false,
+	userAuth: null,
+	isAuth: false,
+	isAdmin: false,
 	isLoading: false,
 	error: null,
 	status: 0,
@@ -68,7 +64,7 @@ export const useAuthStore = create<AuthStore>()(
 
 				try {
 					const response = await checkAdmin();
-					const data: boolean = response.data.isAdmin;
+					const data: boolean = response.data;
 
 					set({ isAdmin: data });
 					return true;
@@ -150,15 +146,16 @@ export const useAuthStore = create<AuthStore>()(
 
 				try {
 					const response = await login(formData);
-					const { user, isVerified } = response.data;
+					const { user } = response.data;
 
-					if (isVerified) {
+					const isActive = user.status === "ACTIVE"
+					if (isActive) {
 						set({ userAuth: user, isAuth: true })
 
 						await get().checkAdmin();
 					}
 
-					return { user: user, isVerified };
+					return { user: user, isActive: isActive };
 				} catch (error: any) {
 					console.error(error)
 					const { message } = error.response.data;

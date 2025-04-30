@@ -1,7 +1,14 @@
 import { useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Clock, MessageCircle, Send, Share2, ThumbsUp } from "lucide-react";
+import {
+  BadgeCheck,
+  MessageCircle,
+  MoreHorizontal,
+  Send,
+  Share2,
+  ThumbsUp,
+} from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -91,33 +98,36 @@ const VideoCard = ({
       className="bg-white dark:bg-[rgb(36,37,38)] rounded-lg shadow-lg overflow-hidden mb-4"
     >
       <div>
-        <div className="flex items-center justify-between mb-4 px-4 mt-2 ">
-          <div className="flex items-center">
-            <Avatar className="h-10 w-10 rounded-full mr-3">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center space-x-3 cursor-pointer ml-4 mt-4">
+            <Avatar>
               <AvatarImage
                 src={post?.user?.avatarPhotoUrl}
                 alt={post?.user?.fullName}
               />
-
-              <AvatarFallback className="bg-gray-700">
+              <AvatarFallback className="bg-gray-400 text-white">
                 {post?.user?.fullName?.substring(0, 2)}
               </AvatarFallback>
             </Avatar>
 
             <div>
-              <p className="font-semibold dark:text-white">
+              <p className="text-xl font-bold flex items-center">
                 {post?.user?.fullName}
+
+                {post?.user?.followers.length > 5000 && (
+                  <BadgeCheck className="ml-2 h-4 w-4 text-[#1877F2]" />
+                )}
+              </p>
+
+              <p className="font-sm text-gray-500">
+                {formateDateAgo(post?.createdAt as string)}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center text-gray-500 dark:text-gray-400">
-            <Clock className="h-4 w-4 mr-1" />
-
-            <span className="text-sm">
-              {formateDateAgo(post?.createdAt as string)}
-            </span>
-          </div>
+          <Button variant="ghost" className="dark:hover:bg-gray-500">
+            <MoreHorizontal className="dark:text-white h-4 w-4" />
+          </Button>
         </div>
 
         <div className="relative aspect-video bg-black mb-4">
@@ -230,33 +240,34 @@ const VideoCard = ({
                 <VideoComments comments={(post?.comments as COMMENT[]) || []} />
               </ScrollArea>
 
-              <div className="flex items-center mt-4 p-2">
-                <Avatar className="h-10 w-10 rounded mr-3">
-                  {userAuth?.avatarPhotoUrl ? (
+              {userAuth && (
+                <div className="flex items-center mt-4 p-2">
+                  <Avatar className="h-10 w-10 rounded mr-3">
                     <AvatarImage
                       src={userAuth?.avatarPhotoUrl}
                       alt={userAuth?.fullName}
                     />
-                  ) : (
                     <AvatarFallback className="dark:bg-gray-400">
                       {userAuth?.fullName?.substring(0, 2)}
                     </AvatarFallback>
-                  )}
-                </Avatar>
+                  </Avatar>
 
-                <Input
-                  className="flex-1 mr-2 dark:border-gray-400"
-                  placeholder="Write a comment..."
-                  value={commentText}
-                  ref={commentInputRef}
-                  onChange={(e) => setCommentText(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleCommentSubmit()}
-                />
+                  <Input
+                    className="flex-1 mr-2 dark:border-gray-400"
+                    placeholder="Write a comment..."
+                    value={commentText}
+                    ref={commentInputRef}
+                    onChange={(e) => setCommentText(e.target.value)}
+                    onKeyDown={(e) =>
+                      e.key === "Enter" && handleCommentSubmit()
+                    }
+                  />
 
-                <Button onClick={handleCommentSubmit}>
-                  <Send className="h-4 w-4" />
-                </Button>
-              </div>
+                  <Button onClick={handleCommentSubmit}>
+                    <Send className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>

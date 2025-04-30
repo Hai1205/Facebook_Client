@@ -145,7 +145,7 @@ export function VoiceCallWindow({
                 return (
                   <div
                     key={i}
-                    className="w-1 bg-blue-500 rounded-full animate-pulse"
+                    className="w-1 bg-[#1877F2] rounded-full animate-pulse"
                     style={{
                       height: `${height}px`,
                       animationDelay: `${i * 0.1}s`,

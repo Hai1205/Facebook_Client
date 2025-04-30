@@ -33,13 +33,14 @@ import { ChatContainer } from "../../../pages/chat/ChatContainer";
 import { useOpenStore } from "@/stores/useOpenStore";
 
 const Header = () => {
-  const { userAuth, isAuth, isAdmin, logout } = useAuthStore();
-  const { isLoading, getAllUser } = useUserStore();
+  const { userAuth, isAuth, isAdmin, logout, checkAdmin } = useAuthStore();
+  const { searchUsers } = useUserStore();
   const { activeTab, setActiveTab } = useOpenStore();
 
+  const [isLoading, setIsLoading] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [users, setUsers] = useState<USER[]>([]);
+  // const [users, setUsers] = useState<USER[]>([]);
   const [filterUsers, setFilterUsers] = useState<USER[]>([]);
   const searchRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -91,28 +92,28 @@ const Header = () => {
   };
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      const result = await getAllUser();
-      if (result) {
-        setUsers(result);
-      }
+    const check = async () => {
+      setIsLoading(true);
+      await checkAdmin();
+      setIsLoading(false);
     };
 
-    fetchUsers();
-  }, [getAllUser]);
+    check();
+  }, [checkAdmin]);
 
   useEffect(() => {
-    if (searchQuery) {
-      const filterUser = users.filter((user) => {
-        return user.fullName.toLowerCase().includes(searchQuery.toLowerCase());
-      });
-      setFilterUsers(filterUser);
-      setIsSearchOpen(true);
-    } else {
-      setFilterUsers([]);
+    const search = async () => {
+      if (searchQuery) {
+        const filterUser = await searchUsers(searchQuery);
+        setFilterUsers(filterUser);
+      } else {
+        setFilterUsers([]);
+      }
       setIsSearchOpen(false);
-    }
-  }, [searchQuery, users]);
+    };
+
+    search();
+  }, [searchQuery, searchUsers]);
 
   const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -139,7 +140,11 @@ const Header = () => {
 
   const navItems = [
     { icon: Home, path: "/", name: "home" },
-    ...(isAdmin
+    { icon: Video, path: "/video-feed", name: "video" },
+    ...(isAuth
+      ? [{ icon: Users, path: "/friend-requests", name: "friends" }]
+      : []),
+    ...(isAdmin && isAuth
       ? [
           {
             icon: FolderLock,
@@ -148,15 +153,11 @@ const Header = () => {
           },
         ]
       : []),
-    { icon: Video, path: "/video-feed", name: "video" },
-    ...(isAuth
-      ? [{ icon: Users, path: "/friend-requests", name: "friends" }]
-      : []),
   ];
 
-  // if (isLoading) {
-  //   return <Loader />;
-  // }
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <>
@@ -237,7 +238,7 @@ const Header = () => {
                   }`}
                 />
                 {activeTab === name && (
-                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500 rounded-t-md" />
+                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#1877F2] rounded-t-md" />
                 )}
               </button>
             ))}
@@ -252,7 +253,7 @@ const Header = () => {
                     onClick={toggleNotifications}
                     className={`rounded-full bg-gray-800 text-white hover:bg-gray-700 ${
                       showNotifications
-                        ? "bg-blue-500/20 text-blue-500"
+                        ? "bg-[#1877F2]/20 text-blue-500"
                         : "hover:bg-gray-700 text-gray-300"
                     }`}
                   >
@@ -266,7 +267,7 @@ const Header = () => {
                     onClick={toggleMessages}
                     className={`rounded-full bg-gray-800 text-white hover:bg-gray-700 ${
                       showMessages
-                        ? "bg-blue-500/20 text-blue-500"
+                        ? "bg-[#1877F2]/20 text-blue-500"
                         : "hover:bg-gray-700 text-gray-300"
                     }`}
                   >

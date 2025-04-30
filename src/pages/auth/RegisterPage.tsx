@@ -4,7 +4,16 @@ import { useNavigate } from "react-router-dom";
 import Input from "./components/Input";
 import LoadingButton from "../../layout/components/LoadingButton";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { GoogleLoginButton } from "@/pages/auth/components/Oauth";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { GENDER_CHOICE } from "@/utils/choices";
+// import { GoogleLoginButton } from "@/pages/auth/components/Oauth";
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
@@ -12,6 +21,8 @@ const RegisterPage: React.FC = () => {
     email: "",
     password: "",
     fullName: "",
+    dateOfBirth: "",
+    gender: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -45,6 +56,14 @@ const RegisterPage: React.FC = () => {
       newErrors.fullName = "Full name is required";
     }
 
+    if (!formData.dateOfBirth) {
+      newErrors.dateOfBirth = "Date of birth is required";
+    }
+
+    if (!formData.gender) {
+      newErrors.gender = "Gender is required";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -60,6 +79,12 @@ const RegisterPage: React.FC = () => {
     data.append("fullName", formData.fullName);
     data.append("email", formData.email);
     data.append("password", formData.password);
+    data.append("dateOfBirth", formData.dateOfBirth);
+    data.append("gender", formData.gender);
+
+    data.forEach((value, key) => {
+      console.log(`${key}: ${value}`);
+    });
 
     const res = await register(data);
 
@@ -109,6 +134,50 @@ const RegisterPage: React.FC = () => {
           error={errors.password}
         />
 
+        <div className="flex gap-4 mt-4">
+          <div className="w-1/2">
+            <Input
+              label="Date of birth"
+              type="date"
+              name="dateOfBirth"
+              className="cursor-pointer"
+              value={formData.dateOfBirth || ""}
+              onChange={handleChange}
+              error={errors.dateOfBirth}
+            />
+          </div>
+
+          <div className="w-1/2">
+            <Label htmlFor="edit-gender">Gender</Label>
+
+            <Select
+              value={formData.gender || ""}
+              onValueChange={(value) => {
+                setFormData((prev) => ({ ...prev, gender: value }));
+                if (errors.gender) {
+                  setErrors((prev) => ({ ...prev, gender: "" }));
+                }
+              }}
+            >
+              <SelectTrigger id="edit-gender">
+                <SelectValue placeholder="Select gender" />
+              </SelectTrigger>
+
+              <SelectContent>
+                {GENDER_CHOICE.map((item) => (
+                  <SelectItem
+                    key={item.value}
+                    value={item.value}
+                    className="cursor-pointer"
+                  >
+                    {item.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
         <LoadingButton
           type="submit"
           variant="primary"
@@ -130,7 +199,7 @@ const RegisterPage: React.FC = () => {
         </div>
       </div>
 
-      <GoogleLoginButton />
+      {/*<GoogleLoginButton />*/}
 
       <div className="text-center">
         <p className="text-white text-sm">

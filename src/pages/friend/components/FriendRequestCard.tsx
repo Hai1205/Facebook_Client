@@ -54,7 +54,7 @@ const FriendRequestCard = ({
 
         <div className="grid grid-cols-1 gap-2 mt-3">
           <Button
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+            className="w-full bg-blue-600 hover:bg-[#166FE5] text-white"
             onClick={() => onAccept(request.id as string)}
           >
             Accept

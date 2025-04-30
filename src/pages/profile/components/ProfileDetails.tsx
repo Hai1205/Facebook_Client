@@ -24,19 +24,19 @@ const ProfileDetails = ({
   const [likePosts, setLikePosts] = useState(new Set());
   const [userPosts, setUserPosts] = useState<POST[]>([]);
 
-  const { likePost, addCommentToPost, sharePost, getUserPosts } =
+  const { likePost, commentPost, sharePost } =
     usePostStore();
 
-  const fetchUserPosts = useCallback(async () => {
+  const fetchUserPosts = useCallback(() => {
     if (!userId) {
       return;
     }
 
-    const posts = await getUserPosts(userId);
+    const posts = profileData.posts;
     if (posts) {
       setUserPosts(posts);
     }
-  }, [userId, getUserPosts]);
+  }, [profileData, userId]);
 
   useEffect(() => {
     fetchUserPosts();
@@ -75,8 +75,10 @@ const ProfileDetails = ({
       return;
     }
 
-    await addCommentToPost(postId, userId, comment.text);
-    await fetchUserPosts();
+    const formData = new FormData();
+    formData.append("text", comment.text || "");
+    await commentPost(postId, userId, formData);
+    fetchUserPosts();
   };
 
   const handleSharePost = async (postId: string) => {

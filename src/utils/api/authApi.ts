@@ -26,10 +26,8 @@ export const sendOTP = async (email: string): Promise<any> => {
   return await axiosInstance.post(`${endpoint}/send-otp/${email}`)
 }
 
-export const checkOTP = async (email: string, OTP: string): Promise<any> => {
-  const data = new FormData();
-    data.append(`OTP`, OTP);
-  return await axiosInstance.post(`${endpoint}/check-otp/${email}`, data)
+export const checkOTP = async (email: string, formData: FormData): Promise<any> => {
+  return await axiosInstance.post(`${endpoint}/check-otp/${email}`, formData)
 }
 
 export const changePassword = async (userId: string, formData: FormData): Promise<any> => {

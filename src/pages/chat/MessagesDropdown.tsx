@@ -91,7 +91,7 @@ export function MessagesDropdown({ onChatStart }: MessagesDropdownProps) {
               </div>
 
               {chat.unread && (
-                <div className="h-2 w-2 rounded-full bg-blue-500 ml-2" />
+                <div className="h-2 w-2 rounded-full bg-[#1877F2] ml-2" />
               )}
             </div>
           ))}

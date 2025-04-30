@@ -6,15 +6,12 @@ import { USER } from "@/utils/interface";
 import { useUserStore } from "@/stores/useUserStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { ProfileHeaderSkeleton } from "./components/ProfileHeaderSkeleton";
-// import { mockUsers } from "@/utils/fakeData";
 
 const ProfilePage = () => {
   const params = useParams();
-  const userId = params.id;
+  const userId = params.userId;
   const [profileData, setProfileData] = useState<USER | null>(null);
-  const [isOwner, setIsOwner] = useState(true);
-  // const [profileData, setProfileData] = useState<USER | null>(mockUsers[0]);
-  // const [isOwner, setIsOwner] = useState(false);
+  const [isOwner, setIsOwner] = useState(false);
 
   const { getUser } = useUserStore();
   const { userAuth } = useAuthStore();
@@ -24,7 +21,7 @@ const ProfilePage = () => {
       const currentUser = await getUser(userId);
 
       if (currentUser) {
-        setProfileData(currentUser.profile);
+        setProfileData(currentUser);
 
         const isMyProfile = currentUser?.id === userAuth?.id;
         setIsOwner(isMyProfile);

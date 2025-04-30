@@ -1,18 +1,26 @@
 import { useEffect, useState } from "react";
-import { mockFriendRequests } from "@/utils/fakeData";
 import { FRIEND_REQUEST } from "@/utils/interface";
 import FriendRequestCard from "./components/FriendRequestCard";
+import { useUserStore } from "@/stores/useUserStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 export default function FriendRequests() {
+  const { getUserFriendsRequests } = useUserStore();
+  const {userAuth} = useAuthStore();
+
   const [friendRequests, setFriendRequests] = useState<FRIEND_REQUEST[]>([]);
 
   useEffect(() => {
     const fetchFriendRequests = async () => {
-      setFriendRequests(mockFriendRequests);
+      const result = await getUserFriendsRequests(userAuth?.id as string);
+
+      if (result) {
+        setFriendRequests(result);
+      }
     };
 
     fetchFriendRequests();
-  }, []);
+  }, [getUserFriendsRequests, userAuth]);
 
   const handleAccept = (id: string) => {
     setFriendRequests(friendRequests.filter((request) => request.id !== id));

@@ -47,13 +47,13 @@ export const useNotiStore = create<NotiStore>()(
                     set({ isLoading: false });
                 }
             },
-            
+
             deleteNoti: async (notiId: string) => {
                 set({ isLoading: true, error: null });
-                
+
                 try {
                     await deleteNoti(notiId);
-                    
+
                     return true;
                 } catch (error: any) {
                     console.error(error)
@@ -85,7 +85,7 @@ export const useNotiStore = create<NotiStore>()(
                     set({ isLoading: false });
                 }
             },
-            
+
             getUserNotifications: async (userId: string) => {
                 set({ isLoading: true, error: null });
 

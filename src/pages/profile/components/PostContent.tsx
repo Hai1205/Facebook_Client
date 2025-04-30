@@ -109,7 +109,7 @@ const PostsContent = ({
 
           <p className="mb-4">{post?.content}</p>
 
-          {post?.mediaUrl && post.mediaType === "image" && (
+          {post?.mediaUrl && post.mediaType === "IMAGE" && (
             <img
               src={post?.mediaUrl}
               alt="post_image"
@@ -117,7 +117,7 @@ const PostsContent = ({
             />
           )}
 
-          {post?.mediaUrl && post.mediaType === "video" && (
+          {post?.mediaUrl && post.mediaType === "VIDEO" && (
             <video controls className="w-full h-[500px] rounded-lg mb-4">
               <source src={post?.mediaUrl} type="video/mp4" />
               Your browser does not support the video tag

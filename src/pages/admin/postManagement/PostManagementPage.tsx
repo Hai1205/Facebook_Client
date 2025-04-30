@@ -28,24 +28,23 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import EditPostDialog from "./components/EditPostDialog";
 import { usePostStore } from "@/stores/usePostStore";
 import { formatDateInDDMMYYY, formatNumberStyle } from "@/lib/utils";
-import { mockPosts } from "@/utils/fakeData";
 import { Badge } from "@/components/ui/badge";
 import { TablePostSkeleton } from "./components/TablePostSkeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function PostManagementPage() {
+  const { isLoading, getAllPost, searchPosts } = usePostStore();
+
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get("query") || "";
   const [searchQuery, setSearchQuery] = useState(query);
   const queryString = location.search;
 
   const [isAddPostOpen, setIsAddPostOpen] = useState(false);
-  const [posts, setPosts] = useState<POST[] | []>(mockPosts);
+  const [posts, setPosts] = useState<POST[] | []>([]);
 
   const [selectedPost, setSelectedPost] = useState<POST | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-
-  const { isLoading, getAllPost, searchPosts } = usePostStore();
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -91,10 +90,10 @@ export default function PostManagementPage() {
     IMAGE: "text-blue-500 border-blue-500",
     VIDEO: "text-purple-500 border-purple-500",
   };
-  
+
   const privacyStyles = {
     PUBLIC: "text-green-500 border-green-500",
-    PRIVATE: "text-gray-500 border-gray-500",
+    PRIVATE: "text-orange-500 border-orange-500",
   };
 
   return (
@@ -108,7 +107,7 @@ export default function PostManagementPage() {
               <Button
                 onClick={() => setIsAddPostOpen(true)}
                 size="sm"
-                className="bg-blue-600 hover:bg-blue-700 text-white h-8 gap-1"
+                className="bg-blue-600 hover:bg-[#166FE5] text-white h-8 gap-1"
               >
                 <Plus className="h-4 w-4" />
                 Upload POST
@@ -186,13 +185,13 @@ export default function PostManagementPage() {
                               />
 
                               <AvatarFallback className="text-white">
-                                {post?.user?.fullName?.substring(0, 2)}
+                                {post?.user?.fullName?.substring(0, 2) || "FU"}
                               </AvatarFallback>
                             </Avatar>
 
                             <div className="flex flex-col">
                               <span className="font-medium hover:underline text-white">
-                                {post?.user?.fullName}
+                                {post?.user?.fullName || "Facebook User"}
                               </span>
 
                               <span className="text-sm text-muted-foreground hover:underline">

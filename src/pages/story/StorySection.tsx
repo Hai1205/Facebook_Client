@@ -5,21 +5,23 @@ import { Button } from "@/components/ui/button";
 import { usePostStore } from "@/stores/usePostStore";
 import { STORY } from "@/utils/interface";
 import StoryCard from "./components/StoryCard";
-import { mockStories } from "@/utils/fakeData";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 const StorySection = () => {
-  const [stories, setStories] = useState<STORY[]>(mockStories);
+  const { getUserStoryFeed } = usePostStore();
+  const {userAuth} = useAuthStore();
+
+  const [stories, setStories] = useState<STORY[]>([]);
   const [scrollPosition, setScrollPosition] = useState(0);
   const [maxScroll, setMaxScroll] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
-  const { getAllStory } = usePostStore();
 
   const fetchStories = useCallback(async () => {
-    const stories = await getAllStory();
+    const stories = await getUserStoryFeed(userAuth?.id as string);
     if (stories) {
       setStories(stories);
     }
-  }, [getAllStory]);
+  }, [getUserStoryFeed, userAuth]);
 
   useEffect(() => {
     fetchStories();

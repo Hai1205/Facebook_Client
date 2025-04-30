@@ -248,7 +248,7 @@ const NewPostDialog = ({ isPostFormOpen }: NewPostDialogProps) => {
 
           <div className="flex justify-end">
             <Button
-              className="bg-blue-500 hover:bg-blue-700 text-white"
+              className="bg-[#1877F2] hover:bg-[#166FE5] text-white"
               onClick={handlePost}
             >
               {isLoading ? "Posting..." : "Post"}

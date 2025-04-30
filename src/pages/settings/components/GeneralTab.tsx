@@ -217,7 +217,7 @@ const GeneralTab = ({
           <Button
             onClick={handleSaveInfo}
             disabled={isUserLoading}
-            className="gap-1 text-white bg-blue-600 hover:bg-blue-700"
+            className="gap-1 text-white bg-blue-600 hover:bg-[#166FE5]"
           >
             {isUserLoading ? (
               <>

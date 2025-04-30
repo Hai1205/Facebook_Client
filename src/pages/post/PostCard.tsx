@@ -3,7 +3,13 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { MessageCircle, MoreHorizontal, Share2, ThumbsUp } from "lucide-react";
+import {
+  BadgeCheck,
+  MessageCircle,
+  MoreHorizontal,
+  Share2,
+  ThumbsUp,
+} from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import {
   Dialog,
@@ -80,20 +86,22 @@ const PostCard = ({
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-3 cursor-pointer">
               <Avatar>
-                {post?.user?.avatarPhotoUrl ? (
-                  <AvatarImage
-                    src={post?.user?.avatarPhotoUrl}
-                    alt={post?.user?.fullName}
-                  />
-                ) : (
-                  <AvatarFallback className="dark:bg-gray-400">
-                    {post?.user?.fullName?.substring(0, 2)}
-                  </AvatarFallback>
-                )}
+                <AvatarImage
+                  src={post?.user?.avatarPhotoUrl}
+                  alt={post?.user?.fullName}
+                />
+                <AvatarFallback className="bg-gray-400 text-white">
+                  {post?.user?.fullName?.substring(0, 2)}
+                </AvatarFallback>
               </Avatar>
+              
               <div>
-                <p className="font-semibold dark:text-white">
+                <p className="text-xl font-bold flex items-center">
                   {post?.user?.fullName}
+
+                  {post?.user?.followers.length > 5000 && (
+                    <BadgeCheck className="ml-2 h-4 w-4 text-[#1877F2]" />
+                  )}
                 </p>
 
                 <p className="font-sm text-gray-500">

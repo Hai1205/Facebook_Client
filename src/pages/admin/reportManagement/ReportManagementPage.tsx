@@ -23,21 +23,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { usePostStore } from "@/stores/usePostStore";
 import ReportDetailsDialog from "./components/ReportDetailsDialog";
-import ApproveReportDialog from "./components/ApproveReportDialog";
-import RejectReportDialog from "./components/RejectReportDialog";
 import { Link, useSearchParams } from "react-router-dom";
 import { REPORT } from "@/utils/interface";
 import { formatDateInDDMMYYY } from "@/lib/utils";
 import { ReportsEmptyState } from "@/layout/components/EmptyState";
 import { TableReportSkeleton } from "./components/TableReportSkeleton";
-import { mockReports } from "@/utils/fakeData";
 import { Badge } from "@/components/ui/badge";
 import { REPORT_STATUS } from "@/utils/types";
-
-export interface ReportData {
-  rejectionReason: string;
-  details: string;
-}
 
 const contentTypeStyles = {
   POST: "text-orange-500 border-orange-500",
@@ -52,6 +44,12 @@ const statusStyles = {
   REJECT: "text-red-500 border-red-500",
 };
 
+interface FILTER {
+  status: string[];
+  contentType: string[];
+}
+const initialFilters: FILTER = { status: [], contentType: [] };
+
 export default function ReportManagementPage() {
   const { isLoading, searchReports } = usePostStore();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -60,14 +58,10 @@ export default function ReportManagementPage() {
   const queryString = location.search;
 
   const [isViewDetailsOpen, setIsViewDetailsOpen] = useState(false);
-  const [isApproveDialogOpen, setIsApproveDialogOpen] = useState(false);
-  const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
-  const [isResponding, setIsResponding] = useState(false);
   const [selectedReport, setPost] = useState<REPORT | null>(null);
-  const [activeFilters, setActiveFilters] = useState<{ status: string[] }>({
-    status: [],
-  });
-  const [artistApplications, setReports] = useState<REPORT[] | []>(mockReports);
+
+  const [activeFilters, setActiveFilters] = useState<FILTER>(initialFilters);
+  const [reports, setReports] = useState<REPORT[] | []>([]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -80,20 +74,6 @@ export default function ReportManagementPage() {
 
     fetchUsers();
   }, [query, queryString, searchParams, searchReports]);
-
-  useEffect(() => {
-    if (!isRejectDialogOpen && !isApproveDialogOpen) {
-      setReportData({
-        rejectionReason: "",
-        details: "",
-      });
-    }
-  }, [isRejectDialogOpen, isApproveDialogOpen]);
-
-  const [reportData, setReportData] = useState<ReportData>({
-    rejectionReason: "",
-    details: "",
-  });
 
   const handleSearch = useCallback(
     (e: React.FormEvent) => {
@@ -109,66 +89,9 @@ export default function ReportManagementPage() {
     [searchQuery, setSearchParams]
   );
 
-  const handleViewDetails = (report: (typeof artistApplications)[0]) => {
+  const handleViewDetails = (report: (typeof reports)[0]) => {
     setPost(report);
     setIsViewDetailsOpen(true);
-  };
-
-  const handleApprove = (report: (typeof artistApplications)[0]) => {
-    setPost(report);
-    setIsApproveDialogOpen(true);
-  };
-
-  const handleReject = (report: (typeof artistApplications)[0]) => {
-    setPost(report);
-    setIsRejectDialogOpen(true);
-  };
-
-  const handleReportChange = (field: any, value: string | null) => {
-    setReportData((prev: any) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  const confirm = async (status: string) => {
-    if (!selectedReport) {
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("details", reportData.details || "");
-    formData.append("status", status);
-    formData.append("rejectionReason", reportData.rejectionReason || "");
-
-    setIsResponding(true);
-    // const res = await responseUpdateUserToArtist(selectedReport?.id, formData);
-    setIsResponding(false);
-
-    // if (!res) {
-    //   return;
-    // }
-
-    setReports((reports) => {
-      return reports.map((report) => {
-        if (report.id === selectedReport.id) {
-          return {
-            ...report,
-            status: status as REPORT_STATUS,
-            details: reportData.details || "",
-            rejectionReason:
-              status === "reject" ? reportData.rejectionReason : "",
-          };
-        }
-        return report;
-      });
-    });
-
-    if (status === "reject") {
-      setIsRejectDialogOpen(false);
-    } else {
-      setIsApproveDialogOpen(false);
-    }
   };
 
   const toggleFilter = (value: string) => {
@@ -184,7 +107,7 @@ export default function ReportManagementPage() {
   };
 
   const clearFilters = () => {
-    setActiveFilters({ status: [] });
+    setActiveFilters(initialFilters);
     setSearchQuery("");
     setSearchParams({});
     closeMenuMenuFilters();
@@ -209,9 +132,46 @@ export default function ReportManagementPage() {
   useEffect(() => {
     const status = searchParams.get("status");
     if (status) {
-      setActiveFilters({ status: status.split(",") });
+      setActiveFilters({
+        status: status.split(","),
+        contentType: status.split(","),
+      });
     }
   }, [searchParams]);
+
+  const { resolveReport } = usePostStore();
+
+  const [isResponding, setIsResponding] = useState(false);
+  const handleConfirm = async (status: string) => {
+    if (!selectedReport) {
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("status", status);
+
+    setIsResponding(true);
+    const res = await resolveReport(selectedReport?.id as string, formData);
+    setIsResponding(false);
+
+    if (!res) {
+      return;
+    }
+
+    setIsViewDetailsOpen(false);
+
+    setReports((reports) => {
+      return reports.map((report) => {
+        if (report.id === selectedReport.id) {
+          return {
+            ...report,
+            status: status as REPORT_STATUS,
+          };
+        }
+        return report;
+      });
+    });
+  };
 
   return (
     <div className="space-y-4">
@@ -224,31 +184,31 @@ export default function ReportManagementPage() {
         isOpen={isViewDetailsOpen}
         onOpenChange={() => setIsViewDetailsOpen(false)}
         selectedReport={selectedReport}
-        onApprove={handleApprove}
-        onReject={handleReject}
+        onConfirm={handleConfirm}
+        isResponding={isResponding}
       />
 
       {/* Approve Application Dialog */}
-      <ApproveReportDialog
+      {/* <ApproveReportDialog
         isOpen={isApproveDialogOpen}
         onOpenChange={setIsApproveDialogOpen}
         selectedReport={selectedReport}
         onConfirm={confirm}
-        reportData={reportData}
+        status={status}
         handleReportChange={handleReportChange}
         isResponding={isResponding}
-      />
+      /> */}
 
       {/* Reject Application Dialog */}
-      <RejectReportDialog
+      {/* <RejectReportDialog
         isOpen={isRejectDialogOpen}
         onOpenChange={setIsRejectDialogOpen}
         onConfirm={confirm}
         report={selectedReport}
-        reportData={reportData}
+        status={status}
         handleReportChange={handleReportChange}
         isResponding={isResponding}
-      />
+      /> */}
 
       <div className="space-y-4">
         <Card className="bg-zinc-900">
@@ -282,7 +242,7 @@ export default function ReportManagementPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="h-8 gap-1 bg-blue-600 hover:bg-blue-700 text-white"
+                      className="h-8 gap-1 bg-blue-600 hover:bg-[#166FE5] text-white"
                       onClick={() => setOpenMenuFilters((prev) => !prev)}
                     >
                       <Filter className="h-4 w-4" />
@@ -301,20 +261,20 @@ export default function ReportManagementPage() {
                       <div className="space-y-2">
                         <div className="flex items-center">
                           <Checkbox
-                            id="status-approve"
-                            checked={activeFilters.status.includes("approve")}
-                            onCheckedChange={() => toggleFilter("approve")}
+                            id="status-accept"
+                            checked={activeFilters.status.includes("ACCEPT")}
+                            onCheckedChange={() => toggleFilter("ACCEPT")}
                             className="mr-2"
                           />
 
-                          <label htmlFor="status-approve">Approve</label>
+                          <label htmlFor="status-accept">Approve</label>
                         </div>
 
                         <div className="flex items-center">
                           <Checkbox
                             id="status-pending"
-                            checked={activeFilters.status.includes("pending")}
-                            onCheckedChange={() => toggleFilter("pending")}
+                            checked={activeFilters.status.includes("PENDING")}
+                            onCheckedChange={() => toggleFilter("PENDING")}
                             className="mr-2"
                           />
 
@@ -324,12 +284,68 @@ export default function ReportManagementPage() {
                         <div className="flex items-center">
                           <Checkbox
                             id="status-reject"
-                            checked={activeFilters.status.includes("reject")}
-                            onCheckedChange={() => toggleFilter("reject")}
+                            checked={activeFilters.status.includes("REJECT")}
+                            onCheckedChange={() => toggleFilter("REJECT")}
                             className="mr-2"
                           />
 
                           <label htmlFor="status-reject">Reject</label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <DropdownMenuSeparator />
+
+                    <div className="p-2">
+                      <h4 className="mb-2 text-sm font-medium">Type</h4>
+
+                      <div className="space-y-2">
+                        <div className="flex items-center">
+                          <Checkbox
+                            id="type-post"
+                            checked={activeFilters.contentType.includes("POST")}
+                            onCheckedChange={() => toggleFilter("POST")}
+                            className="mr-2"
+                          />
+
+                          <label htmlFor="type-post">Post</label>
+                        </div>
+
+                        <div className="flex items-center">
+                          <Checkbox
+                            id="type-story"
+                            checked={activeFilters.contentType.includes(
+                              "STORY"
+                            )}
+                            onCheckedChange={() => toggleFilter("STORY")}
+                            className="mr-2"
+                          />
+
+                          <label htmlFor="type-story">Pending</label>
+                        </div>
+
+                        <div className="flex items-center">
+                          <Checkbox
+                            id="type-comment"
+                            checked={activeFilters.contentType.includes(
+                              "COMMENT"
+                            )}
+                            onCheckedChange={() => toggleFilter("COMMENT")}
+                            className="mr-2"
+                          />
+
+                          <label htmlFor="type-comment">Reject</label>
+                        </div>
+
+                        <div className="flex items-center">
+                          <Checkbox
+                            id="type-user"
+                            checked={activeFilters.contentType.includes("USER")}
+                            onCheckedChange={() => toggleFilter("USER")}
+                            className="mr-2"
+                          />
+
+                          <label htmlFor="type-user">Reject</label>
                         </div>
                       </div>
                     </div>
@@ -379,8 +395,8 @@ export default function ReportManagementPage() {
                         <TableReportSkeleton />
                       </TableCell>
                     </TableRow>
-                  ) : artistApplications.length > 0 ? (
-                    artistApplications.map((report) => (
+                  ) : reports.length > 0 ? (
+                    reports.map((report) => (
                       <TableRow key={report.id}>
                         <TableCell>
                           <Link to={`/profile/${report?.sender?.id}`}>
@@ -392,13 +408,14 @@ export default function ReportManagementPage() {
                                 />
 
                                 <AvatarFallback className="text-white">
-                                  {report?.sender?.fullName?.substring(0, 2)}
+                                  {report?.sender?.fullName?.substring(0, 2) ||
+                                    "FU"}
                                 </AvatarFallback>
                               </Avatar>
 
                               <div className="flex flex-col">
                                 <span className="font-medium hover:underline text-white">
-                                  {report?.sender?.fullName}
+                                  {report?.sender?.fullName || "Facebook User"}
                                 </span>
 
                                 <span className="text-sm text-muted-foreground hover:underline">
@@ -433,7 +450,7 @@ export default function ReportManagementPage() {
 
                         <TableCell className="text-right">
                           <Button
-                            className="bg-blue-600 hover:bg-blue-700 text-white"
+                            className="bg-blue-600 hover:bg-[#166FE5] text-white"
                             variant="outline"
                             size="sm"
                             onClick={() => handleViewDetails(report)}

@@ -103,37 +103,39 @@ const PostComments = ({
         )}
       </div>
 
-      <div className="flex items-center space-x-2 mt-4">
-        <Avatar className="w-8 h-8">
-          {userAuth?.avatarPhotoUrl ? (
-            <AvatarImage
-              src={userAuth?.avatarPhotoUrl}
-              alt={userAuth?.fullName}
-            />
-          ) : (
-            <AvatarFallback className="dark:bg-gray-400">
-              {userAuth?.fullName.substring(0, 2)}
-            </AvatarFallback>
-          )}
-        </Avatar>
+      {userAuth && (
+        <div className="flex items-center space-x-2 mt-4">
+          <Avatar className="w-8 h-8">
+            {userAuth?.avatarPhotoUrl ? (
+              <AvatarImage
+                src={userAuth?.avatarPhotoUrl}
+                alt={userAuth?.fullName}
+              />
+            ) : (
+              <AvatarFallback className="dark:bg-gray-400">
+                {userAuth?.fullName.substring(0, 2)}
+              </AvatarFallback>
+            )}
+          </Avatar>
 
-        <Input
-          value={commentText}
-          ref={commentInputRef as React.RefObject<HTMLInputElement>}
-          onChange={(e) => setCommentText(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleCommentSubmit()}
-          placeholder="Write a comment..."
-          className="flex-grow cursor-pointer rounded-full h-12 dark:bg-[rgb(58,59,60)]"
-        />
-        <Button
-          variant="ghost"
-          size="icon"
-          className="hover:bg-transparent"
-          onClick={handleCommentSubmit}
-        >
-          <Send className="h-5 w-5 text-blue-500" />
-        </Button>
-      </div>
+          <Input
+            value={commentText}
+            ref={commentInputRef as React.RefObject<HTMLInputElement>}
+            onChange={(e) => setCommentText(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleCommentSubmit()}
+            placeholder="Write a comment..."
+            className="flex-grow cursor-pointer rounded-full h-12 dark:bg-[rgb(58,59,60)]"
+          />
+          <Button
+            variant="ghost"
+            size="icon"
+            className="hover:bg-transparent"
+            onClick={handleCommentSubmit}
+          >
+            <Send className="h-5 w-5 text-blue-500" />
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

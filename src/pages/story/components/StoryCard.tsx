@@ -96,7 +96,7 @@ const StoryCard = ({ isAddStory = false, story }: StoryCardProps) => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="p-0 h-10 w-10 rounded-full bg-blue-600 hover:bg-blue-700 transition duration-200"
+                  className="p-0 h-10 w-10 rounded-full bg-blue-600 hover:bg-[#166FE5] transition duration-200"
                   onClick={() => fileInputRef.current?.click()}
                 >
                   <Plus className="h-5 w-5 text-white" />

@@ -4,41 +4,29 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import { User } from "lucide-react";
 import { Link } from "react-router-dom";
+import { capitalizeEachWord } from "@/lib/utils";
 import { REPORT } from "@/utils/interface";
+import LoadingSpinner from "@/components/ui/loading";
 
 interface ReportDetailsDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   selectedReport: REPORT | null;
-  onApprove: (report: REPORT) => void;
-  onReject: (report: REPORT) => void;
+  onConfirm: (status: string) => void;
+  isResponding: boolean;
 }
 
 const ReportDetailsDialog = ({
   isOpen,
   onOpenChange,
   selectedReport,
-  onApprove,
-  onReject,
+  onConfirm,
+  isResponding,
 }: ReportDetailsDialogProps) => {
   if (!selectedReport) return null;
 
-  // const getStatusColor = (status: string) => {
-  //   switch (status) {
-  //     case "approve":
-  //       return "bg-green-500";
-  //     case "pending":
-  //       return "bg-yellow-500";
-  //     case "reject":
-  //       return "bg-red-500";
-  //     default:
-  //       return "bg-gray-500";
-  //   }
-  // };
-
-  const isPending = selectedReport.status === "pending";
+  const isPending = selectedReport.status === "PENDING";
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -78,46 +66,39 @@ const ReportDetailsDialog = ({
                   Report Details
                 </Dialog.Title>
                 <Dialog.Description className="text-white">
-                  Review the report from {selectedReport?.user?.email}
+                  Review the report from{" "}
+                  <span className="font-bold">
+                    {selectedReport?.sender?.fullName || "Facebook User"}
+                  </span>
                 </Dialog.Description>
 
                 <ScrollArea className="h-[calc(85vh-10rem)] overflow-auto">
                   <div className="grid gap-6 py-4 px-1">
                     <div className="flex gap-6">
-                      <Avatar className="h-32 w-32">
+                      <Avatar className="h-16 w-16">
                         <AvatarImage
-                          src={selectedReport?.user?.avatarPhotoUrl}
-                          alt={selectedReport?.user?.fullName}
+                          src={selectedReport?.sender?.avatarPhotoUrl}
+                          alt={selectedReport?.sender?.fullName}
                         />
-                        <AvatarFallback>
-                          {selectedReport?.user?.fullName?.substring(0, 2)}
+                        <AvatarFallback className="text-3xl">
+                          {selectedReport?.sender?.fullName?.substring(0, 2) ||
+                            "FU"}
                         </AvatarFallback>
                       </Avatar>
 
                       <div>
                         <h2 className="text-2xl font-bold text-white">
-                          <Link to={`/profile/${selectedReport?.user?.id}`}>
-                            {selectedReport?.user?.fullName}
+                          <Link to={`/profile/${selectedReport?.sender?.id}`}>
+                            {selectedReport?.sender?.fullName ||
+                              "Facebook User"}
                           </Link>
                         </h2>
 
                         <p className="text-muted-foreground hover:underline">
-                          <Link to={`/profile/${selectedReport?.user?.id}`}>
-                            @{selectedReport?.user?.email}
+                          <Link to={`/profile/${selectedReport?.sender?.id}`}>
+                            {selectedReport?.sender?.email}
                           </Link>
                         </p>
-
-                        <div className="flex items-center gap-4 mt-3">
-                          <User className="h-4 w-4 text-muted-foreground" />
-
-                          <span className="text-sm text-white">
-                            {selectedReport?.user?.followers?.length}
-
-                            {selectedReport?.user?.followers?.length !== 1
-                              ? " followers"
-                              : " follower"}
-                          </span>
-                        </div>
                       </div>
                     </div>
 
@@ -125,16 +106,20 @@ const ReportDetailsDialog = ({
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
-                        <h3 className="text-lg font-semibold mb-2 text-white">
-                          Artist Bio
+                        <h3 className="text-lg font-semibold mt-4 mb-2 text-white">
+                          Report Type
                         </h3>
-                        <p className="text-sm text-white">
-                          {selectedReport?.user?.bio?.bioText}
-                        </p>
 
+                        <p className="text-sm text-white">
+                          {capitalizeEachWord(selectedReport?.contentType)}
+                        </p>
+                      </div>
+
+                      <div>
                         <h3 className="text-lg font-semibold mt-4 mb-2 text-white">
                           Report Reason
                         </h3>
+
                         <p className="text-sm text-white">
                           {selectedReport?.reason}
                         </p>
@@ -148,9 +133,19 @@ const ReportDetailsDialog = ({
                     {isPending && (
                       <Button
                         variant="destructive"
-                        onClick={() => onReject(selectedReport)}
+                        onClick={() => onConfirm("REJECT")}
                       >
-                        Reject
+                        {isResponding ? (
+                          <>
+                            <LoadingSpinner />
+                            Rejecting...
+                          </>
+                        ) : (
+                          <>
+                            {/* <SendHorizontal className="h-4 w-4" /> */}
+                            Reject
+                          </>
+                        )}
                       </Button>
                     )}
                   </div>
@@ -165,10 +160,20 @@ const ReportDetailsDialog = ({
 
                     {isPending && (
                       <Button
-                        onClick={() => onApprove(selectedReport)}
-                        className="bg-[#1DB954] hover:bg-green-600 text-white"
+                        onClick={() => onConfirm("ACCEPT")}
+                        className="bg-[#1877F2] hover:bg-[#166FE5] text-white"
                       >
-                        Approve
+                        {isResponding ? (
+                          <>
+                            <LoadingSpinner />
+                            Accepting...
+                          </>
+                        ) : (
+                          <>
+                            {/* <SendHorizontal className="h-4 w-4" /> */}
+                            Accept
+                          </>
+                        )}
                       </Button>
                     )}
                   </div>

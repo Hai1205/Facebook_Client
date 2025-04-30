@@ -6,7 +6,7 @@ const RightSidebarPanel = () => {
   return (
     <>
       <ResizeHandle />
-      
+
       <Panel
         defaultSize={20}
         minSize={20}
@@ -24,7 +24,7 @@ const RightSidebarPanel = () => {
 
 const ResizeHandle = ({ className = "" }) => (
   <PanelResizeHandle
-    className={`w-1.5 bg-gray-800 hover:bg-blue-500 active:bg-blue-600 transition-colors ${className}`}
+    className={`w-1.5 bg-gray-800 hover:bg-[#1877F2] active:bg-blue-600 transition-colors ${className}`}
   >
     <div className="h-full w-full cursor-ew-resize flex items-center justify-center">
       <div className="h-8 w-0.5 bg-gray-600 rounded-full" />

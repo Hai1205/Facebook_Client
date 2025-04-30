@@ -1,42 +1,45 @@
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { FriendRequestSection } from "./FriendRequestSection";
-import { BirthdaySection } from "./BirthdaySection";
-import { ContactSection } from "./ContactSection";
-import { GroupConversationSection } from "./GroupConversationSection";
-import {
-  mockGroupConversations,
-  mockFriendRequests,
-  mockUsers,
-} from "@/utils/fakeData";
-import { useEffect, useState } from "react";
-import { FRIEND_REQUEST, USER } from "@/utils/interface";
+import { FriendRequestSection } from "./sections/FriendRequestSection";
+import { BirthdaySection } from "./sections/BirthdaySection";
+import { GroupConversationSection } from "./sections/GroupConversationSection";
+import { ContactSection } from "./sections/ContactSection";
+import { mockGroupConversations } from "@/utils/fakeData";
+import { useCallback, useEffect, useState } from "react";
+import { FRIEND_REQUEST, GROUP_CONVERSATION, USER } from "@/utils/interface";
 import { getUsersWithBirthdayToday } from "@/lib/utils";
+import { useUserStore } from "@/stores/useUserStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 export default function RightSidebar() {
+  const { getUserFriendsRequests } = useUserStore();
+  const { userAuth } = useAuthStore();
+
   const [friendRequests, setFriendRequests] = useState<FRIEND_REQUEST[]>([]);
   const [birthdays, setBirthdays] = useState<USER[]>([]);
   const [contacts, setContacts] = useState<USER[]>([]);
   const [groupConversations, setGroupConversations] = useState<
-    {
-      id: string;
-      name: string;
-      participants: number;
-      avatarPhotoUrl: string;
-      active: boolean;
-    }[]
+    GROUP_CONVERSATION[]
   >([]);
+
+  const fetchUserFriendsRequests = useCallback(async () => {
+    const res = await getUserFriendsRequests(userAuth?.id as string);
+
+    if (res) {
+      setFriendRequests(res.slice(0, 2));
+    }
+  }, [getUserFriendsRequests, userAuth]);
 
   useEffect(() => {
     const fetchData = async () => {
-      setFriendRequests(mockFriendRequests.slice(0, 2));
-      setBirthdays(getUsersWithBirthdayToday(mockUsers));
-      setContacts(mockUsers);
+      fetchUserFriendsRequests();
+      setBirthdays(getUsersWithBirthdayToday(userAuth?.friends as USER[]));
+      setContacts(userAuth?.friends as USER[]);
       setGroupConversations(mockGroupConversations);
     };
 
     fetchData();
-  }, []);
+  }, [fetchUserFriendsRequests, userAuth]);
 
   const handleAccept = (id: string) => {
     setFriendRequests(friendRequests.filter((request) => request.id !== id));

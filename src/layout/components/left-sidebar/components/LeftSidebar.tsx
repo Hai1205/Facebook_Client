@@ -8,7 +8,7 @@ import {
   Flag,
   FileText,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { Separator } from "@/components/ui/separator";
@@ -27,7 +27,11 @@ const LeftSideBar = () => {
   useEffect(() => {
     const navItems = [
       { icon: Home, path: "/", name: "Home" },
-      ...(isAdmin
+      { icon: Video, path: "/video-feed", name: "Video" },
+      ...(isAuth
+        ? [{ icon: Users, path: "/friend-requests", name: "Friends" }]
+        : []),
+      ...(isAuth && isAdmin
         ? [
             {
               icon: FolderLock,
@@ -35,10 +39,6 @@ const LeftSideBar = () => {
               name: "Admin Dashboard",
             },
           ]
-        : []),
-      { icon: Video, path: "/video-feed", name: "Video" },
-      ...(isAuth
-        ? [{ icon: Users, path: "/friend-requests", name: "Friends" }]
         : []),
     ];
 
@@ -81,21 +81,24 @@ const LeftSideBar = () => {
   return (
     <div className="flex flex-col h-full text-white p-4">
       {/* Avatar at top */}
-      <div className="ml-2 mb-6 flex items-center gap-2">
-        <Avatar className="h-10 w-10">
-          <AvatarImage
-            src={userAuth?.avatarPhotoUrl}
-            alt={userAuth?.fullName}
-          />
+      <Link to={`/profile/${userAuth?.id}`}>
+        <div className="ml-2 mb-6 flex items-center gap-2">
+          <Avatar className="h-10 w-10">
+            <AvatarImage
+              src={userAuth?.avatarPhotoUrl}
+              alt={userAuth?.fullName}
+            />
 
-          <AvatarFallback className="bg-gray-700">
-            {userAuth?.fullName?.substring(0, 2) || "U"}
-            {/* <User className="h-5 w-5" /> */}
-          </AvatarFallback>
-        </Avatar>
+            <AvatarFallback className="bg-gray-700">
+              {userAuth?.fullName?.substring(0, 2) || "FU"}
+            </AvatarFallback>
+          </Avatar>
 
-        <span className="text-sm">{userAuth?.fullName || "User"}</span>
-      </div>
+          <span className="text-sm">
+            {userAuth?.fullName || "Facebook User"}
+          </span>
+        </div>
+      </Link>
 
       {/* Main navigation */}
       <div className="flex flex-col space-y-1 flex-grow gap-4">
@@ -115,20 +118,22 @@ const LeftSideBar = () => {
       <div className="mt-auto">
         <Separator className="my-4" />
 
-        <div className="flex items-center mb-2">
-          <Avatar className="h-8 w-8 mr-2">
-            <AvatarImage
-              src={userAuth?.avatarPhotoUrl}
-              alt={userAuth?.fullName}
-            />
+        <Link to={`/profile/${userAuth?.id}`}>
+          <div className="flex items-center mb-2">
+            <Avatar className="h-8 w-8 mr-2">
+              <AvatarImage
+                src={userAuth?.avatarPhotoUrl}
+                alt={userAuth?.fullName}
+              />
 
-            <AvatarFallback className="bg-gray-700">
-              {userAuth?.fullName?.substring(0, 2) || "U"}
-            </AvatarFallback>
-          </Avatar>
+              <AvatarFallback className="bg-gray-700">
+                {userAuth?.fullName?.substring(0, 2) || "U"}
+              </AvatarFallback>
+            </Avatar>
 
-          <span className="text-sm">{userAuth?.fullName || "User"}</span>
-        </div>
+            <span className="text-sm">{userAuth?.fullName || "User"}</span>
+          </div>
+        </Link>
 
         <button
           onClick={handleLogout}

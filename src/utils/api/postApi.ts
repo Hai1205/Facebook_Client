@@ -66,8 +66,8 @@ export const report = async (userId: string, contentId: string, formData: FormDa
     return await axiosInstance.post(`${endpoint}/report/${userId}/${contentId}`, formData);
 }
 
-export const resolveReport = async (contentId: string, formData: FormData): Promise<any> => {
-    return await axiosInstance.post(`${endpoint}/resolve-report/${contentId}`, formData);
+export const resolveReport = async (reportId: string, formData: FormData): Promise<any> => {
+    return await axiosInstance.post(`${endpoint}/resolve-report/${reportId}`, formData);
 }
 
 export const deleteReport = async (reportId: string): Promise<any> => {

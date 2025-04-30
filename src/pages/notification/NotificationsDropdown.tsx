@@ -4,42 +4,6 @@ import { useNotiStore } from "@/stores/useNotiStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { NotificationItem } from "./NotificationItem";
 
-// const notifications = [
-//   {
-//     id: "1",
-//     from: {
-//       fullName: "John Doe",
-//       avatarPhotoUrl: "/placeholder.svg?height=40&width=40",
-//     },
-//     type: "like",
-//     action: "liked your post",
-//     createdAt: new Date().toISOString(),
-//     read: false,
-//   },
-//   {
-//     id: "2",
-//     from: {
-//       fullName: "Jane Smith",
-//       avatarPhotoUrl: "/placeholder.svg?height=40&width=40",
-//     },
-//     type: "follow",
-//     action: "followed you",
-//     createdAt: new Date().toISOString(),
-//     read: false,
-//   },
-//   {
-//     id: "3",
-//     from: {
-//       fullName: "Mike Johnson",
-//       avatarPhotoUrl: "/placeholder.svg?height=40&width=40",
-//     },
-//     type: "comment",
-//     action: "commented on your post",
-//     createdAt: new Date().toISOString(),
-//     read: true,
-//   },
-// ];
-
 export function NotificationsDropdown() {
   const [notifications, setNotifications] = useState<NOTIFICATION[]>([]);
   const { getUserNotifications } = useNotiStore();
@@ -48,7 +12,7 @@ export function NotificationsDropdown() {
   useEffect(() => {
     const fetchNotifications = async () => {
       if (userAuth) {
-        const notifications = await getUserNotifications(userAuth.id || "");
+        const notifications = await getUserNotifications(userAuth.id as string);
         setNotifications(notifications);
       }
     };

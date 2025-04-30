@@ -13,12 +13,11 @@ import { PopularPosts } from "./components/PopularPosts";
 
 import { useStatStore } from "@/stores/useStatStore";
 import { STATS } from "@/utils/interface";
-import { mockStats } from "@/utils/fakeData";
 
 export default function AdminDashboardPage() {
-  const { isLoading, getGeneralStat } = useStatStore();
+  const { isLoading, generalStat, getGeneralStat } = useStatStore();
 
-  const [stats, setStats] = useState<STATS | null>(mockStats);
+  const [stats, setStats] = useState<STATS | null>(generalStat);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -112,7 +111,7 @@ export default function AdminDashboardPage() {
 
       <Tabs defaultValue="overview">
         <TabsContent value="overview" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-8">
             <Card className="col-span-4 bg-zinc-900">
               <CardHeader>
                 <CardTitle className="text-white">Popular Posts</CardTitle>
@@ -125,7 +124,7 @@ export default function AdminDashboardPage() {
               </CardContent>
             </Card>
 
-            <Card className="col-span-3 bg-zinc-900">
+            <Card className="col-span-4 bg-zinc-900">
               <CardHeader>
                 <CardTitle className="text-white">Top Users</CardTitle>
 

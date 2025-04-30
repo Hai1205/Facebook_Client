@@ -28,7 +28,7 @@ export const NotificationItem = ({ notification }: NotificationItemProps) => (
             ? "bg-purple-500"
             : notification.type === "like"
             ? "bg-green-500"
-            : "bg-blue-500"
+            : "bg-[#1877F2]"
         }`}
       >
         {notification.type === "follow" ? (
@@ -57,7 +57,7 @@ export const NotificationItem = ({ notification }: NotificationItemProps) => (
     </div>
 
     {!notification.read && (
-      <div className="h-2 w-2 rounded-full bg-blue-500 mt-2"></div>
+      <div className="h-2 w-2 rounded-full bg-[#1877F2] mt-2"></div>
     )}
   </div>
 );

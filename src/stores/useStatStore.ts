@@ -1,4 +1,5 @@
 import { getGeneralStat, getPopularPostStat, getTopUsersStat } from "@/utils/api/statsApi";
+import { POST, STATS, USER } from "@/utils/interface";
 import { toast } from "react-toastify";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
@@ -9,6 +10,9 @@ interface StatStore {
     error: string | null;
     status: number;
     message: string | null;
+    topUsers: USER[] | [];
+    popularPosts: POST[] | [];
+    generalStat: STATS | null;
 
     getGeneralStat: () => Promise<any>;
     getPopularPostStat: () => Promise<any>;
@@ -17,10 +21,13 @@ interface StatStore {
 }
 
 const initialState = {
-	isLoading: false,
-	error: null,
-	status: 0,
-	message: null,
+    isLoading: false,
+    error: null,
+    status: 0,
+    message: null,
+    generalStat: null,
+    topUsers: [],
+    popularPosts: []
 }
 
 export const useStatStore = create<StatStore>()(
@@ -35,6 +42,7 @@ export const useStatStore = create<StatStore>()(
                     const response = await getGeneralStat();
                     const { generalStat } = response.data;
 
+                    set({ generalStat });
                     return generalStat;
                 } catch (error: any) {
                     console.error(error)
@@ -55,6 +63,7 @@ export const useStatStore = create<StatStore>()(
                     const response = await getPopularPostStat();
                     const { posts } = response.data;
 
+                    set({ popularPosts: posts });
                     return posts;
                 } catch (error: any) {
                     console.error(error)
@@ -75,6 +84,7 @@ export const useStatStore = create<StatStore>()(
                     const response = await getTopUsersStat();
                     const { users } = response.data;
 
+                    set({ topUsers: users });
                     return users;
                 } catch (error: any) {
                     console.error(error)

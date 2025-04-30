@@ -70,3 +70,15 @@ export const formatNumberStyle = (value: number): string => {
     return (value / 1_000_000_000).toFixed(value >= 10_000_000_000 ? 0 : 1).replace('.', ',') + 'B';
   }
 }
+
+export const capitalizeEachWord = (input: string): string => {
+  if (!input) return '';
+
+  return input
+    .toLowerCase()                        
+    .split(' ')                           
+    .map(word =>
+      word.charAt(0).toUpperCase() + word.slice(1) 
+    )
+    .join(' ');                           
+}

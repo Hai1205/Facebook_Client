@@ -22,7 +22,7 @@ interface EditUserDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   user: USER | null;
-  onUserUpdated: (updatedUser: USER) => void;
+  onUserUpdated?: (updatedUser: USER) => void;
 }
 
 const EditUserDialog = ({
@@ -86,7 +86,9 @@ const EditUserDialog = ({
         return;
       }
 
-      onUserUpdated({ ...user, ...userData });
+      if (onUserUpdated) {
+        onUserUpdated({ ...user, ...userData });
+      }
     }
   };
 
@@ -148,7 +150,7 @@ const EditUserDialog = ({
                             <Button
                               variant="secondary"
                               size="sm"
-                              className="bg-blue-600 hover:bg-blue-700 text-white"
+                              className="bg-blue-600 hover:bg-[#166FE5] text-white"
                               onClick={() =>
                                 document.getElementById("avatar-input")?.click()
                               }
@@ -188,7 +190,7 @@ const EditUserDialog = ({
                             <Button
                               variant="secondary"
                               size="sm"
-                              className="bg-blue-600 hover:bg-blue-700 text-white"
+                              className="bg-blue-600 hover:bg-[#166FE5] text-white"
                               onClick={() =>
                                 document.getElementById("avatar-input")?.click()
                               }
@@ -304,7 +306,7 @@ const EditUserDialog = ({
 
                   <Button
                     onClick={handleSaveEdit}
-                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                    className="bg-blue-600 hover:bg-[#166FE5] text-white"
                     disabled={isLoading}
                   >
                     {isLoading ? (

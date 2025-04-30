@@ -125,3 +125,11 @@ export interface STATS {
 	totalComments: number;
 	totalReports: number;
 }
+
+export interface GROUP_CONVERSATION {
+	id: string;
+	name: string;
+	participants: number;
+	avatarPhotoUrl: string;
+	active: boolean;
+}

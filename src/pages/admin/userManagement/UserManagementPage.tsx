@@ -8,6 +8,9 @@ import {
   Pencil,
   UserPlus,
   RefreshCw,
+  User,
+  UserRound,
+  Circle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -41,6 +44,12 @@ import { UserEmptyState } from "@/layout/components/EmptyState";
 import { formatDateInDDMMYYY } from "@/lib/utils";
 import { TableUserSkeleton } from "./components/TableUserSkeleton";
 import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function UserManagementPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -217,21 +226,6 @@ export default function UserManagementPage() {
         onUserUpdated={handleUserUpdated}
       />
 
-      {/* Manage Albums Dialog */}
-      {/* <ManageAlbumsDialog
-        isOpen={isManageAlbumsOpen}
-        onOpenChange={setIsManageAlbumsOpen}
-        artist={selectedArtist}
-        handleEditAlbum={handleEditAlbum}
-      /> */}
-
-      {/* Edit Album Dialog */}
-      {/* <EditAlbumDialog
-        isOpen={isEditAlbumOpen}
-        onOpenChange={setIsEditAlbumOpen}
-        album={selectedAlbum}
-      /> */}
-
       <Tabs defaultValue="all-users" className="space-y-4">
         <TabsContent value="all-users" className="space-y-4">
           <Card className="bg-zinc-900">
@@ -394,6 +388,8 @@ export default function UserManagementPage() {
                     <TableRow>
                       <TableHead className="text-center">User</TableHead>
 
+                      <TableHead className="text-center">Gender</TableHead>
+
                       <TableHead className="text-center">Role</TableHead>
 
                       <TableHead className="text-center">Status</TableHead>
@@ -440,6 +436,25 @@ export default function UserManagementPage() {
                                 </div>
                               </div>
                             </Link>
+                          </TableCell>
+
+                          <TableCell className="text-center">
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger className="cursor-default">
+                                  {user.gender === "MALE" ? (
+                                    <User className="h-4 w-4 mx-auto text-blue-500" />
+                                  ) : user.gender === "FEMALE" ? (
+                                    <UserRound className="h-4 w-4 mx-auto text-pink-500" />
+                                  ) : (
+                                    <Circle className="h-4 w-4 mx-auto text-gray-400" />
+                                  )}
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>{user.gender || "Not specified"}</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
                           </TableCell>
 
                           <TableCell className="text-center">

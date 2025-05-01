@@ -3,6 +3,7 @@ import {
 	PRIVACY,
 	REPORT_STATUS,
 	REPORT_TYPE,
+	USER_GENDER,
 	USER_ROLE,
 	USER_STATUS
 } from "./types";
@@ -10,7 +11,7 @@ import {
 export interface USER {
 	id?: string;
 	email: string;
-	gender: string;
+	gender: USER_GENDER;
 	fullName: string;
 	dateOfBirth: string;
 	avatarPhotoUrl: string;

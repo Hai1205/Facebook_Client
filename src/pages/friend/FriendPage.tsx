@@ -1,50 +1,66 @@
-import { useEffect, useState } from "react";
-import { FRIEND_REQUEST } from "@/utils/interface";
-import FriendRequestCard from "./components/FriendRequestCard";
-import { useUserStore } from "@/stores/useUserStore";
-import { useAuthStore } from "@/stores/useAuthStore";
+import { useEffect } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { UserPlus, Users } from "lucide-react";
+import FriendRequestTab from "./components/tabs/FriendRequestTab";
+import FriendSuggestTab from "./components/tabs/FriendSuggestTab";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 
-export default function FriendRequests() {
-  const { getUserFriendsRequests } = useUserStore();
-  const {userAuth} = useAuthStore();
+export default function FriendPage() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { tab } = useParams();
 
-  const [friendRequests, setFriendRequests] = useState<FRIEND_REQUEST[]>([]);
+  const activeTab = tab === "suggestions" ? "suggestions" : "requests";
 
   useEffect(() => {
-    const fetchFriendRequests = async () => {
-      const result = await getUserFriendsRequests(userAuth?.id as string);
+    if (
+      tab !== "suggestions" &&
+      tab !== "requests" &&
+      location.pathname !== "/friends/requests"
+    ) {
+      navigate("/friends/requests", { replace: true });
+    }
+  }, [tab, location.pathname, navigate]);
 
-      if (result) {
-        setFriendRequests(result);
-      }
-    };
-
-    fetchFriendRequests();
-  }, [getUserFriendsRequests, userAuth]);
-
-  const handleAccept = (id: string) => {
-    setFriendRequests(friendRequests.filter((request) => request.id !== id));
-  };
-
-  const handleDelete = (id: string) => {
-    setFriendRequests(friendRequests.filter((request) => request.id !== id));
+  const handleTabChange = (value: string) => {
+    navigate(`/friends/${value}`);
   };
 
   return (
-    <div className="min-h-screen bg-black text-white p-4 md:p-6">
+    <div className="min-h-screen bg-black text-zinc-900 dark:text-white p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
-        <h3 className="text-lg font-semibold mb-4">Friend Requests</h3>
+        <Tabs
+          defaultValue="requests"
+          value={activeTab}
+          onValueChange={handleTabChange}
+          className="w-full"
+        >
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-2xl font-bold">Friends</h1>
+            <TabsList className="grid grid-cols-2 w-auto">
+              <TabsTrigger value="requests" className="flex items-center gap-2">
+                <UserPlus className="w-4 h-4" />
+                <span>Friend Requests</span>
+              </TabsTrigger>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {friendRequests.map((request) => (
-            <FriendRequestCard
-              key={request.id}
-              request={request}
-              onAccept={handleAccept}
-              onDelete={handleDelete}
-            />
-          ))}
-        </div>
+              <TabsTrigger
+                value="suggestions"
+                className="flex items-center gap-2"
+              >
+                <Users className="w-4 h-4" />
+                <span>Friend Suggestions</span>
+              </TabsTrigger>
+            </TabsList>
+          </div>
+
+          <TabsContent value="requests" className="mt-2">
+            <FriendRequestTab />
+          </TabsContent>
+
+          <TabsContent value="suggestions" className="mt-2">
+            <FriendSuggestTab />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

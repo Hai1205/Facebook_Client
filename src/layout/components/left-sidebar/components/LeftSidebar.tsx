@@ -28,9 +28,7 @@ const LeftSideBar = () => {
     const navItems = [
       { icon: Home, path: "/", name: "Home" },
       { icon: Video, path: "/video-feed", name: "Video" },
-      ...(isAuth
-        ? [{ icon: Users, path: "/friend-requests", name: "Friends" }]
-        : []),
+      ...(isAuth ? [{ icon: Users, path: "/friends", name: "Friends" }] : []),
       ...(isAuth && isAdmin
         ? [
             {

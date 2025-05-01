@@ -7,6 +7,7 @@ import PostCard from "../post/PostCard";
 import { COMMENT, POST } from "@/utils/interface";
 import { toast } from "react-toastify";
 import VideoCard from "../video/components/VideoCard";
+import FriendSuggestSection from "../friend/components/FriendSuggestSection";
 
 const HomePage = () => {
   const { getUserFeed, getAllPost, likePost, commentPost, sharePost } =
@@ -97,10 +98,12 @@ const HomePage = () => {
               />
 
               <StorySection />
+
+              <FriendSuggestSection limit={10} />
             </>
           )}
 
-          <div className="mt-6 space-y-6 mb-4">
+          <div className="mt-1 space-y-6 mb-4">
             {posts.map((post) => (
               <>
                 {post.mediaType === "VIDEO" ? (

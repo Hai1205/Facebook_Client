@@ -141,9 +141,7 @@ const Header = () => {
   const navItems = [
     { icon: Home, path: "/", name: "home" },
     { icon: Video, path: "/video-feed", name: "video" },
-    ...(isAuth
-      ? [{ icon: Users, path: "/friend-requests", name: "friends" }]
-      : []),
+    ...(isAuth ? [{ icon: Users, path: "/friends", name: "friends" }] : []),
     ...(isAdmin && isAuth
       ? [
           {

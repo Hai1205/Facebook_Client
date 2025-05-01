@@ -23,7 +23,7 @@ export const FriendRequestSection = ({
       <div className="flex justify-between items-center mb-3">
         <h3 className="text-gray-400 font-semibold text-sm">Friend Requests</h3>
 
-        <Link to="/friend-requests">
+        <Link to="/friends/requests">
           <button
             className="text-blue-500 text-xs hover:underline"
             onClick={() => setActiveTab("friends")}

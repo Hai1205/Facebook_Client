@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import LoginPage from "./pages/auth/LoginPage";
@@ -26,7 +26,7 @@ import Layout from "./layout/Layout";
 
 function App() {
   return (
-    <Router>
+    <BrowserRouter>
       <Routes>
         <Route element={<AuthRoute />}>
           <Route element={<AuthLayout />}>
@@ -49,7 +49,11 @@ function App() {
 
           <Route path="/profile/:userId" element={<ProfilePage />} />
 
-          <Route path="/friend-requests" element={<FriendPage />} />
+          <Route
+            path="/friends"
+            element={<Navigate to="/friends/requests" replace />}
+          />
+          <Route path="/friends/:tab" element={<FriendPage />} />
 
           <Route path="/video-feed" element={<VideoPage />} />
 
@@ -70,7 +74,10 @@ function App() {
 
             <Route path="post-management" element={<PostManagementPage />} />
 
-            <Route path="report-management" element={<ReportManagementPage />} />
+            <Route
+              path="report-management"
+              element={<ReportManagementPage />}
+            />
           </Route>
         </Route>
 
@@ -93,7 +100,7 @@ function App() {
 
       <CallManager />
       <IncomingCallNotification />
-    </Router>
+    </BrowserRouter>
   );
 }
 

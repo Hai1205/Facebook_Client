@@ -31,7 +31,7 @@ const FriendRequestCard = ({
             className="object-cover"
           />
 
-          <AvatarFallback className="w-full h-full rounded-none bg-zinc-800 text-zinc-400">
+          <AvatarFallback className="w-full h-full rounded-none bg-zinc-800 text-zinc-400 text-8xl">
             {request.from.fullName.substring(0, 2)}
           </AvatarFallback>
         </Avatar>

@@ -46,7 +46,7 @@ export function CallButton({
       variant="ghost"
       size="icon"
       onClick={handleCall}
-      className={`${sizeClasses[size]} hover:bg-gray-200 dark:hover:bg-gray-700`}
+      className={`${sizeClasses[size]} hover:bg-gray-200 dark:hover:bg-gray-800`}
     >
       {type === "voice" ? (
         <Phone className={iconSize[size]} />

@@ -24,7 +24,7 @@ export function CallControls({
         className={`p-3 rounded-full ${
           isMuted
             ? "bg-red-600 text-white"
-            : "bg-gray-700 text-gray-200 hover:bg-gray-600"
+            : "bg-gray-800 text-gray-200 hover:bg-gray-600"
         }`}
       >
         {isMuted ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
@@ -42,7 +42,7 @@ export function CallControls({
         className={`p-3 rounded-full ${
           !isVideoOn
             ? "bg-red-600 text-white"
-            : "bg-gray-700 text-gray-200 hover:bg-gray-600"
+            : "bg-gray-800 text-gray-200 hover:bg-gray-600"
         }`}
       >
         {isVideoOn ? (
@@ -53,7 +53,7 @@ export function CallControls({
       </button>
 
       {isGroupCall && (
-        <button className="p-3 rounded-full bg-gray-700 text-gray-200 hover:bg-gray-600">
+        <button className="p-3 rounded-full bg-gray-800 text-gray-200 hover:bg-gray-600">
           <Users className="h-5 w-5" />
         </button>
       )}

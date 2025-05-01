@@ -11,7 +11,7 @@ export const BirthdaySection = ({ birthdays }: Birthday) => (
 
     <div className="bg-gray-800 rounded-lg p-3">
       <div className="flex items-center space-x-3">
-        <div className="bg-gray-700 rounded-full p-2">
+        <div className="bg-gray-800 rounded-full p-2">
           <Gift className="h-5 w-5 text-blue-400" />
         </div>
 

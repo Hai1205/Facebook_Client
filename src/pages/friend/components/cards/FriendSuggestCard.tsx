@@ -41,10 +41,7 @@ const FriendSuggestCard = ({
   };
 
   return (
-    <Card
-      key={opponent.id}
-      className={`${className}`}
-    >
+    <Card key={opponent.id} className={`${className}`}>
       <div className="aspect-square relative">
         <Avatar className="w-full h-full rounded-none">
           <AvatarImage
@@ -53,7 +50,7 @@ const FriendSuggestCard = ({
             className="object-cover"
           />
 
-          <AvatarFallback className="w-full h-full text-8xl rounded-none bg-blue-100 dark:bg-zinc-700 text-blue-600 dark:text-zinc-200">
+          <AvatarFallback className="w-full h-full text-8xl rounded-none bg-blue-100 dark:bg-zinc-800 text-blue-600 dark:text-zinc-400">
             {opponent?.fullName.substring(0, 2)}
           </AvatarFallback>
         </Avatar>
@@ -95,7 +92,7 @@ const FriendSuggestCard = ({
           <Button
             variant="outline"
             size="sm"
-            className="bg-gray-700 hover:bg-red-600 text-white border-gray-600 text-xs h-8 px-3 rounded-md"
+            className="bg-gray-800 hover:bg-red-600 text-white border-gray-600 text-xs h-8 px-3 rounded-md"
             onClick={handleDelete}
           >
             <Trash className="w-4 h-4" />

@@ -1,10 +1,4 @@
-import {
-  Mic,
-  MicOff,
-  Volume2,
-  VolumeX,
-  Phone,
-} from "lucide-react";
+import { Mic, MicOff, Volume2, VolumeX, Phone } from "lucide-react";
 
 interface CallControlsProps {
   isMuted: boolean;
@@ -28,7 +22,7 @@ export function CallControls({
         className={`p-4 rounded-full ${
           isMuted
             ? "bg-red-600 text-white"
-            : "bg-gray-700 text-gray-200 hover:bg-gray-600"
+            : "bg-gray-800 text-gray-200 hover:bg-gray-600"
         }`}
       >
         {isMuted ? <MicOff className="h-6 w-6" /> : <Mic className="h-6 w-6" />}
@@ -45,7 +39,7 @@ export function CallControls({
         onClick={() => setIsSpeakerOn(!isSpeakerOn)}
         className={`p-4 rounded-full ${
           isSpeakerOn
-            ? "bg-gray-700 text-gray-200 hover:bg-gray-600"
+            ? "bg-gray-800 text-gray-200 hover:bg-gray-600"
             : "bg-red-600 text-white"
         }`}
       >

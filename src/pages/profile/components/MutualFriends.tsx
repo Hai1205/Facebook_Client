@@ -62,7 +62,7 @@ const MutualFriends = ({ userId, isOwner }: MutualFriendsProps) => {
             {mutualFriends?.map((friend) => (
               <div
                 key={friend?.id}
-                className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg flex items-start justify-between"
+                className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg flex items-start justify-between"
               >
                 <div className="flex items-center space-x-4">
                   <Avatar>

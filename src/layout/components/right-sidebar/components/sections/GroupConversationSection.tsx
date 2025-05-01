@@ -27,7 +27,7 @@ export const GroupConversationSection = ({
           <Avatar className="h-8 w-8">
             <AvatarImage src={group.avatarPhotoUrl || "/placeholder.svg"} />
 
-            <AvatarFallback className="bg-gray-600">
+            <AvatarFallback className="bg-zinc-800">
               {group.name.charAt(0)}
             </AvatarFallback>
           </Avatar>

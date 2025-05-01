@@ -8,9 +8,6 @@ import {
   Pencil,
   UserPlus,
   RefreshCw,
-  User,
-  UserRound,
-  Circle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -44,12 +41,6 @@ import { UserEmptyState } from "@/layout/components/EmptyState";
 import { formatDateInDDMMYYY } from "@/lib/utils";
 import { TableUserSkeleton } from "./components/TableUserSkeleton";
 import { Badge } from "@/components/ui/badge";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 export default function UserManagementPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -118,6 +109,12 @@ export default function UserManagementPage() {
     ACTIVE: "text-green-500 border-green-500",
     PENDING: "text-yellow-500 border-yellow-500",
     LOCK: "text-red-500 border-red-500",
+  };
+  
+  const gendersStyles = {
+    MALE: "text-blue-500 border-blue-500",
+    FEMALE: "text-pink-500 border-pink-500",
+    OTHER: "text-purple-500 border-purple-500",
   };
 
   const handleEditUser = (user: USER) => {
@@ -439,22 +436,12 @@ export default function UserManagementPage() {
                           </TableCell>
 
                           <TableCell className="text-center">
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger className="cursor-default">
-                                  {user.gender === "MALE" ? (
-                                    <User className="h-4 w-4 mx-auto text-blue-500" />
-                                  ) : user.gender === "FEMALE" ? (
-                                    <UserRound className="h-4 w-4 mx-auto text-pink-500" />
-                                  ) : (
-                                    <Circle className="h-4 w-4 mx-auto text-gray-400" />
-                                  )}
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>{user.gender || "Not specified"}</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
+                            <Badge
+                              variant="outline"
+                                className={gendersStyles[user.gender]}
+                            >
+                              {user.gender}
+                            </Badge>
                           </TableCell>
 
                           <TableCell className="text-center">

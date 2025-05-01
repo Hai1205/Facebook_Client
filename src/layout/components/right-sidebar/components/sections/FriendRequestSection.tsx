@@ -48,7 +48,7 @@ export const FriendRequestSection = ({
                     src={request.from.avatarPhotoUrl || "/placeholder.svg"}
                   />
 
-                  <AvatarFallback className="bg-gray-600">
+                  <AvatarFallback className="bg-zinc-800">
                     {request.from.fullName.substring(0, 2)}
                   </AvatarFallback>
                 </Avatar>
@@ -82,7 +82,7 @@ export const FriendRequestSection = ({
                     <Button
                       variant="outline"
                       size="sm"
-                      className="bg-gray-700 hover:bg-red-600 text-white border-gray-600 text-xs h-8 px-3 rounded-md"
+                      className="bg-gray-800 hover:bg-red-600 text-white border-gray-600 text-xs h-8 px-3 rounded-md"
                       onClick={() => onDelete(request.id as string)}
                     >
                       Delete

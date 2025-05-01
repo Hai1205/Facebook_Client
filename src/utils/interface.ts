@@ -1,5 +1,6 @@
 import {
 	MEDIA_TYPE,
+	NOTI_TYPE,
 	PRIVACY,
 	REPORT_STATUS,
 	REPORT_TYPE,
@@ -93,7 +94,7 @@ export interface NOTIFICATION {
 	id?: string;
 	from: USER;
 	to: USER;
-	type: string;
+	type: NOTI_TYPE;
 	read: boolean;
 	createdAt?: string;
 	updatedAt?: string;

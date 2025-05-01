@@ -37,7 +37,7 @@ export default function NotFoundPage() {
               navigate(-1);
             }}
             variant="outline"
-            className="border-gray-600 text-gray-300 hover:bg-gray-700 w-full sm:w-auto"
+            className="border-gray-600 text-gray-300 hover:bg-gray-800 w-full sm:w-auto"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Go Back

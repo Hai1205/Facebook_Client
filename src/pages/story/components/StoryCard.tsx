@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ShowStoryPreview from "./ShowStoryPreview";
 import { STORY } from "@/utils/interface";
 import { useAuthStore } from "@/stores/useAuthStore";
@@ -11,9 +11,16 @@ import { usePostStore } from "@/stores/usePostStore";
 interface StoryCardProps {
   isAddStory?: boolean;
   story?: STORY;
+  storiesList?: STORY[];
+  currentIndex?: number;
 }
 
-const StoryCard = ({ isAddStory = false, story }: StoryCardProps) => {
+const StoryCard = ({
+  isAddStory = false,
+  story,
+  storiesList = [],
+  currentIndex = 0,
+}: StoryCardProps) => {
   const { userAuth } = useAuthStore();
   const { isLoading, createStory } = usePostStore();
 
@@ -22,6 +29,13 @@ const StoryCard = ({ isAddStory = false, story }: StoryCardProps) => {
   const [fileType, setFileType] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [isNewStory, setIsNewStory] = useState(false);
+  const [storyIndex, setStoryIndex] = useState<number>(currentIndex);
+
+  useEffect(() => {
+    if (!isNewStory && currentIndex !== undefined) {
+      setStoryIndex(currentIndex);
+    }
+  }, [currentIndex, isNewStory]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -63,11 +77,45 @@ const StoryCard = ({ isAddStory = false, story }: StoryCardProps) => {
   };
 
   const handleStoryClick = () => {
-    setFilePreview(story?.mediaUrl || "");
-    setFileType(story?.mediaType || "");
+    if (story) {
+      setStoryIndex(currentIndex);
+      showStory(story);
+    }
+  };
+
+  const showStory = (storyItem: STORY) => {
+    setFilePreview(storyItem?.mediaUrl || "");
+    const type = storyItem?.mediaType === "VIDEO" ? "video" : "image";
+    setFileType(type);
     setIsNewStory(false);
     setShowPreview(true);
   };
+
+  const handleNextStory = () => {
+    if (storiesList && storiesList.length > 0) {
+      const nextIndex = storyIndex + 1;
+      if (nextIndex < storiesList.length) {
+        setStoryIndex(nextIndex);
+        showStory(storiesList[nextIndex]);
+      } else {
+        resetStoryState();
+      }
+    } else {
+      resetStoryState();
+    }
+  };
+
+  const handlePreviousStory = () => {
+    if (storiesList && storiesList.length > 0) {
+      const prevIndex = storyIndex - 1;
+      if (prevIndex >= 0) {
+        setStoryIndex(prevIndex);
+        showStory(storiesList[prevIndex]);
+      }
+    }
+  };
+
+  const currentStory = isNewStory ? null : storiesList[storyIndex];
 
   return (
     <>
@@ -86,8 +134,8 @@ const StoryCard = ({ isAddStory = false, story }: StoryCardProps) => {
                     className="object-cover"
                   />
 
-                  <AvatarFallback className="bg-gray-700 !rounded-none">
-                    {userAuth?.fullName?.substring(0, 2)}
+                  <AvatarFallback className="bg-zinc-800 text-zinc-700 !rounded-none">
+                    {userAuth?.fullName?.substring(0, 2) || "FU"}
                   </AvatarFallback>
                 </Avatar>
               </div>
@@ -114,7 +162,7 @@ const StoryCard = ({ isAddStory = false, story }: StoryCardProps) => {
             </div>
           ) : (
             <>
-              {story?.mediaType === "image" ? (
+              {story?.mediaType === "IMAGE" ? (
                 <img
                   src={story?.mediaUrl}
                   alt={story?.user?.fullName}
@@ -124,6 +172,9 @@ const StoryCard = ({ isAddStory = false, story }: StoryCardProps) => {
                 <video
                   src={story?.mediaUrl || ""}
                   className="w-full h-full object-cover"
+                  preload="metadata"
+                  muted
+                  playsInline
                 />
               )}
 
@@ -134,15 +185,15 @@ const StoryCard = ({ isAddStory = false, story }: StoryCardProps) => {
                     alt={story?.user?.fullName}
                   />
 
-                  <AvatarFallback className="bg-gray-700">
-                    {story?.user?.fullName.substring(0, 2)}
+                  <AvatarFallback className="bg-zinc-800 text-white">
+                    {story?.user?.fullName.substring(0, 2) || "FU"}
                   </AvatarFallback>
                 </Avatar>
               </div>
 
               <div className="absolute bottom-2 left-2 right-2">
                 <p className="text-white text-xs font-semibold truncate">
-                  {story?.user?.fullName}
+                  {story?.user?.fullName || "Facebook User"}
                 </p>
               </div>
             </>
@@ -158,14 +209,18 @@ const StoryCard = ({ isAddStory = false, story }: StoryCardProps) => {
           onPost={handleCreateStoryPost}
           isNewStory={isNewStory}
           fullName={
-            isNewStory ? userAuth?.fullName || "" : story?.user?.fullName || ""
+            isNewStory
+              ? userAuth?.fullName || ""
+              : currentStory?.user?.fullName || ""
           }
           avatar={
             isNewStory
               ? userAuth?.avatarPhotoUrl || null
-              : story?.user?.avatarPhotoUrl || null
+              : currentStory?.user?.avatarPhotoUrl || null
           }
           isLoading={isLoading}
+          onNext={handleNextStory}
+          onPrevious={handlePreviousStory}
         />
       )}
     </>

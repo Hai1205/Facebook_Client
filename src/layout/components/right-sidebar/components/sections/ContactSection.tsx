@@ -104,7 +104,7 @@ export const ContactSection = ({ contacts }: ContactSectionProps) => {
                     src={contact.avatarPhotoUrl || "/placeholder.svg"}
                   />
 
-                  <AvatarFallback className="bg-gray-600">
+                  <AvatarFallback className="bg-zinc-800">
                     {contact.fullName.substring(0, 2)}
                   </AvatarFallback>
                 </Avatar>

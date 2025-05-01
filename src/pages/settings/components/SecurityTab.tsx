@@ -39,7 +39,7 @@ const SecurityTab = ({
     <TabsContent value="security">
       <Card className="bg-zinc-900">
         <CardHeader>
-          <CardTitle>Security Settings</CardTitle>
+          <CardTitle className="text-white">Security Settings</CardTitle>
           <CardDescription>
             Manage your account security and authentication methods.
           </CardDescription>
@@ -47,7 +47,7 @@ const SecurityTab = ({
 
         <CardContent className="h-[366px] space-y-4">
           <div className="space-y-1">
-            <Label htmlFor="current-password">Current Password</Label>
+            <Label htmlFor="current-password" className="text-white">Current Password</Label>
             <Input
               id="current-password"
               type="password"
@@ -56,11 +56,12 @@ const SecurityTab = ({
                 handleSecurityChange("currentPassword", e.target.value)
               }
               placeholder="Enter current password"
+              className="text-white"
             />
           </div>
 
           <div className="space-y-1">
-            <Label htmlFor="new-password">New Password</Label>
+            <Label htmlFor="new-password" className="text-white">New Password</Label>
             <Input
               id="new-password"
               type="password"
@@ -69,11 +70,12 @@ const SecurityTab = ({
                 handleSecurityChange("newPassword", e.target.value)
               }
               placeholder="Enter new password"
+              className="text-white"
             />
           </div>
 
           <div className="space-y-1">
-            <Label htmlFor="confirm-password">Confirm New Password</Label>
+            <Label htmlFor="confirm-password" className="text-white">Confirm New Password</Label>
             <Input
               id="confirm-password"
               type="password"
@@ -82,6 +84,7 @@ const SecurityTab = ({
                 handleSecurityChange("rePassword", e.target.value)
               }
               placeholder="Enter confirm password"
+              className="text-white"
             />
           </div>
         </CardContent>

@@ -48,10 +48,12 @@ const VideoCard = ({
   const commentInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleCommentClick = () => {
-    setShowComments(true);
-    setTimeout(() => {
-      commentInputRef?.current?.focus();
-    }, 0);
+    setShowComments(!showComments);
+    if (!showComments) {
+      setTimeout(() => {
+        commentInputRef?.current?.focus();
+      }, 0);
+    }
   };
 
   const handleCommentSubmit = async () => {
@@ -105,14 +107,15 @@ const VideoCard = ({
                 src={post?.user?.avatarPhotoUrl}
                 alt={post?.user?.fullName}
               />
-              <AvatarFallback className="bg-gray-400 text-white">
-                {post?.user?.fullName?.substring(0, 2)}
+
+              <AvatarFallback className="bg-gray-800 text-white">
+                {post?.user?.fullName?.substring(0, 2) || "FU"}
               </AvatarFallback>
             </Avatar>
 
             <div>
-              <p className="text-xl font-bold flex items-center">
-                {post?.user?.fullName}
+              <p className="text-s font-bold flex items-center">
+                {post?.user?.fullName || "Facebook User"}
 
                 {post?.user?.followers.length > 5000 && (
                   <BadgeCheck className="ml-2 h-4 w-4 text-[#1877F2]" />

@@ -87,7 +87,7 @@ const LeftSideBar = () => {
               alt={userAuth?.fullName}
             />
 
-            <AvatarFallback className="bg-gray-700">
+            <AvatarFallback className="bg-zinc-800">
               {userAuth?.fullName?.substring(0, 2) || "FU"}
             </AvatarFallback>
           </Avatar>
@@ -124,7 +124,7 @@ const LeftSideBar = () => {
                 alt={userAuth?.fullName}
               />
 
-              <AvatarFallback className="bg-gray-700">
+              <AvatarFallback className="bg-zinc-800">
                 {userAuth?.fullName?.substring(0, 2) || "U"}
               </AvatarFallback>
             </Avatar>

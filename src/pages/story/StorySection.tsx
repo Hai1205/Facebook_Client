@@ -9,7 +9,7 @@ import { useAuthStore } from "@/stores/useAuthStore";
 
 const StorySection = () => {
   const { getUserStoryFeed } = usePostStore();
-  const {userAuth} = useAuthStore();
+  const { userAuth } = useAuthStore();
 
   const [stories, setStories] = useState<STORY[]>([]);
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -73,9 +73,14 @@ const StorySection = () => {
               (containerRef.current ? containerRef.current.offsetWidth : 0),
           }}
         >
-          <StoryCard isAddStory={true} />
-          {stories?.map((story) => (
-            <StoryCard story={story} key={story.id} />
+          <StoryCard isAddStory={true} storiesList={stories} />
+          {stories?.map((story, index) => (
+            <StoryCard
+              story={story}
+              key={story.id}
+              storiesList={stories}
+              currentIndex={index}
+            />
           ))}
         </motion.div>
 

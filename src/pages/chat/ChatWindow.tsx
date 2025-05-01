@@ -139,21 +139,21 @@ export function ChatWindow({
 
           <div className="flex items-center space-x-1">
             <button
-              className="p-1 rounded-full hover:bg-gray-700 text-gray-400"
+              className="p-1 rounded-full hover:bg-gray-800 text-gray-400"
               onClick={handlePhoneClick}
             >
               <Phone className="h-4 w-4" />
             </button>
 
             <button
-              className="p-1 rounded-full hover:bg-gray-700 text-gray-400"
+              className="p-1 rounded-full hover:bg-gray-800 text-gray-400"
               onClick={handleVideoClick}
             >
               <Video className="h-4 w-4" />
             </button>
 
             <button
-              className="p-1 rounded-full hover:bg-gray-700 text-gray-400"
+              className="p-1 rounded-full hover:bg-gray-800 text-gray-400"
               onClick={(e) => {
                 e.stopPropagation();
                 onToggleMinimize();
@@ -163,7 +163,7 @@ export function ChatWindow({
             </button>
 
             <button
-              className="p-1 rounded-full hover:bg-gray-700 text-gray-400"
+              className="p-1 rounded-full hover:bg-gray-800 text-gray-400"
               onClick={(e) => {
                 e.stopPropagation();
                 onClose();
@@ -199,7 +199,7 @@ export function ChatWindow({
                       className={`p-2 rounded-lg ${
                         message.sender === "me"
                           ? "bg-blue-600 text-white"
-                          : "bg-gray-700 text-gray-100"
+                          : "bg-gray-800 text-gray-100"
                       }`}
                     >
                       <p className="text-sm">{message.text}</p>
@@ -218,15 +218,15 @@ export function ChatWindow({
             {/* Chat input */}
             <div className="p-3 border-t border-gray-700 mt-auto">
               <div className="flex items-center space-x-2 mb-2">
-                <button className="p-1 rounded-full hover:bg-gray-700 text-gray-400">
+                <button className="p-1 rounded-full hover:bg-gray-800 text-gray-400">
                   <Paperclip className="h-5 w-5" />
                 </button>
 
-                <button className="p-1 rounded-full hover:bg-gray-700 text-gray-400">
+                <button className="p-1 rounded-full hover:bg-gray-800 text-gray-400">
                   <ImageIcon className="h-5 w-5" />
                 </button>
 
-                <button className="p-1 rounded-full hover:bg-gray-700 text-gray-400">
+                <button className="p-1 rounded-full hover:bg-gray-800 text-gray-400">
                   <Smile className="h-5 w-5" />
                 </button>
               </div>
@@ -238,7 +238,7 @@ export function ChatWindow({
                   onChange={(e) => setInput(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Aa"
-                  className="flex-1 bg-gray-700 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex-1 bg-gray-800 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
 
                 <button
@@ -247,7 +247,7 @@ export function ChatWindow({
                   className={`p-2 rounded-full ${
                     input.trim()
                       ? "bg-blue-600 text-white"
-                      : "bg-gray-700 text-gray-400"
+                      : "bg-gray-800 text-gray-400"
                   }`}
                 >
                   <Send className="h-5 w-5" />

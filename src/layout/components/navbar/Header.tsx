@@ -191,7 +191,7 @@ const Header = () => {
                       {filterUsers.length > 0 ? (
                         filterUsers.map((user) => (
                           <div
-                            className="flex items-center gap-3 p-2 hover:bg-gray-700 rounded-md cursor-pointer"
+                            className="flex items-center gap-3 p-2 hover:bg-gray-800 rounded-md cursor-pointer"
                             key={user?.id}
                             onClick={() => handleUserClick(user?.id || "")}
                           >
@@ -201,7 +201,7 @@ const Header = () => {
                                 alt={user?.fullName}
                               />
 
-                              <AvatarFallback className="bg-gray-700">
+                              <AvatarFallback className="bg-gray-800">
                                 {user?.fullName?.substring(0, 2) || "U"}
                               </AvatarFallback>
                             </Avatar>
@@ -249,10 +249,10 @@ const Header = () => {
                 <div className="relative">
                   <Button
                     onClick={toggleNotifications}
-                    className={`rounded-full bg-gray-800 text-white hover:bg-gray-700 ${
+                    className={`rounded-full bg-gray-800 text-white hover:bg-gray-800 ${
                       showNotifications
                         ? "bg-[#1877F2]/20 text-blue-500"
-                        : "hover:bg-gray-700 text-gray-300"
+                        : "hover:bg-gray-800 text-gray-300"
                     }`}
                   >
                     <Bell className="h-5 w-5" />
@@ -263,10 +263,10 @@ const Header = () => {
                 <div className="relative">
                   <Button
                     onClick={toggleMessages}
-                    className={`rounded-full bg-gray-800 text-white hover:bg-gray-700 ${
+                    className={`rounded-full bg-gray-800 text-white hover:bg-gray-800 ${
                       showMessages
                         ? "bg-[#1877F2]/20 text-blue-500"
-                        : "hover:bg-gray-700 text-gray-300"
+                        : "hover:bg-gray-800 text-gray-300"
                     }`}
                   >
                     <MessageCircle className="h-5 w-5" />
@@ -287,7 +287,7 @@ const Header = () => {
                           alt={userAuth?.fullName}
                         />
 
-                        <AvatarFallback className="bg-gray-700">
+                        <AvatarFallback className="bg-gray-800">
                           {userAuth?.fullName?.substring(0, 2) || "U"}
                         </AvatarFallback>
                       </Avatar>
@@ -296,14 +296,14 @@ const Header = () => {
 
                   <DropdownMenuContent
                     align="end"
-                    className="w-56 bg-gray-800 text-white border-gray-700"
+                    className="w-56 bg-zinc-900 text-white border-zinc-700"
                   >
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
 
-                    <DropdownMenuSeparator className="bg-gray-700" />
+                    <DropdownMenuSeparator className="bg-gray-800" />
 
                     <DropdownMenuItem
-                      className="cursor-pointer hover:bg-gray-700"
+                      className="cursor-pointer hover:bg-gray-800"
                       onClick={() =>
                         handleNavigation(`/profile/${userAuth?.id}`, "profile")
                       }
@@ -312,16 +312,16 @@ const Header = () => {
                     </DropdownMenuItem>
 
                     <DropdownMenuItem
-                      className="cursor-pointer hover:bg-gray-700"
+                      className="cursor-pointer hover:bg-gray-800"
                       onClick={() => handleNavigation(`/settings`, "settings")}
                     >
                       <Settings className="mr-2 h-4 w-4" /> Settings
                     </DropdownMenuItem>
 
-                    <DropdownMenuSeparator className="bg-gray-700" />
+                    <DropdownMenuSeparator className="bg-gray-800" />
 
                     <DropdownMenuItem
-                      className="cursor-pointer hover:bg-gray-700"
+                      className="cursor-pointer hover:bg-gray-800"
                       onClick={handleLogout}
                     >
                       <LogOut className="mr-2 h-4 w-4" /> Logout

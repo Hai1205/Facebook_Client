@@ -142,7 +142,7 @@ const NewPostDialog = ({ isPostFormOpen }: NewPostDialogProps) => {
                 <SelectValue placeholder="Public" />
               </SelectTrigger>
 
-              <SelectContent className="bg-gray-700">
+              <SelectContent className="bg-gray-800">
                 {PRIVACY_CHOICE.map((item) => (
                   <SelectItem
                     key={item.value}

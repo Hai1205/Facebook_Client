@@ -20,7 +20,7 @@ export function CallContent({
   return (
     <div className="p-8 flex flex-col items-center justify-center">
       <div className="relative">
-        <div className="h-32 w-32 rounded-full bg-gray-700 flex items-center justify-center mb-4 border-4 border-blue-600">
+        <div className="h-32 w-32 rounded-full bg-gray-800 flex items-center justify-center mb-4 border-4 border-blue-600">
           {user.avatarPhotoUrl ? (
             <Avatar className="h-full w-full">
               <AvatarImage src={user.avatarPhotoUrl || "/placeholder.svg"} />

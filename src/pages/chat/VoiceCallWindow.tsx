@@ -94,13 +94,13 @@ export function VoiceCallWindow({
           <div className="flex items-center space-x-2">
             <button
               onClick={handleMinimize}
-              className="p-1.5 rounded-full hover:bg-gray-700 text-gray-400"
+              className="p-1.5 rounded-full hover:bg-gray-800 text-gray-400"
             >
               <Minus className="h-5 w-5" />
             </button>
             <button
               onClick={handleEndCall}
-              className="p-1.5 rounded-full hover:bg-gray-700 text-gray-400"
+              className="p-1.5 rounded-full hover:bg-gray-800 text-gray-400"
             >
               <X className="h-5 w-5" />
             </button>
@@ -110,7 +110,7 @@ export function VoiceCallWindow({
         {/* Call content */}
         <div className="p-8 flex flex-col items-center justify-center">
           <div className="relative">
-            <div className="h-32 w-32 rounded-full bg-gray-700 flex items-center justify-center mb-4 border-4 border-blue-600">
+            <div className="h-32 w-32 rounded-full bg-gray-800 flex items-center justify-center mb-4 border-4 border-blue-600">
               {user.avatarPhotoUrl ? (
                 <Avatar className="h-full w-full">
                   <AvatarImage
@@ -164,7 +164,7 @@ export function VoiceCallWindow({
             className={`p-4 rounded-full ${
               isMuted
                 ? "bg-red-600 text-white"
-                : "bg-gray-700 text-gray-200 hover:bg-gray-600"
+                : "bg-gray-800 text-gray-200 hover:bg-gray-600"
             }`}
           >
             {isMuted ? (
@@ -185,7 +185,7 @@ export function VoiceCallWindow({
             onClick={toggleSpeaker}
             className={`p-4 rounded-full ${
               isSpeakerOn
-                ? "bg-gray-700 text-gray-200 hover:bg-gray-600"
+                ? "bg-gray-800 text-gray-200 hover:bg-gray-600"
                 : "bg-red-600 text-white"
             }`}
           >

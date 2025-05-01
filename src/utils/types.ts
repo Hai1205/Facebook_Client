@@ -11,3 +11,5 @@ export type PRIVACY = "PUBLIC" | "PRIVATE";
 export type REPORT_TYPE = "POST" | "STORY" | "COMMENT" | "USER";
 
 export type REPORT_STATUS = "ACCEPT" | "PENDING" | "REJECT";
+
+export type NOTI_TYPE = "LIKE" | "FOLLOW" | "COMMENT";

@@ -46,7 +46,7 @@ export function CallContent({
           </div>
 
           {/* Self video (picture-in-picture) */}
-          <div className="absolute bottom-4 right-4 w-48 h-36 bg-gray-700 rounded-lg overflow-hidden border-2 border-gray-600 shadow-lg">
+          <div className="absolute bottom-4 right-4 w-48 h-36 bg-gray-800 rounded-lg overflow-hidden border-2 border-gray-600 shadow-lg">
             <div className="absolute inset-0 flex items-center justify-center">
               {isVideoOn ? (
                 <img

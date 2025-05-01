@@ -29,7 +29,7 @@ const NewPostForm = ({
               alt={userAuth?.fullName}
             />
 
-            <AvatarFallback className="bg-gray-700">
+            <AvatarFallback className="bg-gray-800">
               {userAuth?.fullName?.substring(0, 2)}
             </AvatarFallback>
           </Avatar>

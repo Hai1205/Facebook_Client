@@ -19,13 +19,13 @@ export function CallHeader({
       <div className="flex items-center space-x-2">
         <button
           onClick={handleMinimize}
-          className="p-1.5 rounded-full hover:bg-gray-700 text-gray-400"
+          className="p-1.5 rounded-full hover:bg-gray-800 text-gray-400"
         >
           <Minus className="h-5 w-5" />
         </button>
         <button
           onClick={handleEndCall}
-          className="p-1.5 rounded-full hover:bg-gray-700 text-gray-400"
+          className="p-1.5 rounded-full hover:bg-gray-800 text-gray-400"
         >
           <X className="h-5 w-5" />
         </button>

@@ -28,7 +28,7 @@ export function MinimizedCall({
       <div className="relative w-20 h-12 overflow-hidden rounded-md bg-gray-900 mr-2">
         <div className="absolute inset-0 flex items-center justify-center">
           {isVideoOn ? (
-            <div className="w-full h-full bg-gray-700">
+            <div className="w-full h-full bg-gray-800">
               <img
                 src={
                   user.avatarPhotoUrl || "/placeholder.svg?height=48&width=80"

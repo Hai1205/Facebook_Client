@@ -1,7 +1,7 @@
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { AvatarFallback } from "@radix-ui/react-avatar";
 import { X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 interface ShowStoryPreviewProps {
   file: string | null;
@@ -12,6 +12,8 @@ interface ShowStoryPreviewProps {
   fullName: string;
   avatar: string | null;
   isLoading: boolean;
+  onNext?: () => void;
+  onPrevious?: () => void;
 }
 
 const ShowStoryPreview = ({
@@ -23,14 +25,160 @@ const ShowStoryPreview = ({
   fullName,
   avatar,
   isLoading,
+  onNext,
+  onPrevious,
 }: ShowStoryPreviewProps) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [progress, setProgress] = useState<number>(0);
+  const MAX_DURATION = 20;
+  const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    // Ngăn chặn tất cả các sự kiện kéo chuột và touchmove
+    const preventDrag = (e: MouseEvent | TouchEvent) => {
+      e.preventDefault();
+    };
+
+    document.addEventListener("dragstart", preventDrag as EventListener, {
+      passive: false,
+    });
+    document.addEventListener("touchmove", preventDrag as EventListener, {
+      passive: false,
+    });
+    document.addEventListener("mousedown", preventDrag as EventListener, {
+      passive: false,
+    });
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      document.removeEventListener("dragstart", preventDrag as EventListener);
+      document.removeEventListener("touchmove", preventDrag as EventListener);
+      document.removeEventListener("mousedown", preventDrag as EventListener);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (videoRef.current && file && isVideoType(fileType)) {
+      videoRef.current.load();
+    }
+  }, [file, fileType]);
+
+  useEffect(() => {
+    if (!isNewStory) {
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+      }
+
+      setProgress(0);
+
+      progressIntervalRef.current = setInterval(() => {
+        setProgress((prev) => {
+          const newProgress = prev + 100 / MAX_DURATION / 10;
+
+          if (newProgress >= 100) {
+            clearInterval(progressIntervalRef.current as NodeJS.Timeout);
+            if (onNext) {
+              onNext();
+            } else {
+              onClose();
+            }
+            return 100;
+          }
+
+          return newProgress;
+        });
+      }, 100);
+
+      return () => {
+        if (progressIntervalRef.current) {
+          clearInterval(progressIntervalRef.current);
+        }
+      };
+    }
+  }, [isNewStory, onClose, onNext, file]);
+
+  const isVideoType = (type: string | null): boolean => {
+    if (!type) return false;
+    return (
+      type.toLowerCase() === "video" ||
+      type.toLowerCase() === "video/mp4" ||
+      type.toUpperCase() === "VIDEO"
+    );
+  };
+
+  const handlePrevious = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+    }
+    if (onPrevious) {
+      onPrevious();
+    }
+  };
+
+  const handleNext = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+    }
+    if (onNext) {
+      onNext();
+    } else {
+      onClose();
+    }
+  };
+
+  const handleCloseStory = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+    }
+    onClose();
+  };
+
+  const preventInteraction = (e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-      <div className="relative w-full max-w-md h-[70vh] flex flex-col  bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
+    <div
+      ref={containerRef}
+      className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 select-none"
+      onClick={preventInteraction}
+      onContextMenu={preventInteraction}
+      onMouseDown={preventInteraction}
+      onTouchStart={preventInteraction}
+      onTouchMove={preventInteraction}
+      onDragStart={preventInteraction}
+      style={{ touchAction: "none", userSelect: "none" }}
+    >
+      <div className="relative w-full max-w-md h-[70vh] flex flex-col bg-zinc-800 rounded-lg overflow-hidden">
+        {!isNewStory && (
+          <div className="absolute top-0 left-0 right-0 z-10 px-2 pt-2">
+            <div className="w-full h-1 bg-gray-500 bg-opacity-40 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-white transition-all duration-100 ease-linear"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          </div>
+        )}
+
         <Button
-          className="absolute top-4 right-4 z-10 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+          className="absolute top-4 right-4 z-30 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800"
           variant="ghost"
-          onClick={onClose}
+          onClick={handleCloseStory}
         >
           <X className="h-6 w-6" />
         </Button>
@@ -39,29 +187,60 @@ const ShowStoryPreview = ({
           <Avatar className="w-10 h-10 mr-2 border-2 border-blue-500 rounded-full">
             <AvatarImage src={avatar as string} alt={fullName} />
 
-            <AvatarFallback className="bg-gray-700">
-              {fullName.substring(0, 2)}
+            <AvatarFallback className="bg-zinc-800 text-white">
+              {fullName.substring(0, 2) || "FU"}
             </AvatarFallback>
           </Avatar>
 
           <span className="text-gray-700 dark:text-gray-200 font-semibold">
-            {fullName}
+            {fullName || "Facebook User"}
           </span>
         </div>
 
-        <div className="flex-grow flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-          {fileType === "image" ? (
+        {!isNewStory && (
+          <>
+            <div
+              className="absolute left-0 top-[50px] bottom-0 w-1/3 z-20 cursor-pointer"
+              onClick={handlePrevious}
+            />
+            <div
+              className="absolute right-0 top-[50px] bottom-0 w-1/3 z-20 cursor-pointer"
+              onClick={handleNext}
+            />
+            <div className="absolute left-1/3 right-1/3 top-[50px] bottom-0 z-20 cursor-default" />
+          </>
+        )}
+
+        <div
+          className="flex-grow flex items-center justify-center bg-gray-100 dark:bg-gray-900 select-none"
+          onClick={preventInteraction}
+          onMouseDown={preventInteraction}
+          onTouchStart={preventInteraction}
+          onTouchMove={preventInteraction}
+          onDragStart={preventInteraction}
+        >
+          {!isVideoType(fileType) ? (
             <img
               src={file || ""}
               alt="story_preview"
-              className="max-w-full max-h-full object-contain"
+              className="max-w-full max-h-full object-contain pointer-events-none select-none"
+              onClick={preventInteraction}
+              onDragStart={preventInteraction}
+              draggable="false"
             />
           ) : (
             <video
+              ref={videoRef}
               src={file || ""}
-              controls
+              controls={false}
               autoPlay
-              className="max-w-full max-h-full object-contain"
+              playsInline
+              muted={false}
+              loop={false}
+              preload="auto"
+              className="max-w-full max-h-full object-contain pointer-events-none select-none"
+              onClick={preventInteraction}
+              draggable="false"
             />
           )}
         </div>

@@ -39,7 +39,7 @@ const GeneralTab = ({
     <TabsContent value="general">
       <Card className="bg-zinc-900">
         <CardHeader>
-          <CardTitle>General Settings</CardTitle>
+          <CardTitle className="text-white">General Settings</CardTitle>
           <CardDescription>Manage your profile information.</CardDescription>
         </CardHeader>
 
@@ -85,13 +85,19 @@ const GeneralTab = ({
 
                 {/* email */}
                 <div className="grid gap-2">
-                  <Label>Email</Label>
-                  <Input value={userData?.email || ""} readOnly />
+                  <Label className="text-white">Email</Label>
+                  <Input
+                    value={userData?.email || ""}
+                    readOnly
+                    className="text-white"
+                  />
                 </div>
 
                 {/* Name */}
                 <div className="grid gap-2">
-                  <Label htmlFor="edit-fullName">Full Name</Label>
+                  <Label htmlFor="edit-fullName" className="text-white">
+                    Full Name
+                  </Label>
                   <Input
                     id="edit-fullName"
                     value={userData?.fullName || ""}
@@ -99,6 +105,7 @@ const GeneralTab = ({
                       handleInfoChange("fullName", e.target.value)
                     }
                     placeholder="Enter full name"
+                    className="text-white"
                   />
                 </div>
 

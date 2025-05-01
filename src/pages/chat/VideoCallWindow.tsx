@@ -102,7 +102,7 @@ export function VideoCallWindow({
         <div className="relative w-20 h-12 overflow-hidden rounded-md bg-gray-900 mr-2">
           <div className="absolute inset-0 flex items-center justify-center">
             {isVideoOn ? (
-              <div className="w-full h-full bg-gray-700">
+              <div className="w-full h-full bg-gray-800">
                 <img
                   src={
                     user.avatarPhotoUrl || "/placeholder.svg?height=48&width=80"
@@ -173,14 +173,14 @@ export function VideoCallWindow({
           <div className="flex items-center space-x-2">
             <button
               onClick={handleMinimize}
-              className="p-1.5 rounded-full hover:bg-gray-700 text-gray-400"
+              className="p-1.5 rounded-full hover:bg-gray-800 text-gray-400"
             >
               <Minus className="h-5 w-5" />
             </button>
 
             <button
               onClick={toggleFullScreen}
-              className="p-1.5 rounded-full hover:bg-gray-700 text-gray-400"
+              className="p-1.5 rounded-full hover:bg-gray-800 text-gray-400"
             >
               {isFullScreen ? (
                 <Minimize2 className="h-5 w-5" />
@@ -191,7 +191,7 @@ export function VideoCallWindow({
 
             <button
               onClick={handleEndCall}
-              className="p-1.5 rounded-full hover:bg-gray-700 text-gray-400"
+              className="p-1.5 rounded-full hover:bg-gray-800 text-gray-400"
             >
               <X className="h-5 w-5" />
             </button>
@@ -229,7 +229,7 @@ export function VideoCallWindow({
                 </div>
 
                 {/* Self video (picture-in-picture) */}
-                <div className="absolute bottom-4 right-4 w-48 h-36 bg-gray-700 rounded-lg overflow-hidden border-2 border-gray-600 shadow-lg">
+                <div className="absolute bottom-4 right-4 w-48 h-36 bg-gray-800 rounded-lg overflow-hidden border-2 border-gray-600 shadow-lg">
                   <div className="absolute inset-0 flex items-center justify-center">
                     {isVideoOn ? (
                       <img
@@ -322,7 +322,7 @@ export function VideoCallWindow({
             className={`p-3 rounded-full ${
               isMuted
                 ? "bg-red-600 text-white"
-                : "bg-gray-700 text-gray-200 hover:bg-gray-600"
+                : "bg-gray-800 text-gray-200 hover:bg-gray-600"
             }`}
           >
             {isMuted ? (
@@ -344,7 +344,7 @@ export function VideoCallWindow({
             className={`p-3 rounded-full ${
               !isVideoOn
                 ? "bg-red-600 text-white"
-                : "bg-gray-700 text-gray-200 hover:bg-gray-600"
+                : "bg-gray-800 text-gray-200 hover:bg-gray-600"
             }`}
           >
             {isVideoOn ? (
@@ -355,7 +355,7 @@ export function VideoCallWindow({
           </button>
 
           {isGroupCall && (
-            <button className="p-3 rounded-full bg-gray-700 text-gray-200 hover:bg-gray-600">
+            <button className="p-3 rounded-full bg-gray-800 text-gray-200 hover:bg-gray-600">
               <Users className="h-5 w-5" />
             </button>
           )}

@@ -61,7 +61,9 @@ export function IncomingCallNotification() {
         <div className="flex items-center space-x-3">
           <div className="relative">
             <Avatar className="h-12 w-12">
-              <AvatarImage src={remoteUser.avatarPhotoUrl || "/placeholder.svg"} />
+              <AvatarImage
+                src={remoteUser.avatarPhotoUrl || "/placeholder.svg"}
+              />
               <AvatarFallback className="bg-blue-600">
                 {remoteUser.fullName.substring(0, 2)}
               </AvatarFallback>
@@ -82,7 +84,7 @@ export function IncomingCallNotification() {
 
           <button
             onClick={handleDecline}
-            className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
+            className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800"
           >
             <X className="h-5 w-5" />
           </button>

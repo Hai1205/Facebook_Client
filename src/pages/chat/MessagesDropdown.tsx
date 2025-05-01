@@ -44,7 +44,7 @@ export function MessagesDropdown({ onChatStart }: MessagesDropdownProps) {
           <input
             type="text"
             placeholder="Search chats"
-            className="bg-gray-700 rounded-full pl-10 pr-4 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="bg-gray-800 rounded-full pl-10 pr-4 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -59,8 +59,8 @@ export function MessagesDropdown({ onChatStart }: MessagesDropdownProps) {
           .map((chat) => (
             <div
               key={chat.id}
-              className={`p-3 hover:bg-gray-700 cursor-pointer flex items-center ${
-                chat.unread ? "bg-gray-700/50" : ""
+              className={`p-3 hover:bg-gray-800 cursor-pointer flex items-center ${
+                chat.unread ? "bg-gray-800/50" : ""
               }`}
               onClick={() => onChatStart(chat.user)}
             >

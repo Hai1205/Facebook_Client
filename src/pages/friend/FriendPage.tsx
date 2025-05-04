@@ -48,7 +48,7 @@ export default function FriendPage() {
                 className="flex items-center gap-2"
               >
                 <Users className="w-4 h-4" />
-                <span>People you may know</span>
+                <span>Friend Suggestions</span>
               </TabsTrigger>
             </TabsList>
           </div>

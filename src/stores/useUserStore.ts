@@ -18,7 +18,8 @@ import {
     updateAvatarPhoto,
     updateCoverPhoto,
     updateUser,
-    updateUserBio
+    updateUserBio,
+    getFriendRequestStatus
 } from "@/utils/api/usersApi";
 
 interface UserStore {
@@ -42,7 +43,8 @@ interface UserStore {
     unFriend: (currentUserId: string, opponentId: string) => Promise<any>;
     getSuggestedUsers: (userId: string) => Promise<any>;
     getUserFriendsRequests: (userId: string) => Promise<any>;
-    searchUsers: (query: string) => Promise<any>;
+    searchUsers: (queryString: string) => Promise<any>;
+    getFriendRequestStatus: (currentUserId: string, targetUserId: string) => Promise<any>;
     reset: () => any;
 }
 
@@ -103,9 +105,8 @@ export const useUserStore = create<UserStore>()(
 
                 try {
                     const response = await getUser(userId);
-                    const { user } = response.data;
 
-                    return user;
+                    return response.data;
                 } catch (error: any) {
                     console.error(error)
                     const { message } = error.response.data;
@@ -157,15 +158,13 @@ export const useUserStore = create<UserStore>()(
                     return false;
                 }
             },
-           
+
             sendFriendRequest: async (currentUserId, opponentId) => {
                 set({ error: null });
 
                 try {
-                    const response = await sendFriendRequest(currentUserId, opponentId);
-                    const { message } = response.data;
+                    await sendFriendRequest(currentUserId, opponentId);
 
-                    toast.success(message);
                     return true;
                 } catch (error: any) {
                     console.error(error)
@@ -176,7 +175,7 @@ export const useUserStore = create<UserStore>()(
                     return false;
                 }
             },
-           
+
             responseFriendRequest: async (currentUserId, opponentId) => {
                 set({ error: null });
 
@@ -195,7 +194,7 @@ export const useUserStore = create<UserStore>()(
                     return false;
                 }
             },
-            
+
             unFriend: async (currentUserId, opponentId) => {
                 set({ error: null });
 
@@ -277,7 +276,7 @@ export const useUserStore = create<UserStore>()(
                     set({ isLoading: false });
                 }
             },
-            
+
             updateUserBio: async (userId, formData) => {
                 set({ isLoading: true, error: null });
 
@@ -321,7 +320,7 @@ export const useUserStore = create<UserStore>()(
                     set({ isLoading: false });
                 }
             },
-           
+
             updateAvatarPhoto: async (userId, formData) => {
                 set({ isLoading: true, error: null });
 
@@ -365,14 +364,38 @@ export const useUserStore = create<UserStore>()(
                 }
             },
 
-            searchUsers: async (query: string) => {
+            searchUsers: async (queryString) => {
                 set({ isLoading: true, error: null });
 
                 try {
-                    const response = await searchUsers(query);
+                    const response = await searchUsers(queryString);
                     const { users } = response.data;
 
+                    if (!users || !Array.isArray(users)) {
+                        return [];
+                    }
+
                     return users;
+                } catch (error: any) {
+                    console.error(error)
+                    const { message } = error.response.data;
+                    set({ error: message });
+
+                    toast.error(message);
+                    return false;
+                } finally {
+                    set({ isLoading: false });
+                }
+            },
+
+            getFriendRequestStatus: async (currentUserId, targetUserId) => {
+                set({ isLoading: true, error: null });
+
+                try {
+                    const response = await getFriendRequestStatus(currentUserId, targetUserId);
+                    const { status } = response.data;
+
+                    return status;
                 } catch (error: any) {
                     console.error(error)
                     const { message } = error.response.data;

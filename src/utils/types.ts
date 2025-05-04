@@ -4,6 +4,8 @@ export type USER_ROLE = "USER" | "ADMIN";
 
 export type USER_GENDER = "MALE" | "FEMALE" | "OTHER";
 
+export type FRIEND_STATUS = "PENDING" | "NONE" | "SENT" | "FRIEND";
+
 export type MEDIA_TYPE = "IMAGE" | "VIDEO";
 
 export type PRIVACY = "PUBLIC" | "PRIVATE";

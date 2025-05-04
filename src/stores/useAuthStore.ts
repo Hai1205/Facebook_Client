@@ -20,6 +20,8 @@ import {
 } from "@/utils/api/authApi";
 import { useNotiStore } from "./useNotiStore";
 import { useCallStore } from "./useCallStore";
+import { getOnlineUsers } from "@/utils/api/chatApi";
+import { useOnlineUsersStore } from "./useOnlineUsersStore";
 
 export interface AuthStore {
 	userAuth: USER | null;
@@ -153,6 +155,18 @@ export const useAuthStore = create<AuthStore>()(
 						set({ userAuth: user, isAuth: true })
 
 						await get().checkAdmin();
+
+						// Lấy danh sách người dùng đang online sau khi đăng nhập thành công
+						try {
+							const onlineResponse = await getOnlineUsers();
+							if (onlineResponse.data && onlineResponse.data.data && onlineResponse.data.data.onlineUsers) {
+								const onlineUsers = onlineResponse.data.data.onlineUsers;
+								useOnlineUsersStore.getState().setOnlineUsers(onlineUsers);
+								console.log("📋 Đã cập nhật danh sách người dùng online:", onlineUsers);
+							}
+						} catch (error) {
+							console.error("Lỗi khi lấy danh sách người dùng online:", error);
+						}
 					}
 
 					return { user: user, isActive: isActive };
@@ -177,6 +191,18 @@ export const useAuthStore = create<AuthStore>()(
 
 					set({ userAuth: user, isAuth: true })
 					await get().checkAdmin();
+
+					// Lấy danh sách người dùng đang online sau khi đăng nhập thành công
+					try {
+						const onlineResponse = await getOnlineUsers();
+						if (onlineResponse.data && onlineResponse.data.data && onlineResponse.data.data.onlineUsers) {
+							const onlineUsers = onlineResponse.data.data.onlineUsers;
+							useOnlineUsersStore.getState().setOnlineUsers(onlineUsers);
+							console.log("📋 Đã cập nhật danh sách người dùng online:", onlineUsers);
+						}
+					} catch (error) {
+						console.error("Lỗi khi lấy danh sách người dùng online:", error);
+					}
 
 					return user;
 				} catch (error: any) {
@@ -287,6 +313,7 @@ export const useAuthStore = create<AuthStore>()(
 				usePostStore.getState().reset();
 				useStatStore.getState().reset();
 				useUserStore.getState().reset();
+				useOnlineUsersStore.getState().reset();
 			},
 		}),
 

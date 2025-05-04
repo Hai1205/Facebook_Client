@@ -82,7 +82,7 @@ export const deleteUser = async (userId: string): Promise<any> => {
 
 export const searchUsers = async (queryString: string): Promise<any> => {
   return await axiosInstance.get(`${endpoint}/search-users${queryString}`);
-}
+};
 
 export const sendFriendRequest = async (
   currentUserId: string,
@@ -113,4 +113,8 @@ export const responseFriendRequest = async (
 
 export const getAllFriendsRequest = async (): Promise<any> => {
   return await axiosInstance.get(`${endpoint}/get-all-friend-request`);
+};
+
+export const getFriendRequestStatus = async (currentUserId: string, targetUserId: string): Promise<any> => {
+  return await axiosInstance.get(`${endpoint}/friend-request-status/${currentUserId}/${targetUserId}`);
 };

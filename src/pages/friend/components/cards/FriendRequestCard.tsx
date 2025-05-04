@@ -4,6 +4,7 @@ import { Users } from "lucide-react";
 import { FRIEND_REQUEST } from "@/utils/interface";
 import { countMutualFriends } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
+import { Link } from "react-router-dom";
 
 interface FriendRequestCardProps {
   request: FRIEND_REQUEST;
@@ -24,22 +25,26 @@ const FriendRequestCard = ({
       className="bg-zinc-900 border-zinc-800 overflow-hidden"
     >
       <div className="aspect-square relative">
-        <Avatar className="w-full h-full rounded-none">
-          <AvatarImage
-            src={request.from.avatarPhotoUrl || "/placeholder.svg"}
-            alt={request.from.fullName}
-            className="object-cover"
-          />
+        <Link to={`/profile/${request.from.id}`}>
+          <Avatar className="w-full h-full rounded-none">
+            <AvatarImage
+              src={request.from.avatarPhotoUrl || "/placeholder.svg"}
+              alt={request.from.fullName}
+              className="object-cover"
+            />
 
-          <AvatarFallback className="w-full h-full rounded-none bg-zinc-800 text-zinc-400 text-8xl">
-            {request.from.fullName.substring(0, 2)}
-          </AvatarFallback>
-        </Avatar>
+            <AvatarFallback className="w-full h-full rounded-none bg-zinc-800 text-zinc-400 text-8xl">
+              {request.from.fullName.substring(0, 2)}
+            </AvatarFallback>
+          </Avatar>
+        </Link>
       </div>
 
       <div className="p-3">
         <h3 className="font-medium truncate text-white">
-          {request.from.fullName}
+          <Link to={`/profile/${request.from.id}`}>
+            {request.from.fullName}
+          </Link>
         </h3>
 
         {mutualFriendsCount > 0 ? (

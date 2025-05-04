@@ -1,28 +1,30 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { AnimatePresence } from "framer-motion";
-import { Camera, PenLine, Save, Upload, X, BadgeCheck } from "lucide-react";
+import {
+  Camera,
+  PenLine,
+  Save,
+  Upload,
+  UserRoundX,
+  BadgeCheck,
+  MessageCircle,
+} from "lucide-react";
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
-// import { Label } from "@/components/ui/label";
-// import { Input } from "@/components/ui/input";
-// import {
-//   Select,
-//   SelectContent,
-//   SelectItem,
-//   SelectTrigger,
-//   SelectValue,
-// } from "@/components/ui/select";
-// import { useForm } from "react-hook-form";
 import { USER } from "@/utils/interface";
 import { useUserStore } from "@/stores/useUserStore";
-// import { GENDER_CHOICE, CHOICE } from "@/utils/choices";
+import { useAuthStore } from "@/stores/useAuthStore";
 import EditUserDialog from "@/pages/admin/userManagement/components/EditUserDialog";
 import { formatNumberStyle } from "@/lib/utils";
+import { FriendButton } from "@/layout/components/navbar/components/FriendButton";
+import { FollowButton } from "@/layout/components/navbar/components/FollowButton";
+import { FRIEND_STATUS } from "@/utils/types";
 
 interface ProfileHeaderProps {
   userId: string | undefined;
   profileData: USER;
+  friendStatus: FRIEND_STATUS;
   isOwner: boolean;
   setProfileData: (profileData: USER) => void;
 }
@@ -31,53 +33,74 @@ const ProfileHeader = ({
   userId,
   profileData,
   isOwner,
+  friendStatus,
   setProfileData,
 }: ProfileHeaderProps) => {
+  const { userAuth } = useAuthStore();
+  const { isLoading, updateCoverPhoto } = useUserStore();
+
   const [isEditProfileModel, setIsEditProfileModel] = useState(false);
   const [isEditCoverModel, setIsEditCoverModel] = useState(false);
   const [coverPhotoPreview, setCoverPhotoPreview] = useState<string | null>(
     null
   );
-  // const [profilePicturePreview, setProfilePicturePreview] = useState<
-  //   string | null
-  // >(null);
-  // const [profilePictureFile, setProfilePictureFile] = useState<string | null>(
-  //   null
-  // );
   const [coverPhotoFile, setCoverPhotoFile] = useState<string | null>(null);
-  const { isLoading, updateCoverPhoto } = useUserStore();
+  const [friendRequestStatus, setFriendRequestStatus] =
+    useState<FRIEND_STATUS>(friendStatus);
 
-  // const { register, handleSubmit, setValue } = useForm({
-  //   defaultValues: {
-  //     fullName: profileData?.fullName,
-  //     dateOfBirth: profileData?.dateOfBirth?.split("T")[0],
-  //     gender: profileData?.gender,
-  //   },
-  // });
-
-  // const profileImageInputRef = useRef<HTMLInputElement | null>(null);
   const coverImageInputRef = useRef<HTMLInputElement | null>(null);
 
-  // const onSubmitProfile = async (data: any) => {
-  //   if (!userId) {
-  //     return;
-  //   }
+  const handleFriendStatusChange = (newStatus: FRIEND_STATUS) => {
+    setFriendRequestStatus(newStatus);
 
-  //   const formData = new FormData();
-  //   formData.append("fullName", data.fullName);
-  //   formData.append("dateOfBirth", data.dateOfBirth);
-  //   formData.append("gender", data.gender);
+    if (newStatus === "FRIEND" && userAuth?.id) {
+      const updatedFriends = [...(profileData.friends || [])];
+      const friendExists = updatedFriends.some(
+        (friend) => friend.id === userAuth.id
+      );
 
-  //   if (profilePictureFile) {
-  //     formData.append("profilePicture", profilePictureFile);
-  //   }
+      if (!friendExists) {
+        updatedFriends.push(userAuth as USER);
+        setProfileData({
+          ...profileData,
+          friends: updatedFriends,
+        });
+      }
+    }
 
-  //   const updateProfile = await updateUserBio(userId, formData);
-  //   setProfileData({ ...profileData, ...updateProfile });
-  //   setIsEditProfileModel(false);
-  //   setProfilePicturePreview(null);
-  //   await getUser(userId);
-  // };
+    if (newStatus === "NONE" && userAuth?.id) {
+      setProfileData({
+        ...profileData,
+        friends:
+          profileData.friends?.filter((friend) => friend.id !== userAuth.id) ||
+          [],
+      });
+    }
+  };
+
+  const handleFollowChange = (isFollowing: boolean) => {
+    if (!userAuth?.id) return;
+
+    let updatedFollowers = [...(profileData.followers || [])];
+
+    if (isFollowing) {
+      const userExists = updatedFollowers.some(
+        (follower) => follower.id === userAuth.id
+      );
+      if (!userExists) {
+        updatedFollowers.push(userAuth as USER);
+      }
+    } else {
+      updatedFollowers = updatedFollowers.filter(
+        (follower) => follower.id !== userAuth.id
+      );
+    }
+
+    setProfileData({
+      ...profileData,
+      followers: updatedFollowers,
+    });
+  };
 
   const onSubmitCoverPhoto = async (e: any) => {
     e.preventDefault();
@@ -109,24 +132,26 @@ const ProfileHeader = ({
     }
   };
 
-  // const handleProfilePictureChange = (e: any) => {
-  //   const file = e.target.files[0];
-  //   if (file) {
-  //     setProfilePictureFile(file);
-
-  //     const previewUrl = URL.createObjectURL(file);
-  //     setProfilePicturePreview(previewUrl);
-  //   }
-  // };
-
   return (
     <div className="relative">
-      <div className="relative h-64 md:h-80 bg-gray-300 overflow-hidden ">
-        <img
-          src={profileData?.coverPhotoUrl}
-          alt="cover"
-          className="w-full h-full object-cover"
-        />
+      <div className="relative h-64 md:h-80 bg-gray-300 overflow-hidden">
+        {profileData?.coverPhotoUrl ? (
+          <img
+            src={profileData.coverPhotoUrl}
+            alt="cover"
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div
+            className="w-full h-full"
+            style={{
+              background: "#1010D5",
+              backgroundImage:
+                "linear-gradient(to right, #1010D5 0%, #323257 100%)",
+            }}
+            aria-label={`${profileData?.fullName || "User"}'s cover`}
+          />
+        )}
 
         {isOwner && (
           <Button
@@ -150,7 +175,7 @@ const ProfileHeader = ({
               alt={profileData.fullName}
             />
 
-            <AvatarFallback className="dark:bg-gray-400">
+            <AvatarFallback className="dark:bg-zinc-700 text-3xl">
               {profileData?.fullName
                 ?.split(" ")
                 .map((name) => name[0])
@@ -163,29 +188,54 @@ const ProfileHeader = ({
               {profileData?.fullName}
 
               {profileData.followers.length > 5000 && (
-                <BadgeCheck
-                  className="ml-2 h-6 w-6 text-[#1877F2]"
-                />
+                <BadgeCheck className="ml-2 h-6 w-6 text-[#1877F2]" />
               )}
             </h1>
 
             <p className="text-gray-400 font-semibold">
               {formatNumberStyle(profileData?.followers?.length)}{" "}
-
               {profileData?.followers?.length > 1 ? "followers" : "follower"}
             </p>
           </div>
 
-          {isOwner && (
+          {isOwner ? (
             <Button
               className="mt-4 md:mt-0 cursor-pointer bg-[#1877F2] hover:bg-[#166FE5] text-white"
               onClick={() => {
                 setIsEditProfileModel(true);
               }}
             >
-              <PenLine className="w-4 h-4 mr-2" />
-              Edit Profile
+              <PenLine className="w-4 h-4" />
+              Edit profile
             </Button>
+          ) : (
+            <>
+              {userAuth && (
+                <div className="mt-4 md:mt-0 flex space-x-2">
+                  <FriendButton
+                    targetUserId={profileData.id || ""}
+                    initialStatus={friendRequestStatus}
+                    onStatusChange={handleFriendStatusChange}
+                    className="bg-zinc-800 hover:bg-zinc-900 text-white"
+                  />
+
+                  <FollowButton
+                    targetUserId={profileData.id || ""}
+                    profileData={profileData}
+                    className="cursor-pointer bg-zinc-800 hover:bg-zinc-900 text-white"
+                    onFollowChange={handleFollowChange}
+                  />
+
+                  <Button
+                    variant="secondary"
+                    className="cursor-pointer bg-[#1877F2] hover:bg-[#166FE5] text-white"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    Message
+                  </Button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
@@ -222,7 +272,7 @@ const ProfileHeader = ({
                   size="icon"
                   onClick={() => setIsEditCoverModel(false)}
                 >
-                  <X className="w-4 h-4" />
+                  <UserRoundX className="w-4 h-4" />
                 </Button>
               </div>
 
@@ -252,7 +302,7 @@ const ProfileHeader = ({
                       coverImageInputRef.current?.click();
                     }}
                   >
-                    <Upload className="h-4 w-4 mr-2" />
+                    <Upload className="h-4 w-4" />
                     Select New Cover Photo
                   </Button>
                 </div>
@@ -263,7 +313,7 @@ const ProfileHeader = ({
                   disabled={!coverPhotoFile}
                   type="button"
                 >
-                  <Save className="w-4 h-4 mr-2" />{" "}
+                  <Save className="w-4 h-4" />{" "}
                   {isLoading ? "Saving..." : "Save"}
                 </Button>
               </form>

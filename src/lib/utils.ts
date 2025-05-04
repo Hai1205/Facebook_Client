@@ -5,6 +5,8 @@ import { USER } from "@/utils/interface";
 
 export const serverUrl = import.meta.env.VITE_SERVER_URL as string;
 
+export const socketUrl = import.meta.env.VITE_SOCKET_URL as string;
+
 export const clientUrl = import.meta.env.VITE_CLIENT_URL as string;
 
 export function cn(...inputs: ClassValue[]) {

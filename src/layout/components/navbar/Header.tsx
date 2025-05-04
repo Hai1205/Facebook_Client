@@ -23,14 +23,17 @@ import {
   User,
   FolderLock,
   Settings,
+  X,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { NotificationsDropdown } from "@/pages/notification/NotificationsDropdown";
 import { MessagesDropdown } from "@/pages/chat/MessagesDropdown";
 import Loader from "./components/Loader";
 import { ChatContainer } from "../../../pages/chat/ChatContainer";
 import { useOpenStore } from "@/stores/useOpenStore";
+import { SearchResults } from "./components/SearchResults";
+import { debounce } from "lodash";
 
 const Header = () => {
   const { userAuth, isAuth, isAdmin, logout, checkAdmin } = useAuthStore();
@@ -38,11 +41,12 @@ const Header = () => {
   const { activeTab, setActiveTab } = useOpenStore();
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  // const [users, setUsers] = useState<USER[]>([]);
   const [filterUsers, setFilterUsers] = useState<USER[]>([]);
   const searchRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
   const [showNotifications, setShowNotifications] = useState(false);
@@ -101,29 +105,58 @@ const Header = () => {
     check();
   }, [checkAdmin]);
 
-  useEffect(() => {
-    const search = async () => {
-      if (searchQuery) {
-        const filterUser = await searchUsers(searchQuery);
-        setFilterUsers(filterUser);
-      } else {
+  const performSearch = useCallback(
+    async (query: string) => {
+      if (query.trim() === "") {
         setFilterUsers([]);
+        setIsSearchOpen(false);
+        return;
       }
-      setIsSearchOpen(false);
-    };
 
-    search();
-  }, [searchQuery, searchUsers]);
+      setIsSearching(true);
 
-  const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+      try {
+        const queryString = `?query=${encodeURIComponent(query)}`;
+        const response = await searchUsers(queryString);
+
+        setFilterUsers(Array.isArray(response) ? response : []);
+        setIsSearchOpen(true);
+      } catch (error) {
+        console.error("Search error:", error);
+        setFilterUsers([]);
+      } finally {
+        setIsSearching(false);
+      }
+    },
+    [searchUsers]
+  );
+
+  const debouncedSearchRef = useRef(
+    debounce((query: string) => {
+      performSearch(query);
+    }, 500)
+  );
+
+  const handleSearchSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsSearchOpen(false);
+    performSearch(searchQuery);
+  };
+
+  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+
+    if (query.length >= 1) {
+      debouncedSearchRef.current(query);
+    } else {
+      setIsSearchOpen(false);
+    }
   };
 
   const handleUserClick = async (userId: string) => {
     setIsSearchOpen(false);
     setSearchQuery("");
-    navigate(`user-profile/${userId}`);
+    navigate(`/profile/${userId}`);
   };
 
   const handleSearchClose = (e: MouseEvent) => {
@@ -131,12 +164,28 @@ const Header = () => {
       setIsSearchOpen(false);
     }
   };
+
   useEffect(() => {
     document.addEventListener("click", handleSearchClose);
     return () => {
       document.removeEventListener("click", handleSearchClose);
     };
-  });
+  }, []);
+
+  const clearSearch = () => {
+    setSearchQuery("");
+    setFilterUsers([]);
+    setIsSearchOpen(false);
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
+
+  const focusSearch = () => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
 
   const navItems = [
     { icon: Home, path: "/", name: "home" },
@@ -175,46 +224,46 @@ const Header = () => {
             <div className="relative" ref={searchRef}>
               <form onSubmit={handleSearchSubmit}>
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                  <Input
-                    className="pl-10 w-56 md:w-72 h-10 bg-gray-800 border-none rounded-full text-sm"
-                    placeholder="search facebook..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onFocus={() => setIsSearchOpen(true)}
+                  <Search
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 cursor-pointer"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      performSearch(searchQuery);
+                    }}
                   />
+                  <Input
+                    ref={inputRef}
+                    className="pl-10 pr-10 w-56 md:w-72 h-10 bg-gray-800 border-none rounded-full text-sm transition-all duration-300 focus:ring-2 focus:ring-blue-500"
+                    placeholder="Searching on Facebook..."
+                    value={searchQuery}
+                    onChange={handleSearchInputChange}
+                    onFocus={focusSearch}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        performSearch(searchQuery);
+                      }
+                    }}
+                  />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={clearSearch}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-200"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  )}
                 </div>
 
                 {isSearchOpen && (
-                  <div className="absolute top-full left-0 w-full bg-gray-800 border border-gray-700 rounded-md shadow-lg mt-1 z-50">
-                    <div className="p-2">
-                      {filterUsers.length > 0 ? (
-                        filterUsers.map((user) => (
-                          <div
-                            className="flex items-center gap-3 p-2 hover:bg-gray-800 rounded-md cursor-pointer"
-                            key={user?.id}
-                            onClick={() => handleUserClick(user?.id || "")}
-                          >
-                            <Avatar className="h-8 w-8">
-                              <AvatarImage
-                                src={user?.avatarPhotoUrl}
-                                alt={user?.fullName}
-                              />
-
-                              <AvatarFallback className="bg-gray-800">
-                                {user?.fullName?.substring(0, 2) || "U"}
-                              </AvatarFallback>
-                            </Avatar>
-                            <span className="text-sm">{user?.fullName}</span>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="p-2 text-gray-400 text-sm">
-                          No users found
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                  <SearchResults
+                    isSearching={isSearching}
+                    searchQuery={searchQuery}
+                    users={filterUsers}
+                    currentUser={userAuth}
+                    onUserClick={handleUserClick}
+                  />
                 )}
               </form>
             </div>

@@ -57,7 +57,7 @@ export default function FriendSuggestTab() {
     <div className="rounded-xl bg-white dark:bg-zinc-900 p-6">
       <div className="flex items-center gap-2 mb-4">
         <Users className="h-5 w-5 text-blue-500" />
-        <h2 className="font-semibold text-lg">Friend Suggestions</h2>
+        <h2 className="font-semibold text-lg">People you may know</h2>
         {friendSuggestions.length > 0 && (
           <span className="bg-blue-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full">
             {friendSuggestions.length}

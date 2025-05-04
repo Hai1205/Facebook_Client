@@ -14,7 +14,7 @@ export const mockUsers: USER[] = [
     {
         id: "1",
         email: "john.doe@example.com",
-        gender: "male",
+        gender: "MALE",
         fullName: "John Doe",
         dateOfBirth: "2000-04-15",
         avatarPhotoUrl: "/placeholder.svg",
@@ -24,7 +24,7 @@ export const mockUsers: USER[] = [
         friends: [{
             id: "2",
             email: "john.doe@example.com",
-            gender: "male",
+            gender: "MALE",
             fullName: "John Doe",
             dateOfBirth: "2000-04-15",
             avatarPhotoUrl: "/placeholder.svg",
@@ -73,7 +73,7 @@ export const mockUsers: USER[] = [
     {
         id: "2",
         email: "jane.smith@example.com",
-        gender: "female",
+        gender: "FEMALE",
         fullName: "Jane Smith",
         dateOfBirth: "1992-02-02",
         avatarPhotoUrl: "/placeholder.svg",
@@ -85,7 +85,7 @@ export const mockUsers: USER[] = [
         friends: [{
             id: "1",
             email: "john.doe@example.com",
-            gender: "male",
+            gender: "MALE",
             fullName: "John Doe",
             dateOfBirth: "2000-04-15",
             avatarPhotoUrl: "/placeholder.svg",
@@ -132,7 +132,7 @@ export const mockUsers: USER[] = [
     {
         id: "3",
         email: "john.doe@example.com",
-        gender: "male",
+        gender: "MALE",
         fullName: "Bob Johnson",
         dateOfBirth: "2000-04-15",
         avatarPhotoUrl: "/placeholder.svg",
@@ -144,7 +144,7 @@ export const mockUsers: USER[] = [
         friends: [{
             id: "2",
             email: "john.doe@example.com",
-            gender: "male",
+            gender: "MALE",
             fullName: "John Doe",
             dateOfBirth: "2000-04-15",
             avatarPhotoUrl: "/placeholder.svg",
@@ -191,7 +191,7 @@ export const mockUsers: USER[] = [
     {
         id: "4",
         email: "jane.smith@example.com",
-        gender: "female",
+        gender: "FEMALE",
         fullName: "Jane Smith",
         dateOfBirth: "1992-02-02",
         avatarPhotoUrl: "/placeholder.svg",
@@ -203,7 +203,7 @@ export const mockUsers: USER[] = [
         friends: [{
             id: "2",
             email: "john.doe@example.com",
-            gender: "male",
+            gender: "MALE",
             fullName: "John Doe",
             dateOfBirth: "2000-04-15",
             avatarPhotoUrl: "/placeholder.svg",
@@ -250,7 +250,7 @@ export const mockUsers: USER[] = [
     {
         id: "5",
         email: "john.doe@example.com",
-        gender: "male",
+        gender: "MALE",
         fullName: "John 5",
         dateOfBirth: "2000-04-15",
         avatarPhotoUrl: "/placeholder.svg",
@@ -280,7 +280,7 @@ export const mockUsers: USER[] = [
     {
         id: "6",
         email: "jane.smith@example.com",
-        gender: "female",
+        gender: "FEMALE",
         fullName: "Jane 6",
         dateOfBirth: "1992-02-02",
         avatarPhotoUrl: "/placeholder.svg",
@@ -310,7 +310,7 @@ export const mockUsers: USER[] = [
     {
         id: "7",
         email: "john.doe@example.com",
-        gender: "male",
+        gender: "MALE",
         fullName: "John 7",
         dateOfBirth: "2000-04-15",
         avatarPhotoUrl: "/placeholder.svg",
@@ -340,7 +340,7 @@ export const mockUsers: USER[] = [
     {
         id: "8",
         email: "jane.smith@example.com",
-        gender: "female",
+        gender: "FEMALE",
         fullName: "Jane 8",
         dateOfBirth: "1992-02-02",
         avatarPhotoUrl: "/placeholder.svg",
@@ -370,7 +370,7 @@ export const mockUsers: USER[] = [
     {
         id: "9",
         email: "john.doe@example.com",
-        gender: "male",
+        gender: "MALE",
         fullName: "John 9",
         dateOfBirth: "2000-04-15",
         avatarPhotoUrl: "/placeholder.svg",
@@ -400,7 +400,7 @@ export const mockUsers: USER[] = [
     {
         id: "10",
         email: "jane.smith@example.com",
-        gender: "female",
+        gender: "FEMALE",
         fullName: "Jane 10",
         dateOfBirth: "1992-02-02",
         avatarPhotoUrl: "/placeholder.svg",
@@ -717,7 +717,7 @@ export const mockNotifications: NOTIFICATION[] = [
         id: "1",
         from: mockUsers[1],
         to: mockUsers[0],
-        type: "friend_request",
+        type: "FOLLOW",
         read: false,
         createdAt: "2023-01-04T00:00:00Z",
         updatedAt: "2023-01-04T00:00:00Z",

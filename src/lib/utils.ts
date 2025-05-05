@@ -42,10 +42,16 @@ export const formatDateInDDMMYYY = (date: string) => {
 }
 
 export const countMutualFriends = (userA: USER, userB: USER): number => {
+  const mutualFriends: USER[] = getMutualFriends(userA, userB);
+
+  return mutualFriends.length;
+}
+
+export const getMutualFriends = (userA: USER, userB: USER): USER[] => {
   const idsOfUserAFriends = new Set(userA.friends.map(friend => friend.id));
   const mutualFriends: USER[] = userB.friends.filter(friend => idsOfUserAFriends.has(friend.id));
 
-  return mutualFriends.length;
+  return mutualFriends;
 }
 
 export const getUsersWithBirthdayToday = (users: USER[]): USER[] => {

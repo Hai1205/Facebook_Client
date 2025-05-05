@@ -7,12 +7,11 @@ import { CHOICE, TAB_LIST_CHOICE } from "@/utils/choices";
 type PROFILE_TAB = "posts" | "about" | "friends" | "photos";
 
 interface ProfileTabsProps {
-  userId: string | undefined;
   profileData: USER;
   isOwner: boolean;
 }
 
-const ProfileTabs = ({ userId, profileData, isOwner }: ProfileTabsProps) => {
+const ProfileTabs = ({ profileData, isOwner }: ProfileTabsProps) => {
   const [activeTab, setActiveTab] = useState("posts");
 
   return (
@@ -34,7 +33,6 @@ const ProfileTabs = ({ userId, profileData, isOwner }: ProfileTabsProps) => {
           <ProfileDetails
             activeTab={activeTab as PROFILE_TAB}
             profileData={profileData}
-            userId={userId}
             isOwner={isOwner}
           />
         </div>

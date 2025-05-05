@@ -1,13 +1,9 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ChatWindow } from "./ChatWindow";
-import { USER } from "@/utils/interface";
+import { useChatStore } from "@/stores/useChatStore";
 
-interface ChatContainerProps {
-  activeChats: USER[];
-  closeChat: (userId: string) => void;
-}
-
-export function ChatContainer({ activeChats, closeChat }: ChatContainerProps) {
+export function ChatContainer() {
+  const { activeChats, closeChat } = useChatStore();
   const [minimizedChats, setMinimizedChats] = useState<Record<string, boolean>>(
     {}
   );
@@ -21,11 +17,16 @@ export function ChatContainer({ activeChats, closeChat }: ChatContainerProps) {
 
   const visibleChats = activeChats.slice(0, 4);
 
+  const { beginValue, distance } = useMemo(() => {
+    return {
+      beginValue: 600,
+      distance: 300,
+    };
+  }, []);
+  
   return (
-    <div className="fixed bottom-0 right-0 z-10">
+    <div className="fixed bottom-0 right-0 z-30">
       {visibleChats.map((user, index) => {
-        const beginValue: number = 600;
-        const distance: number = 300;
         const rightPosition: number = beginValue + index * distance;
 
         return (

@@ -11,6 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useUserStore } from "@/stores/useUserStore";
+import { useChatStore } from "@/stores/useChatStore";
 import { USER } from "@/utils/interface";
 import {
   Bell,
@@ -30,7 +31,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { NotificationsDropdown } from "@/pages/notification/NotificationsDropdown";
 import { MessagesDropdown } from "@/pages/chat/MessagesDropdown";
 import Loader from "./components/Loader";
-import { ChatContainer } from "../../../pages/chat/ChatContainer";
 import { useOpenStore } from "@/stores/useOpenStore";
 import { SearchResults } from "./components/SearchResults";
 import { debounce } from "lodash";
@@ -39,6 +39,7 @@ const Header = () => {
   const { userAuth, isAuth, isAdmin, logout, checkAdmin } = useAuthStore();
   const { searchUsers } = useUserStore();
   const { activeTab, setActiveTab } = useOpenStore();
+  const { startChat } = useChatStore();
 
   const [isLoading, setIsLoading] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
@@ -51,7 +52,6 @@ const Header = () => {
 
   const [showNotifications, setShowNotifications] = useState(false);
   const [showMessages, setShowMessages] = useState(false);
-  const [activeChats, setActiveChats] = useState<USER[]>([]);
 
   const toggleNotifications = () => {
     setShowNotifications(!showNotifications);
@@ -63,24 +63,9 @@ const Header = () => {
     if (showNotifications) setShowNotifications(false);
   };
 
-  const startChat = (user: USER) => {
-    if (activeChats.some((chat) => chat.id === user.id)) {
-      setActiveChats([
-        user,
-        ...activeChats.filter((chat) => chat.id !== user.id),
-      ]);
-    } else {
-      setActiveChats((prev) => {
-        const newChats = [user, ...prev.filter((chat) => chat.id !== user.id)];
-        return newChats.slice(0, 4);
-      });
-    }
-
+  const handleStartChat = (user: USER) => {
+    startChat(user);
     setShowMessages(false);
-  };
-
-  const closeChat = (userId: string) => {
-    setActiveChats(activeChats.filter((chat) => chat.id !== userId));
   };
 
   const handleNavigation = (path: string, name: string) => {
@@ -321,7 +306,9 @@ const Header = () => {
                     <MessageCircle className="h-5 w-5" />
                   </Button>
 
-                  {showMessages && <MessagesDropdown onChatStart={startChat} />}
+                  {showMessages && (
+                    <MessagesDropdown onChatStart={handleStartChat} />
+                  )}
                 </div>
 
                 <DropdownMenu>
@@ -391,7 +378,6 @@ const Header = () => {
           </div>
         </div>
       </header>
-      <ChatContainer activeChats={activeChats} closeChat={closeChat} />
     </>
   );
 };

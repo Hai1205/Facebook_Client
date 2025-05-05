@@ -7,6 +7,7 @@ import MobileLayout from "./MobileLayout";
 import RightSidebarPanel from "./components/right-sidebar/RightSidebarPanel";
 import LeftSidebarPanel from "./components/left-sidebar/LeftSidebarPanel";
 import notificationSocket from "@/utils/socket/NotificationSocketService";
+import { ChatContainer } from "@/pages/chat/ChatContainer";
 
 const Layout = () => {
   const { isAuth, userAuth } = useAuthStore();
@@ -25,20 +26,13 @@ const Layout = () => {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Theo dõi thay đổi trạng thái đăng nhập để khởi tạo hoặc ngắt kết nối socket
   useEffect(() => {
-    // Khi người dùng đăng nhập
     if (isAuth && userAuth?.id) {
-      console.log("Khởi tạo kết nối socket cho người dùng:", userAuth.id);
       notificationSocket.init(userAuth.id);
-    }
-    // Khi người dùng đăng xuất (isAuth từ true sang false)
-    else if (prevAuthState.current && !isAuth) {
-      console.log("Ngắt kết nối socket do người dùng đăng xuất");
+    } else if (prevAuthState.current && !isAuth) {
       notificationSocket.disconnect();
     }
 
-    // Cập nhật giá trị của ref để theo dõi thay đổi trạng thái
     prevAuthState.current = isAuth;
   }, [isAuth, userAuth]);
 
@@ -60,6 +54,9 @@ const Layout = () => {
           <MobileLayout />
         )}
       </div>
+
+      {/* Global Chat Container */}
+      {isAuth && <ChatContainer />}
     </div>
   );
 };

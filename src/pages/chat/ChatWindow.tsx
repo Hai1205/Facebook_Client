@@ -120,6 +120,7 @@ export function ChatWindow({
         className={`w-72 bg-gray-800 rounded-t-lg shadow-lg border border-gray-700 transition-all duration-300 absolute bottom-0 ${
           isMinimized ? "h-12" : "h-96"
         }`}
+        style={{ zIndex: 40 }}
       >
         {/* Chat header */}
         <div className="p-2 flex items-center justify-between border-b border-gray-700 cursor-pointer">

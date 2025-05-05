@@ -6,29 +6,29 @@ import EditBio from "./EditBio";
 import ProfilePosts from "./tabs/ProfilePosts";
 import ProfileAbout from "./tabs/ProfileAbout";
 import ProfilePhotos from "./tabs/ProfilePhotos";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 interface ProfileDetailsProps {
   activeTab: "posts" | "about" | "friends" | "photos";
-  userId: string | undefined;
   profileData: USER;
   isOwner: boolean;
 }
 
 const ProfileDetails = ({
   activeTab,
-  userId,
   profileData,
   isOwner,
 }: ProfileDetailsProps) => {
+  const { likePost, commentPost, sharePost } =
+    usePostStore();
+    const {userAuth} = useAuthStore();
+
   const [isEditBioModel, setIsEditBioModel] = useState(false);
   const [likePosts, setLikePosts] = useState(new Set());
   const [userPosts, setUserPosts] = useState<POST[]>([]);
 
-  const { likePost, commentPost, sharePost } =
-    usePostStore();
-
   const fetchUserPosts = useCallback(() => {
-    if (!userId) {
+    if (!profileData) {
       return;
     }
 
@@ -36,7 +36,7 @@ const ProfileDetails = ({
     if (posts) {
       setUserPosts(posts);
     }
-  }, [profileData, userId]);
+  }, [profileData]);
 
   useEffect(() => {
     fetchUserPosts();
@@ -50,7 +50,7 @@ const ProfileDetails = ({
   }, []);
 
   const handleLikePost = async (postId: string) => {
-    if (!userId) {
+    if (!userAuth) {
       return;
     }
 
@@ -66,28 +66,28 @@ const ProfileDetails = ({
       JSON.stringify(Array.from(updatedLikePost))
     );
 
-    await likePost(postId, userId);
+    await likePost(postId, userAuth?.id as string);
     fetchUserPosts();
   };
 
   const handleCommentPost = async (comment: COMMENT, postId: string) => {
-    if (!userId) {
+    if (!userAuth) {
       return;
     }
 
     const formData = new FormData();
-    formData.append("text", comment.text || "");
-    await commentPost(postId, userId, formData);
+    formData.append("text", comment.text as string);
+    await commentPost(postId, userAuth?.id as string, formData);
     fetchUserPosts();
   };
 
   const handleSharePost = async (postId: string) => {
-    if (!userId) {
+    if (!userAuth) {
       return;
     }
 
-    await sharePost(postId, userId);
-    await fetchUserPosts();
+    await sharePost(postId, userAuth?.id as string);
+    fetchUserPosts();
   };
 
   // Render appropriate component based on activeTab
@@ -109,7 +109,7 @@ const ProfileDetails = ({
       case "about":
         return <ProfileAbout profileData={profileData} />;
       case "friends":
-        return <MutualFriends userId={userId} isOwner={isOwner} />;
+        return <MutualFriends user={profileData} isOwner={isOwner} />;
       case "photos":
         return <ProfilePhotos posts={userPosts} />;
       default:
@@ -124,8 +124,7 @@ const ProfileDetails = ({
       <EditBio
         isOpen={isEditBioModel}
         onClose={() => setIsEditBioModel(false)}
-        initialData={profileData?.bio}
-        userId={userId}
+        profileData={profileData}
       />
     </div>
   );

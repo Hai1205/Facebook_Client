@@ -13,6 +13,7 @@ import {
 import { toast } from "react-toastify";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { USER } from "@/utils/interface";
 
 interface ChatStore {
   isLoading: boolean;
@@ -54,6 +55,10 @@ interface ChatStore {
   deleteUserFromGroup: (conversationId: string, userId: string) => Promise<any>;
   chatAI: (prompt: string) => Promise<any>;
   reset: () => void;
+
+  activeChats: USER[];
+  startChat: (user: USER) => void;
+  closeChat: (userId: string) => void;
 }
 
 const initialState = {
@@ -264,7 +269,7 @@ export const useChatStore = create<ChatStore>()(
           set({ isLoading: false });
         }
       },
-      
+
       chatAI: async (prompt: string) => {
         set({ isLoading: true, error: null });
 
@@ -373,6 +378,33 @@ export const useChatStore = create<ChatStore>()(
 
       reset: () => {
         set({ ...initialState });
+      },
+
+      activeChats: [],
+
+      startChat: (user: USER) => {
+        set((state) => {
+          if (state.activeChats.some((chat) => chat.id === user.id)) {
+            return {
+              activeChats: [
+                user,
+                ...state.activeChats.filter((chat) => chat.id !== user.id),
+              ],
+            };
+          } else {
+            const newChats = [
+              user,
+              ...state.activeChats.filter((chat) => chat.id !== user.id),
+            ];
+            return { activeChats: newChats.slice(0, 4) };
+          }
+        });
+      },
+
+      closeChat: (userId: string) => {
+        set((state) => ({
+          activeChats: state.activeChats.filter((chat) => chat.id !== userId),
+        }));
       },
     }),
 

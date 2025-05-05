@@ -15,6 +15,7 @@ import { motion } from "framer-motion";
 import { USER } from "@/utils/interface";
 import { useUserStore } from "@/stores/useUserStore";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { useChatStore } from "@/stores/useChatStore";
 import EditUserDialog from "@/pages/admin/userManagement/components/EditUserDialog";
 import { formatNumberStyle } from "@/lib/utils";
 import { FriendButton } from "@/layout/components/navbar/components/FriendButton";
@@ -38,6 +39,7 @@ const ProfileHeader = ({
 }: ProfileHeaderProps) => {
   const { userAuth } = useAuthStore();
   const { isLoading, updateCoverPhoto } = useUserStore();
+  const { startChat } = useChatStore();
 
   const [isEditProfileModel, setIsEditProfileModel] = useState(false);
   const [isEditCoverModel, setIsEditCoverModel] = useState(false);
@@ -132,6 +134,10 @@ const ProfileHeader = ({
     }
   };
 
+  const handleStartChat = () => {
+    startChat(profileData);
+  };
+
   return (
     <div className="relative">
       <div className="relative h-64 md:h-80 bg-gray-300 overflow-hidden">
@@ -155,7 +161,7 @@ const ProfileHeader = ({
 
         {isOwner && (
           <Button
-            className="absolute bottom-4 right-4 flex items-center z-20"
+            className="absolute bottom-4 right-4 flex items-center z-10"
             variant="secondary"
             size="sm"
             onClick={() => setIsEditCoverModel(true)}
@@ -229,6 +235,7 @@ const ProfileHeader = ({
                   <Button
                     variant="secondary"
                     className="cursor-pointer bg-[#1877F2] hover:bg-[#166FE5] text-white"
+                    onClick={handleStartChat}
                   >
                     <MessageCircle className="w-4 h-4" />
                     Message

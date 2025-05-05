@@ -57,7 +57,6 @@ const ProfilePage = () => {
       <ProfileTabs
         profileData={profileData as USER}
         isOwner={isOwner}
-        userId={userId}
       />
     </div>
   );

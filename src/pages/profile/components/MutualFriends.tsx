@@ -12,37 +12,38 @@ import { Button } from "@/components/ui/button";
 import { MoreHorizontal, UserX } from "lucide-react";
 import { useUserStore } from "@/stores/useUserStore";
 import { USER } from "@/utils/interface";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { getMutualFriends } from "@/lib/utils";
 
 interface MutualFriendsProps {
-  userId: string | undefined;
+  user: USER;
   isOwner: boolean;
 }
 
-const MutualFriends = ({ userId, isOwner }: MutualFriendsProps) => {
-  const { getUserMutualFriends, followUser } = useUserStore();
+const MutualFriends = ({ user, isOwner }: MutualFriendsProps) => {
+  const { followUser } = useUserStore();
+  const { userAuth } = useAuthStore();
 
   const [mutualFriends, setMutualFriends] = useState<USER[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      if (userId) {
-        const result = await getUserMutualFriends(userId);
+      if (user) {
+        const result = getMutualFriends(user, userAuth as USER);
 
-        if (result) {
-          setMutualFriends(result);
-        }
+        setMutualFriends(result);
       }
     };
 
     fetchData();
-  }, [getUserMutualFriends, userId, setMutualFriends]);
+  }, [user, userAuth]);
 
   const handleUnfollow = async (opponentId: string) => {
-    if (!userId) {
+    if (!userAuth) {
       return;
     }
 
-    await followUser(userId, opponentId);
+    await followUser(userAuth?.id as string, opponentId);
   };
 
   return (
@@ -102,18 +103,7 @@ const MutualFriends = ({ userId, isOwner }: MutualFriendsProps) => {
                   {isOwner && (
                     <DropdownMenuContent
                       align="end"
-                      onClick={async () => {
-                        if (!userId) {
-                          return;
-                        }
-
-                        await handleUnfollow(friend?.id);
-
-                        const result = await getUserMutualFriends(userId);
-                        if (result) {
-                          setMutualFriends(result);
-                        }
-                      }}
+                      onClick={() => handleUnfollow(friend?.id as string)}
                     >
                       <DropdownMenuItem>
                         <UserX className="h-4 w-4 mr-2" /> Unfollow

@@ -1,5 +1,5 @@
 import { useState, useEffect, ButtonHTMLAttributes } from "react";
-import { Button } from "../../../../components/ui/button";
+import { Button } from "@/components/ui/button";
 import { UserPlus, UserCheck, UserRoundX, Bell } from "lucide-react";
 import { useUserStore } from "@/stores/useUserStore";
 import { useAuthStore } from "@/stores/useAuthStore";

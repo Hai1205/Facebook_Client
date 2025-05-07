@@ -33,7 +33,6 @@ const ProfileHeader = ({
   const [isEditCoverPhotoModel, setIsEditCoverPhotoModel] = useState(false);
   const [friendRequestStatus, setFriendRequestStatus] =
     useState<FRIEND_STATUS>(friendStatus);
-  const [coverImageError, setCoverImageError] = useState(false);
 
   const handleFriendStatusChange = (newStatus: FRIEND_STATUS) => {
     setFriendRequestStatus(newStatus);
@@ -99,7 +98,6 @@ const ProfileHeader = ({
             src={profileData.coverPhotoUrl}
             alt={`${profileData.fullName}'s cover`}
             className="w-full h-full object-cover"
-            onError={() => setCoverImageError(true)}
           />
         ) : (
           <div

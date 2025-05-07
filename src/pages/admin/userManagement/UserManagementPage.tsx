@@ -221,6 +221,7 @@ export default function UserManagementPage() {
         onOpenChange={setIsEditUserOpen}
         user={selectedUser}
         onUserUpdated={handleUserUpdated}
+        isAdmin={isAdmin}
       />
 
       <Tabs defaultValue="all-users" className="space-y-4">

@@ -105,10 +105,9 @@ const HomePage = () => {
 
           <div className="mt-1 space-y-6 mb-4">
             {posts.map((post) => (
-              <>
+              <div key={post.id}>
                 {post.mediaType === "VIDEO" ? (
                   <VideoCard
-                    key={post?.id}
                     post={post}
                     isLiked={likePosts.has(post?.id || "")}
                     onLike={() => handleLike(post?.id || "")}
@@ -119,7 +118,6 @@ const HomePage = () => {
                   />
                 ) : (
                   <PostCard
-                    key={post.id}
                     post={post}
                     isLiked={likePosts.has(post?.id)}
                     onLike={() => handleLike(post?.id as string)}
@@ -129,7 +127,7 @@ const HomePage = () => {
                     onShare={() => handleShare(post?.id || "")}
                   />
                 )}
-              </>
+              </div>
             ))}
           </div>
         </div>

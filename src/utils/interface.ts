@@ -83,9 +83,30 @@ export interface COMMENT {
 
 export interface MESSAGE {
 	id?: string;
+	conversation: CONVERSATION;
 	sender: USER;
-	receiver: USER;
 	content: string;
+	isRead: boolean;
+	createdAt?: string;
+	updatedAt?: string;
+}
+
+export interface CONVERSATION {
+	id?: string;
+	name: string;
+	isGroupChat: boolean;
+	participants: PARTICIPANT[];
+	unreadCount: number;
+	createdAt?: string;
+	updatedAt?: string;
+}
+
+export interface PARTICIPANT {
+	id?: string;
+	conversation: CONVERSATION;
+	user: USER;
+	leftAt?: string;
+	joinedAt?: string;
 	createdAt?: string;
 	updatedAt?: string;
 }

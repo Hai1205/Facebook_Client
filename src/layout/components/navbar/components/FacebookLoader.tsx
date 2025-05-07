@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 type REPEAT_TYPE = "reverse" | "loop" | "mirror";
 
 
-export default function Loader() {
+export default function FacebookLoader() {
   const type = "reverse";
 
   const dotVariants = {

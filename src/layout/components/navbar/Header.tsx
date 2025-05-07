@@ -30,7 +30,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { NotificationsDropdown } from "@/pages/notification/NotificationsDropdown";
 import { MessagesDropdown } from "@/pages/chat/MessagesDropdown";
-import Loader from "./components/Loader";
+import FacebookLoader from "./components/FacebookLoader";
 import { useOpenStore } from "@/stores/useOpenStore";
 import { SearchResults } from "./components/SearchResults";
 import { debounce } from "lodash";
@@ -188,7 +188,7 @@ const Header = () => {
   ];
 
   if (isLoading) {
-    return <Loader />;
+    return <FacebookLoader />;
   }
 
   return (

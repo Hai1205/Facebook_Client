@@ -139,13 +139,14 @@ export const useChatStore = create<ChatStore>()(
 
         try {
           const response = await getOrCreateConversation(userId, otherUserId);
-          const { generalStat } = response.data;
+          console.log(response)
+          const { conversation } = response.data;
 
-          if (generalStat) {
-            set({ currentConversation: generalStat });
+          if (conversation) {
+            set({ currentConversation: conversation });
           }
 
-          return generalStat;
+          return conversation;
         } catch (error: any) {
           console.error(error);
           const { message } = error.response.data;
@@ -207,13 +208,13 @@ export const useChatStore = create<ChatStore>()(
 
         try {
           const response = await getMessages(conversationId, userId);
-          const { users } = response.data;
+          const { messageResponses } = response.data;
 
-          if (users) {
-            set({ messages: users });
+          if (messageResponses) {
+            set({ messages: messageResponses });
           }
 
-          return users;
+          return messageResponses;
         } catch (error: any) {
           console.error(error);
           const { message } = error.response.data;

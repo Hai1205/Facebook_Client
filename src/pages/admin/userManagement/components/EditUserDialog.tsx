@@ -15,7 +15,7 @@ import { USER } from "@/utils/interface";
 import { useUserStore } from "@/stores/useUserStore";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import LoadingSpinner from "@/components/ui/loading";
-import { Image, Save, UserIcon } from "lucide-react";
+import { Save, UserIcon } from "lucide-react";
 import { GENDER_CHOICE, ROLE_CHOICE, STATUS_CHOICE } from "@/utils/choices";
 
 interface EditUserDialogProps {
@@ -23,6 +23,7 @@ interface EditUserDialogProps {
   onOpenChange: (open: boolean) => void;
   user: USER | null;
   onUserUpdated?: (updatedUser: USER) => void;
+  isAdmin: boolean;
 }
 
 const EditUserDialog = ({
@@ -30,21 +31,33 @@ const EditUserDialog = ({
   onOpenChange,
   user,
   onUserUpdated,
+  isAdmin,
 }: EditUserDialogProps) => {
+  const { updateUser } = useUserStore();
+
   const [userData, setUserData] = useState<USER | null>(null);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [previewAvatar, setPreviewAvatar] = useState<string>("");
-  const { updateUser } = useUserStore();
   const [isLoading, setIsLoading] = useState(false);
+  const [formattedDate, setFormattedDate] = useState<string>("");
 
   useEffect(() => {
     if (!isOpen) {
       setUserData(null);
       setAvatarFile(null);
       setPreviewAvatar("");
+      setFormattedDate("");
     } else {
       setUserData(user);
       setPreviewAvatar(user?.avatarPhotoUrl || "");
+
+      if (user?.dateOfBirth) {
+        const date = new Date(user.dateOfBirth);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        setFormattedDate(`${year}-${month}-${day}`);
+      }
     }
   }, [isOpen, user]);
 
@@ -74,8 +87,12 @@ const EditUserDialog = ({
       formData.append("role", userData.role);
       formData.append("status", userData.status);
 
+      if (userData.dateOfBirth) {
+        formData.append("dateOfBirth", formattedDate);
+      }
+
       if (avatarFile) {
-        formData.append("avatar", avatarFile);
+        formData.append("avatarPhoto", avatarFile);
       }
 
       setIsLoading(true);
@@ -123,131 +140,101 @@ const EditUserDialog = ({
                   as="h3"
                   className="text-lg font-medium leading-6 text-white"
                 >
-                  Edit USER
+                  Edit profile user
                 </Dialog.Title>
 
-                <ScrollArea className="h-[60vh] pr-4 mt-4">
-                  {userData && (
-                    <div className="grid gap-4">
-                      {/* Avatar */}
-                      <div className="flex items-center justify-center col-span-1 row-span-3">
-                        <div className="relative w-40 h-40 border border-gray-700 rounded-full overflow-hidden flex items-center justify-center bg-[#282828]">
-                          <Avatar className="rounded-full object-cover w-full h-full">
-                            <AvatarImage
-                              src={
-                                previewAvatar
-                                  ? previewAvatar
-                                  : "/placeholder.svg"
-                              }
-                              alt={userData.fullName}
-                            />
-                            <AvatarFallback>
-                              <UserIcon />
-                            </AvatarFallback>
-                          </Avatar>
-
-                          <div className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 flex items-center justify-center transition-opacity">
-                            <Button
-                              variant="secondary"
-                              size="sm"
-                              className="bg-blue-600 hover:bg-[#166FE5] text-white"
-                              onClick={() =>
-                                document.getElementById("avatar-input")?.click()
-                              }
-                            >
-                              Change
-                            </Button>
-
-                            <input
-                              id="avatar-input"
-                              type="file"
-                              accept="image/*"
-                              className="hidden"
-                              onChange={handleAvatarChange}
-                            />
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* COVER */}
-                      <div className="flex items-center justify-center col-span-1 row-span-3">
-                        <div className="relative w-full h-40 overflow-hidden flex items-center justify-center bg-[#282828]">
-                          <Avatar className="rounded-none object-cover w-full h-full">
-                            <AvatarImage
-                              src={
-                                previewAvatar
-                                  ? previewAvatar
-                                  : "/placeholder.svg"
-                              }
-                              alt={userData.fullName}
-                            />
-                            <AvatarFallback>
-                              <Image className="h 20" />
-                            </AvatarFallback>
-                          </Avatar>
-
-                          <div className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 flex items-center justify-center transition-opacity">
-                            <Button
-                              variant="secondary"
-                              size="sm"
-                              className="bg-blue-600 hover:bg-[#166FE5] text-white"
-                              onClick={() =>
-                                document.getElementById("avatar-input")?.click()
-                              }
-                            >
-                              Change
-                            </Button>
-
-                            <input
-                              id="avatar-input"
-                              type="file"
-                              accept="image/*"
-                              className="hidden"
-                              onChange={handleAvatarChange}
-                            />
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Name & Role */}
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="grid gap-2">
-                          <Label htmlFor="edit-fullName">Full Name</Label>
-
-                          <Input
-                            id="edit-fullName"
-                            value={userData.fullName}
-                            onChange={(e) =>
-                              handleChange("fullName", e.target.value)
+                <ScrollArea className="h-[55vh] pr-4 mt-4">
+                  <div className="grid gap-4">
+                    {/* Avatar */}
+                    <div className="flex items-center justify-center col-span-1 row-span-3">
+                      <div className="relative w-40 h-40 border border-gray-700 rounded-full overflow-hidden flex items-center justify-center bg-[#282828]">
+                        <Avatar className="rounded-full object-cover w-full h-full">
+                          <AvatarImage
+                            src={
+                              previewAvatar ? previewAvatar : "/placeholder.svg"
                             }
+                            alt={userData?.fullName}
                           />
-                        </div>
+                          <AvatarFallback>
+                            <UserIcon />
+                          </AvatarFallback>
+                        </Avatar>
 
-                        <div className="grid gap-2">
-                          <Label htmlFor="edit-role">Role</Label>
-
-                          <Select
-                            value={userData.role}
-                            onValueChange={(value) =>
-                              handleChange("role", value)
+                        <div className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 flex items-center justify-center transition-opacity">
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            className="bg-blue-600 hover:bg-[#166FE5] text-white"
+                            onClick={() =>
+                              document.getElementById("avatar-input")?.click()
                             }
                           >
-                            <SelectTrigger id="edit-role">
-                              <SelectValue placeholder="Select role" />
-                            </SelectTrigger>
+                            Change
+                          </Button>
 
-                            <SelectContent>
-                              {ROLE_CHOICE.map((item) => (
-                                <SelectItem key={item.value} value={item.value}>
-                                  {item.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          <input
+                            id="avatar-input"
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={handleAvatarChange}
+                          />
                         </div>
                       </div>
                     </div>
-                  )}
+
+                    {/* Full Name */}
+                    <div className="grid gap-2">
+                      <Label htmlFor="edit-fullName">Full Name</Label>
+                      <Input
+                        id="edit-fullName"
+                        value={userData?.fullName}
+                        onChange={(e) =>
+                          handleChange("fullName", e.target.value)
+                        }
+                      />
+                    </div>
+
+                    {/* Role */}
+                    {isAdmin && (
+                      <div className="grid gap-2">
+                        <Label htmlFor="edit-role">Role</Label>
+                        <Select
+                          value={userData?.role}
+                          onValueChange={(value) => handleChange("role", value)}
+                        >
+                          <SelectTrigger id="edit-role">
+                            <SelectValue placeholder="Select role" />
+                          </SelectTrigger>
+
+                          <SelectContent>
+                            {ROLE_CHOICE.map((item) => (
+                              <SelectItem key={item.value} value={item.value}>
+                                {item.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="grid gap-2 mt-3">
+                    <Label htmlFor="edit-date-of-birth">Date of birth</Label>
+
+                    <Input
+                      id="edit-date-of-birth"
+                      type="date"
+                      name="date-of-birth"
+                      className="cursor-pointer"
+                      value={formattedDate}
+                      onChange={(e) => {
+                        const newDate = e.target.value;
+                        setFormattedDate(newDate);
+                        handleChange("dateOfBirth", newDate);
+                      }}
+                    />
+                  </div>
 
                   {/* Gender */}
                   <div className="grid gap-2 mt-3">
@@ -263,7 +250,11 @@ const EditUserDialog = ({
 
                       <SelectContent>
                         {GENDER_CHOICE.map((item) => (
-                          <SelectItem key={item.value} value={item.value}>
+                          <SelectItem
+                            key={item.value}
+                            value={item.value}
+                            className="text-white cursor-pointer"
+                          >
                             {item.label}
                           </SelectItem>
                         ))}
@@ -272,26 +263,28 @@ const EditUserDialog = ({
                   </div>
 
                   {/* Status */}
-                  <div className="grid gap-2 mt-3">
-                    <Label htmlFor="edit-status">Status</Label>
+                  {isAdmin && (
+                    <div className="grid gap-2 mt-3">
+                      <Label htmlFor="edit-status">Status</Label>
 
-                    <Select
-                      value={userData?.status}
-                      onValueChange={(value) => handleChange("status", value)}
-                    >
-                      <SelectTrigger id="edit-status">
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
+                      <Select
+                        value={userData?.status}
+                        onValueChange={(value) => handleChange("status", value)}
+                      >
+                        <SelectTrigger id="edit-status">
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
 
-                      <SelectContent>
-                        {STATUS_CHOICE.map((item) => (
-                          <SelectItem key={item.value} value={item.value}>
-                            {item.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                        <SelectContent>
+                          {STATUS_CHOICE.map((item) => (
+                            <SelectItem key={item.value} value={item.value}>
+                              {item.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
                 </ScrollArea>
 
                 {/* Footer */}

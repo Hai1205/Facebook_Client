@@ -83,10 +83,17 @@ export const capitalizeEachWord = (input: string): string => {
   if (!input) return '';
 
   return input
-    .toLowerCase()                        
-    .split(' ')                           
+    .toLowerCase()
+    .split(' ')
     .map(word =>
-      word.charAt(0).toUpperCase() + word.slice(1) 
+      word.charAt(0).toUpperCase() + word.slice(1)
     )
-    .join(' ');                           
+    .join(' ');
 }
+
+export const logTestFormData = (formData: FormData) => {
+  formData.forEach((value, key) => {
+    console.log(`${key}: ${value}`);
+  });
+}
+

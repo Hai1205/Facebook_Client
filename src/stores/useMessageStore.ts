@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-interface StatStore {
+interface MessageStore {
     isLoading: boolean;
     error: string | null;
     status: number;
@@ -24,7 +24,7 @@ const initialState = {
     message: null,
 }
 
-export const useStatStore = create<StatStore>()(
+export const useMessageStore = create<MessageStore>()(
     persist(
         (set) => ({
             ...initialState,
@@ -36,9 +36,9 @@ export const useStatStore = create<StatStore>()(
                 try {
                     const response = await getConversation(user1Id,
                         user2Id);
-                    const { conversation } = response.data;
+                    const { messageResponses } = response.data;
 
-                    return conversation;
+                    return messageResponses;
                 } catch (error: any) {
                     console.error(error)
                     const { message } = error.response.data;

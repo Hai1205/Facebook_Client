@@ -21,11 +21,8 @@ const GoogleLoginButton = () => {
 
   const navigate = useNavigate();
 
-  const clientId = import.meta.env.VITE_CLIENT_ID as string;
-  console.log(clientId);
-
   const handleSuccess = useCallback(
-    (response: any) => {
+    async (response: any) => {
       if (response.credential) {
         const user: UserData = jwtDecode<UserData>(response.credential);
 
@@ -35,8 +32,6 @@ const GoogleLoginButton = () => {
           !user.given_name ||
           !user.picture
         ) {
-          console.error("Decoded user is invalid");
-
           return;
         }
 
@@ -45,11 +40,13 @@ const GoogleLoginButton = () => {
         const formData = new FormData();
         formData.append("email", user.email);
         formData.append("fullName", fullName);
-        formData.append("avatarUrl", user.picture);
+        formData.append("avatarPhotoUrl", user.picture);
 
-        loginGoogle(formData);
+        const res = await loginGoogle(formData);
 
-        navigate("/");
+        if (res) {
+          navigate("/");
+        }
       } else {
         console.warn("No credential received from Google.");
       }
@@ -74,7 +71,7 @@ const GoogleLoginButton = () => {
     const initializeGoogleLogin = () => {
       if (window.google && window.google.accounts) {
         window.google.accounts.id.initialize({
-          clientid: clientId,
+          client_id: import.meta.env.VITE_CLIENT_ID as string,
           callback: handleSuccess,
         });
 
@@ -86,7 +83,7 @@ const GoogleLoginButton = () => {
     };
 
     loadGoogleScript();
-  }, [clientId, handleSuccess]);
+  }, [handleSuccess]);
 
   return (
     <div id="google-login-button" className="mb-4  flex justify-center"></div>

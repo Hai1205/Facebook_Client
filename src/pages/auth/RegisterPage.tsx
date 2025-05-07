@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { GENDER_CHOICE } from "@/utils/choices";
-// import { GoogleLoginButton } from "@/pages/auth/components/Oauth";
+import { GoogleLoginButton } from "@/pages/auth/components/Oauth";
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
@@ -199,7 +199,7 @@ const RegisterPage: React.FC = () => {
         </div>
       </div>
 
-      {/*<GoogleLoginButton />*/}
+      <GoogleLoginButton />
 
       <div className="text-center">
         <p className="text-white text-sm">
@@ -210,7 +210,7 @@ const RegisterPage: React.FC = () => {
 
               if (!isLoading) navigate("/login");
             }}
-            className={`text-white hover:text-[#1877F2] underline cursor-pointer ${
+            className={`text-[#1877F2] hover:text-[#166FE5] underline cursor-pointer ${
               isLoading ? "pointer-events-none opacity-70" : ""
             }`}
           >

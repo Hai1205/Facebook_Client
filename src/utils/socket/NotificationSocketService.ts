@@ -29,7 +29,6 @@ class NotificationSocketService {
       return;
     }
     this.userId = userId;
-    console.log(`Initializing WebSocket for userId=${userId}`);
     this.connect();
   }
 
@@ -57,7 +56,10 @@ class NotificationSocketService {
     }
 
     this.socket = io(this.apiUrl, {
-      query: { userId: this.userId },
+      query: {
+        userId: this.userId,
+        EIO: "3"
+      },
       transports: ["websocket", "polling"],
       reconnection: true,
       reconnectionAttempts: 10,

@@ -103,7 +103,7 @@ const LoginPage: React.FC = () => {
 
               if (!isLoading) navigate("/forgot-password");
             }}
-            className={`text-white hover:text-facebook text-sm underline cursor-pointer ${
+            className={`text-[#1877F2] hover:text-[#166FE5] text-sm underline cursor-pointer ${
               isLoading ? "pointer-events-none opacity-70" : ""
             }`}
           >
@@ -138,7 +138,7 @@ const LoginPage: React.FC = () => {
           Don't have an account?{" "}
           <a
             onClick={() => navigate("/register")}
-            className="text-white hover:text-facebook underline cursor-pointer"
+            className="text-[#1877F2] hover:text-[#166FE5] underline cursor-pointer"
           >
             Register for Facebook
           </a>

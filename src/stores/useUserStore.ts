@@ -262,7 +262,11 @@ export const useUserStore = create<UserStore>()(
                     const response = await updateUser(userId, formData);
                     const { user, message } = response.data;
 
-                    useAuthStore.getState().setUserAuth(user);
+                    const userAuth = useAuthStore.getState().userAuth;
+                    if (userAuth?.id === userId) {
+                        useAuthStore.getState().setUserAuth(user);
+                    }
+
                     toast.success(message);
                     return user;
                 } catch (error: any) {

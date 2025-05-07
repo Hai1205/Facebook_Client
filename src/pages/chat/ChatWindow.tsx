@@ -13,12 +13,20 @@ import {
 import { Avatar } from "@/components/ui/avatar";
 import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { mockMessages } from "@/utils/fakeData";
 import { VideoCallWindow } from "./VideoCallWindow";
 import { VoiceCallWindow } from "./VoiceCallWindow";
-import { USER } from "@/utils/interface";
+import { CONVERSATION, MESSAGE, USER } from "@/utils/interface";
+import { useChatStore } from "@/stores/useChatStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 type SENDER = "user" | "me";
+
+interface DisplayMessage {
+  id: string;
+  content: string;
+  sender: SENDER;
+  timestamp: Date;
+}
 
 interface ChatWindowProps {
   user: USER;
@@ -27,21 +35,18 @@ interface ChatWindowProps {
   onToggleMinimize: () => void;
 }
 
-interface Message {
-  id: string;
-  text: string;
-  sender: "user" | "me";
-  timestamp: Date;
-}
-
 export function ChatWindow({
   user,
   onClose,
   isMinimized,
   onToggleMinimize,
 }: ChatWindowProps) {
+  const { getOrCreateConversation, getMessages } = useChatStore();
+  const { userAuth } = useAuthStore();
+
+  const [conversation, setConversation] = useState<CONVERSATION | null>(null);
+  const [messages, setMessages] = useState<DisplayMessage[]>([]);
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState<Message[]>([]);
   const [isVoiceCallOpen, setIsVoiceCallOpen] = useState(false);
   const [isVideoCallOpen, setIsVideoCallOpen] = useState(false);
 
@@ -52,16 +57,38 @@ export function ChatWindow({
   };
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      const result = mockMessages.map((msg) => ({
-        ...msg,
-        sender: msg.sender as SENDER,
-      }));
-      setMessages(result);
+    const fetchConversation = async () => {
+      if (userAuth?.id && user?.id) {
+        const conversation = await getOrCreateConversation(
+          userAuth.id,
+          user.id
+        );
+        setConversation(conversation);
+      }
     };
 
-    fetchUsers();
-  }, []);
+    fetchConversation();
+  }, [getOrCreateConversation, userAuth?.id, user?.id]);
+
+  useEffect(() => {
+    const fetchMessages = async () => {
+      if (conversation?.id && userAuth?.id) {
+        const response: MESSAGE[] = await getMessages(
+          conversation.id,
+          userAuth.id
+        );
+        const result = response.map((msg) => ({
+          id: msg.id || Date.now().toString(),
+          content: msg.content,
+          sender: (msg.sender.id === userAuth.id ? "me" : "user") as SENDER,
+          timestamp: new Date(msg.createdAt || Date.now()),
+        }));
+        setMessages(result);
+      }
+    };
+
+    fetchMessages();
+  }, [conversation?.id, userAuth?.id, getMessages]);
 
   useEffect(() => {
     scrollToBottom();
@@ -73,25 +100,12 @@ export function ChatWindow({
         ...messages,
         {
           id: Date.now().toString(),
-          text: input.trim(),
+          content: input.trim(),
           sender: "me",
           timestamp: new Date(),
         },
       ]);
       setInput("");
-
-      // Simulate a response after a short delay
-      setTimeout(() => {
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: (Date.now() + 1).toString(),
-            text: "Thanks for your message! I'll get back to you soon.",
-            sender: "user",
-            timestamp: new Date(),
-          },
-        ]);
-      }, 1000);
     }
   };
 
@@ -203,7 +217,7 @@ export function ChatWindow({
                           : "bg-gray-800 text-gray-100"
                       }`}
                     >
-                      <p className="text-sm">{message.text}</p>
+                      <p className="text-sm">{message.content}</p>
                     </div>
 
                     <p className="text-xs text-gray-400 mt-1">

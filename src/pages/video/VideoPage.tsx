@@ -1,25 +1,15 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { usePostStore } from "@/stores/usePostStore";
-import { COMMENT, POST } from "@/utils/interface";
+import { COMMENT } from "@/utils/interface";
 import { useAuthStore } from "@/stores/useAuthStore";
 import VideoCard from "./components/VideoCard";
 
 const VideoPage = () => {
-  const { getAllPost, likePost, sharePost, commentPost } = usePostStore();
+  const { homePosts, likePost, sharePost, commentPost } = usePostStore();
   const { userAuth } = useAuthStore();
 
-  const [posts, setPosts] = useState<POST[]>([]);
   const [likePosts, setLikePosts] = useState(new Set());
-
-  const fetchPosts = useCallback(async () => {
-    const posts = await getAllPost();
-    setPosts(posts);
-  }, [getAllPost]);
-
-  useEffect(() => {
-    fetchPosts();
-  }, [fetchPosts]);
 
   useEffect(() => {
     const saveLikes = sessionStorage.getItem("likePosts");
@@ -50,10 +40,9 @@ const VideoPage = () => {
     );
 
     await likePost(userAuth?.id, postId);
-    await fetchPosts();
   };
 
-  const videoPosts = posts?.filter((post) => post.mediaType === "VIDEO");
+  const videoPosts = homePosts?.filter((post) => post.mediaType === "VIDEO");
 
   const handleComment = async (postId: string, comment: COMMENT) => {
     if (!userAuth?.id) {
@@ -65,7 +54,6 @@ const VideoPage = () => {
     formData.append("text", comment?.text);
 
     await commentPost(postId, userAuth?.id, formData);
-    await fetchPosts();
   };
 
   const handleShare = async (postId: string) => {
@@ -75,7 +63,6 @@ const VideoPage = () => {
     }
 
     await sharePost(postId, userAuth?.id);
-    await fetchPosts();
   };
 
   return (

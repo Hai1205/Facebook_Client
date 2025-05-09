@@ -19,7 +19,8 @@ import {
     updateCoverPhoto,
     updateUser,
     updateUserBio,
-    getFriendRequestStatus
+    getFriendRequestStatus,
+    getUserProfile
 } from "@/utils/api/usersApi";
 
 interface UserStore {
@@ -31,6 +32,7 @@ interface UserStore {
     getAllUser: () => Promise<any>;
     getAllFriendsRequest: () => Promise<any>;
     getUser: (userId: string) => Promise<any>;
+    getUserProfile: (currentUserId: string, targetUserId: string) => Promise<any>;
     createUser: (formData: FormData) => Promise<any>;
     updateUser: (userId: string, formData: FormData) => Promise<any>;
     updateUserBio: (userId: string, formData: FormData) => Promise<any>;
@@ -39,7 +41,7 @@ interface UserStore {
     deleteUser: (userId: string) => Promise<any>;
     followUser: (currentUserId: string, opponentId: string) => Promise<any>;
     sendFriendRequest: (currentUserId: string, opponentId: string) => Promise<any>;
-    responseFriendRequest: (currentUserId: string, opponentId: string) => Promise<any>;
+    responseFriendRequest: (currentUserId: string, opponentId: string, formData: FormData) => Promise<any>;
     unFriend: (currentUserId: string, opponentId: string) => Promise<any>;
     getSuggestedUsers: (userId: string) => Promise<any>;
     getUserFriendsRequests: (userId: string) => Promise<any>;
@@ -118,15 +120,34 @@ export const useUserStore = create<UserStore>()(
                     set({ isLoading: false });
                 }
             },
+           
+            getUserProfile: async (currentUserId: string, targetUserId: string) => {
+                set({ isLoading: true, error: null });
+
+                try {
+                    const response = await getUserProfile(currentUserId || "NONE", targetUserId);
+
+                    return response.data;
+                } catch (error: any) {
+                    console.error(error)
+                    const { message } = error.response.data;
+                    set({ error: message });
+
+                    toast.error(message);
+                    return false;
+                } finally {
+                    set({ isLoading: false });
+                }
+            },
 
             getUserFriendsRequests: async (userId) => {
                 set({ isLoading: true, error: null });
 
                 try {
                     const response = await getUserFriendsRequests(userId);
-                    const { user } = response.data;
+                    const { friendRequests } = response.data;
 
-                    return user;
+                    return friendRequests;
                 } catch (error: any) {
                     console.error(error)
                     const { message } = error.response.data;
@@ -176,15 +197,12 @@ export const useUserStore = create<UserStore>()(
                 }
             },
 
-            responseFriendRequest: async (currentUserId, opponentId) => {
+            responseFriendRequest: async (currentUserId, opponentId, formData: FormData) => {
                 set({ error: null });
 
                 try {
-                    const response = await responseFriendRequest(currentUserId, opponentId);
-                    const { message } = response.data;
+                    await responseFriendRequest(currentUserId, opponentId, formData);
 
-                    toast.success(message);
-                    return true;
                 } catch (error: any) {
                     console.error(error)
                     const { message } = error.response.data;

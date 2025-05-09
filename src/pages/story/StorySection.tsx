@@ -1,31 +1,15 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { usePostStore } from "@/stores/usePostStore";
-import { STORY } from "@/utils/interface";
 import StoryCard from "./components/StoryCard";
-import { useAuthStore } from "@/stores/useAuthStore";
+import { usePostStore } from "@/stores/usePostStore";
 
 const StorySection = () => {
-  const { getUserStoryFeed } = usePostStore();
-  const { userAuth } = useAuthStore();
-
-  const [stories, setStories] = useState<STORY[]>([]);
+  const { homeStories } = usePostStore();
   const [scrollPosition, setScrollPosition] = useState(0);
   const [maxScroll, setMaxScroll] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const fetchStories = useCallback(async () => {
-    const stories = await getUserStoryFeed(userAuth?.id as string);
-    if (stories) {
-      setStories(stories);
-    }
-  }, [getUserStoryFeed, userAuth]);
-
-  useEffect(() => {
-    fetchStories();
-  }, [fetchStories]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -38,7 +22,7 @@ const StorySection = () => {
       window.addEventListener("resize", updateMaxScroll);
       return () => window.removeEventListener("resize", updateMaxScroll);
     }
-  }, []);
+  }, [homeStories.length]);
 
   const scroll = (direction: string) => {
     const container = containerRef.current;
@@ -69,16 +53,16 @@ const StorySection = () => {
           dragConstraints={{
             right: 0,
             left:
-              -((stories.length + 1) * 200) +
+              -((homeStories.length + 1) * 200) +
               (containerRef.current ? containerRef.current.offsetWidth : 0),
           }}
         >
-          <StoryCard isAddStory={true} storiesList={stories} />
-          {stories?.map((story, index) => (
+          <StoryCard isAddStory={true} storiesList={homeStories} />
+          {homeStories?.map((story, index) => (
             <StoryCard
               story={story}
               key={story.id}
-              storiesList={stories}
+              storiesList={homeStories}
               currentIndex={index}
             />
           ))}
@@ -97,7 +81,7 @@ const StorySection = () => {
         )}
 
         {/* Right side scroll button */}
-        {scrollPosition < maxScroll && stories.length > 3 && (
+        {scrollPosition < maxScroll && homeStories.length > 3 && (
           <Button
             variant="outline"
             size="icon"

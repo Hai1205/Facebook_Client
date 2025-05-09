@@ -14,12 +14,13 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { formateDateAgo, clientUrl } from "@/lib/utils";
-import { COMMENT, POST } from "@/utils/interface";
+import { COMMENT, POST, USER } from "@/utils/interface";
 import PostComments from "@/pages/post/components/PostComments";
 
 interface PostContentProps {
   post: POST;
   isLiked: boolean;
+  profileData: USER;
   onShare: () => void;
   onComment: (comment: COMMENT) => void;
   onLike: () => void;
@@ -28,6 +29,7 @@ interface PostContentProps {
 const PostsContent = ({
   post,
   isLiked,
+  profileData,
   onShare,
   onComment,
   onLike,
@@ -37,10 +39,12 @@ const PostsContent = ({
   const commentInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleCommentClick = () => {
-    setShowComments(true);
-    setTimeout(() => {
-      commentInputRef?.current?.focus();
-    }, 0);
+    setShowComments(!showComments);
+    if (!showComments) {
+      setTimeout(() => {
+        commentInputRef?.current?.focus();
+      }, 0);
+    }
   };
 
   const handleShare = (platform: string) => {
@@ -78,22 +82,20 @@ const PostsContent = ({
         <CardContent className="p-6  dark:text-white ">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-3 cursor-pointer">
-              <Avatar>
-                {post?.user?.avatarPhotoUrl ? (
-                  <AvatarImage
-                    src={post?.user?.avatarPhotoUrl}
-                    alt={post?.user?.fullName}
-                  />
-                ) : (
-                  <AvatarFallback className="dark:bg-gray-400">
-                    {post?.user?.fullName?.substring(0, 2)}
-                  </AvatarFallback>
-                )}
+              <Avatar className="h-12 w-12">
+                <AvatarImage
+                  src={profileData?.avatarPhotoUrl}
+                  alt={profileData?.fullName}
+                />
+
+                <AvatarFallback className="dark:bg-zinc-700">
+                  {profileData?.fullName?.substring(0, 2)}
+                </AvatarFallback>
               </Avatar>
 
               <div>
                 <p className="font-semibold dark:text-white">
-                  {post?.user?.fullName}
+                  {profileData?.fullName}
                 </p>
 
                 <p className="font-sm text-gray-500">

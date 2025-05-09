@@ -82,10 +82,6 @@ const RegisterPage: React.FC = () => {
     data.append("dateOfBirth", formData.dateOfBirth);
     data.append("gender", formData.gender);
 
-    data.forEach((value, key) => {
-      console.log(`${key}: ${value}`);
-    });
-
     const res = await register(data);
 
     if (!res) {
@@ -159,7 +155,7 @@ const RegisterPage: React.FC = () => {
                 }
               }}
             >
-              <SelectTrigger id="edit-gender">
+              <SelectTrigger id="edit-gender" className="h-11">
                 <SelectValue placeholder="Select gender" />
               </SelectTrigger>
 
@@ -175,6 +171,9 @@ const RegisterPage: React.FC = () => {
                 ))}
               </SelectContent>
             </Select>
+            {errors.gender && (
+              <span className="text-red-500 text-xs mt-1">{errors.gender}</span>
+            )}
           </div>
         </div>
 

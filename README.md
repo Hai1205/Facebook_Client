@@ -1,50 +1,77 @@
-# React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# Sportify
 
-Currently, two official plugins are available:
+## Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+**Sportify** is a web-based music streaming application inspired by Spotify, featuring full music playback, song and album management, social interaction, and more.
 
-## Expanding the ESLint configuration
+- 🎵 Music playback with full controls (play, pause, next, previous)  
+- 🎧 Display currently playing song with detailed information  
+- 📚 Browse songs and albums  
+- 🎤 Song detail page with lyrics and metadata  
+- 💿 Album detail page with track list  
+- 🔍 Search for songs, albums, and artists  
+- ❤️ Like songs and albums  
+- 👤 User and artist profile pages  
+- 🔐 Complete authentication system  
+- 💬 Real-time chat between users  
+- 📱 Responsive design  
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Technologies Used
 
-- Configure the top-level `parserOptions` property like this:
+- **React 18** – Frontend framework  
+- **TypeScript** – Programming language  
+- **Vite** – Build tool  
+- **Tailwind CSS** – CSS framework  
+- **shadcn/ui** – UI component library  
+- **Zustand** – State management  
+- **React Router** – Routing  
+- **Axios** – HTTP client  
+- **WebSocket** – Real-time communication  
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## Installation
+
+### Prerequisites
+
+- Node.js version 18.x or above  
+- npm or yarn
+
+### Steps
+
+1. Clone the repository and navigate to the frontend folder:
+
+```bash
+git clone https://github.com/haole2k4/Sportify-Client.git
+cd Sportify-Client
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+2. Install dependencies:
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```bash
+npm install
 ```
+
+3. Create and configure a `.env` file with the following variables:
+
+```env
+VITE_SERVER_URL=
+VITE_SOCKET_URL=
+VITE_CLIENT_ID=
+VITE_CLIENT_URL=
+```
+
+4. Run the development server:
+
+```bash
+npm run dev
+```
+
+The frontend will be available at [http://localhost:3000](http://localhost:3000)
+
+## Team Members
+
+| Student ID     | Full Name           |
+|----------------|---------------------|
+| 3122410095     | Nguyễn Hoàng Hải    |
+| 3122410117     | Nguyễn Văn Hiếu     |
+| 3122410365     | Đoàn Tuấn Tài       |

@@ -14,7 +14,7 @@ import { USER } from "@/utils/interface";
 import { Save } from "lucide-react";
 import { useForm } from "react-hook-form";
 
-interface EditBioProps {
+interface EditBioDialogProps {
   isOpen: boolean;
   onClose: () => void;
   profileData: USER;
@@ -30,7 +30,7 @@ interface BIO {
   hometown?: string;
 }
 
-const EditBio = ({ isOpen, onClose, profileData }: EditBioProps) => {
+const EditBioDialog = ({ isOpen, onClose, profileData }: EditBioDialogProps) => {
   const {
     register,
     handleSubmit,
@@ -41,7 +41,7 @@ const EditBio = ({ isOpen, onClose, profileData }: EditBioProps) => {
 
   const { updateUserBio } = useUserStore();
 
-  const handleEditBio = async (data: BIO) => {
+  const handleEditBioDialog = async (data: BIO) => {
     if (!profileData) {
       return;
     }
@@ -63,7 +63,7 @@ const EditBio = ({ isOpen, onClose, profileData }: EditBioProps) => {
         <DialogContent className="max-w-[400px]">
           <DialogHeader>Edit Bio</DialogHeader>
 
-          <form onSubmit={handleSubmit(handleEditBio)}>
+          <form onSubmit={handleSubmit(handleEditBioDialog)}>
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="bio" className="text-right">
@@ -167,4 +167,4 @@ const EditBio = ({ isOpen, onClose, profileData }: EditBioProps) => {
   );
 };
 
-export default EditBio;
+export default EditBioDialog;

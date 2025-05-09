@@ -1,9 +1,11 @@
 import { countUnreadMessages, getContacts, getConversation, getLatestMessages } from "@/utils/api/messageApi";
+import { USER } from "@/utils/interface";
 import { toast } from "react-toastify";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
 interface MessageStore {
+    contacts: USER[],
     isLoading: boolean;
     error: string | null;
     status: number;
@@ -18,6 +20,7 @@ interface MessageStore {
 }
 
 const initialState = {
+    contacts: [],
     isLoading: false,
     error: null,
     status: 0,
@@ -58,6 +61,7 @@ export const useMessageStore = create<MessageStore>()(
                     const response = await getContacts(userId);
                     const { users } = response.data;
 
+                    set({ contacts: users });
                     return users;
                 } catch (error: any) {
                     console.error(error)

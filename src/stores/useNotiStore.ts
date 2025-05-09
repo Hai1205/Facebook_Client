@@ -2,8 +2,10 @@ import { toast } from "react-toastify";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { deleteNoti, deleteUserNotifications, getAllNoti, getUserNotifications } from "@/utils/api/notiApi";
+import { NOTIFICATION } from "@/utils/interface";
 
 export interface NotiStore {
+    notifications: NOTIFICATION[]
     status: number;
     message: string | null;
     isLoading: boolean;
@@ -17,6 +19,7 @@ export interface NotiStore {
 }
 
 const initialState = {
+    notifications: [],
     status: 0,
     message: null,
     isLoading: false,
@@ -91,8 +94,9 @@ export const useNotiStore = create<NotiStore>()(
 
                 try {
                     const response = await getUserNotifications(userId);
-                    const { notifications } = response.data;
+                    const { notifications } = response.data
 
+                    set({ notifications: notifications.slice(0, 10) });
                     return notifications;
                 } catch (error: any) {
                     console.error(error)

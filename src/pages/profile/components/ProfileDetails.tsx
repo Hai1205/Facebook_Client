@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { COMMENT, POST, USER } from "@/utils/interface";
 import { usePostStore } from "@/stores/usePostStore";
 import MutualFriends from "./MutualFriends";
-import EditBio from "./EditBio";
+import EditBioDialog from "./dialogs/EditBioDialog";
 import ProfilePosts from "./tabs/ProfilePosts";
 import ProfileAbout from "./tabs/ProfileAbout";
 import ProfilePhotos from "./tabs/ProfilePhotos";
@@ -96,7 +96,6 @@ const ProfileDetails = ({
       case "posts":
         return (
           <ProfilePosts
-            userPosts={userPosts}
             likePosts={likePosts}
             profileData={profileData}
             isOwner={isOwner}
@@ -121,7 +120,7 @@ const ProfileDetails = ({
     <div>
       {renderTabContent()}
 
-      <EditBio
+      <EditBioDialog
         isOpen={isEditBioModel}
         onClose={() => setIsEditBioModel(false)}
         profileData={profileData}

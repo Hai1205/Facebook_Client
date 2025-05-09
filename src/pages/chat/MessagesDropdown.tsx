@@ -1,11 +1,11 @@
 import { User, Search } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useEffect, useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { USER } from "@/utils/interface";
-import { useMessageStore } from "@/stores/useMessageStore";
-import { useAuthStore } from "@/stores/useAuthStore";
+// import { useMessageStore } from "@/stores/useMessageStore";
+// import { useAuthStore } from "@/stores/useAuthStore";
 
 interface MessagesDropdownProps {
   onChatStart: (user: USER) => void;
@@ -21,23 +21,23 @@ interface CHAT {
 }
 
 export function MessagesDropdown({ onChatStart }: MessagesDropdownProps) {
-  const { getContacts } = useMessageStore();
-  const { userAuth } = useAuthStore();
+  // const { contacts } = useMessageStore();
+  // const { userAuth } = useAuthStore();
 
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [chats, setChats] = useState<CHAT[]>([]);
 
-  useEffect(() => {
-    const fetchChats = async () => {
-      getContacts(userAuth?.id as string).then(setChats);
-    };
+  // useEffect(() => {
+  //   const fetchChats = async () => {
+  //     getContacts(userAuth?.id as string).then(setChats);
+  //   };
 
-    fetchChats();
-  }, [getContacts, userAuth]);
+  //   fetchChats();
+  // }, [getContacts, userAuth]);
 
   const filteredChats = useMemo(() => {
-    return chats.filter((chat) =>
-      chat.user.fullName.toLowerCase().includes(searchTerm.toLowerCase())
+    return chats.filter((contact) =>
+      contact.user.fullName.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [chats, searchTerm]);
 

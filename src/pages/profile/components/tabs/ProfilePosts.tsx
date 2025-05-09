@@ -5,7 +5,6 @@ import NewPostForm from "@/pages/post/components/NewPostForm";
 import { useState } from "react";
 
 interface ProfilePostsProps {
-  userPosts: POST[];
   likePosts: Set<unknown>;
   profileData: any;
   isOwner: boolean;
@@ -16,7 +15,6 @@ interface ProfilePostsProps {
 }
 
 const ProfilePosts = ({
-  userPosts,
   likePosts,
   profileData,
   isOwner,
@@ -43,10 +41,11 @@ const ProfilePosts = ({
           setIsPostFormOpen={setIsPostFormOpen}
         />
 
-        {userPosts?.map((post) => (
+        {profileData.posts?.map((post: POST) => (
           <PostsContent
             key={post?.id}
             post={post}
+            profileData={profileData}
             isLiked={likePosts.has(post?.id)}
             onLike={() => onLike(post?.id || "")}
             onComment={(comment: COMMENT) => onComment(comment, post?.id || "")}

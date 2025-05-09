@@ -4,7 +4,7 @@ export type USER_ROLE = "USER" | "ADMIN";
 
 export type USER_GENDER = "MALE" | "FEMALE" | "OTHER";
 
-export type FRIEND_STATUS = "PENDING" | "NONE" | "SENT" | "FRIEND";
+export type FRIEND_STATUS = "NONE" | "SENT" | "FRIEND" | "PENDING" | "REJECT" | "ACCEPT";
 
 export type MEDIA_TYPE = "IMAGE" | "VIDEO";
 
@@ -14,4 +14,4 @@ export type REPORT_TYPE = "POST" | "STORY" | "COMMENT" | "USER";
 
 export type REPORT_STATUS = "ACCEPT" | "PENDING" | "REJECT";
 
-export type NOTI_TYPE = "LIKE" | "FOLLOW" | "COMMENT";
+export type NOTI_TYPE = "LIKE" | "FOLLOW" | "COMMENT" | "FRIEND_REQUEST";

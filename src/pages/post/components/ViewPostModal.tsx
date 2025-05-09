@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import { Button } from "@/components/ui/button";
@@ -6,26 +6,35 @@ import PostCard from "../PostCard";
 import { POST, USER } from "@/utils/interface";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { X } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
-interface PostModalProps {
+interface ViewPostModalProps {
   isOpen: boolean;
-  onClose: () => void;
+  onOpenChange: (open: boolean) => void;
   post: POST;
 }
 
-export function PostModal({ isOpen, onClose, post }: PostModalProps) {
+export function ViewPostModal({ isOpen, onOpenChange, post }: ViewPostModalProps) {
   const { userAuth } = useAuthStore();
-  const [isLiked, setIsLiked] = useState(
-    post.likes.includes(userAuth as USER) || false
-  );
 
+  const [isLiked, setIsLiked] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!post) {
+      return;
+    }
+
+    setIsLiked(post.likes.includes(userAuth as USER))
+
+  }, [post, userAuth]);
+  
   const handleLike = () => {
     setIsLiked(!isLiked);
   };
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={onClose}>
+      <Dialog as="div" className="relative z-50" onClose={onOpenChange}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -57,23 +66,33 @@ export function PostModal({ isOpen, onClose, post }: PostModalProps) {
                   <h3 className="text-lg font-medium text-white">
                     Post by {post.user.fullName}
                   </h3>
+
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={onClose}
+                    onClick={() => onOpenChange(false)}
                     className="rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800"
                   >
                     <X className="h-5 w-5" />
                   </Button>
                 </Dialog.Title>
 
-                <PostCard
-                  post={post}
-                  isLiked={isLiked}
-                  onShare={() => {}}
-                  onComment={() => {}}
-                  onLike={handleLike}
-                />
+                <div
+                  className="relative"
+                  style={{ height: "calc(100vh - 200px)" }}
+                >
+                  <ScrollArea className="h-full w-full">
+                    <div className="p-2">
+                      <PostCard
+                        post={post}
+                        isLiked={isLiked}
+                        onShare={() => {}}
+                        onComment={() => {}}
+                        onLike={handleLike}
+                      />
+                    </div>
+                  </ScrollArea>
+                </div>
               </Dialog.Panel>
             </Transition.Child>
           </div>

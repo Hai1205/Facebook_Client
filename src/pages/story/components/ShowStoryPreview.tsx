@@ -38,7 +38,6 @@ const ShowStoryPreview = ({
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
-    // Ngăn chặn tất cả các sự kiện kéo chuột và touchmove
     const preventDrag = (e: MouseEvent | TouchEvent) => {
       e.preventDefault();
     };
@@ -249,9 +248,9 @@ const ShowStoryPreview = ({
           <div className="absolute bottom-4 right-2 transform -translate-x-1/2">
             <Button
               onClick={onPost}
-              className="bg-[#1877F2] hover:bg-orange-500 text-white"
+              className="bg-[#1877F2] hover:bg-[#166FE5] text-white"
             >
-              {isLoading ? "Saving..." : "Share"}
+              {isLoading ? "Sharing..." : "Share"}
             </Button>
           </div>
         )}

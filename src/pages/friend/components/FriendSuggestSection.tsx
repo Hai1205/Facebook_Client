@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -22,22 +22,6 @@ const FriendSuggestSection = ({ limit }: FriendSuggestSectionProps) => {
   const [scrollPosition, setScrollPosition] = useState(0);
   const [maxScroll, setMaxScroll] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const fetchStories = useCallback(async () => {
-    const friendSuggest = await getSuggestedUsers(userAuth?.id as string);
-
-    if (friendSuggest) {
-      if (limit) {
-        setFriendSuggest(friendSuggest.slice(0, limit));
-      } else {
-        setFriendSuggest(friendSuggest);
-      }
-    }
-  }, [getSuggestedUsers, limit, userAuth]);
-
-  useEffect(() => {
-    fetchStories();
-  }, [fetchStories]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -72,12 +56,16 @@ const FriendSuggestSection = ({ limit }: FriendSuggestSectionProps) => {
       const result = await getSuggestedUsers(userAuth?.id as string);
 
       if (result) {
-        setFriendSuggest(result);
+        if (limit && limit > 0) {
+          setFriendSuggest(result.slice(0, limit));
+        } else {
+          setFriendSuggest(result);
+        }
       }
     };
 
     fetchFriendRequests();
-  }, [getSuggestedUsers, userAuth]);
+  }, [getSuggestedUsers, userAuth, limit]);
 
   const handleSendFriendRequest = (userId: string) => {
     sendFriendRequest(userAuth?.id as string, userId);

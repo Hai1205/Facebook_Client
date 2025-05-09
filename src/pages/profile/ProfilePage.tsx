@@ -9,7 +9,7 @@ import { ProfileHeaderSkeleton } from "./components/ProfileHeaderSkeleton";
 import { FRIEND_STATUS } from "@/utils/types";
 
 const ProfilePage = () => {
-  const { getUser } = useUserStore();
+  const { getUserProfile } = useUserStore();
   const { userAuth } = useAuthStore();
 
   const params = useParams();
@@ -22,17 +22,17 @@ const ProfilePage = () => {
 
   const fetchProfile = useCallback(async () => {
     if (userId) {
-      const {user: currentUser, friendStatus} = await getUser(userId);
+      const { user: targetUser, friendStatus } = await getUserProfile(userAuth?.id as string, userId);
 
-      if (currentUser) {
-        setProfileData(currentUser);
+      if (targetUser) {
+        setProfileData(targetUser);
         setFriendRequestStatus(friendStatus);
 
-        const isMyProfile = currentUser?.id === userAuth?.id;
+        const isMyProfile = targetUser?.id === userAuth?.id;
         setIsOwner(isMyProfile);
       }
     }
-  }, [userId, getUser, userAuth]);
+  }, [userId, getUserProfile, userAuth]);
 
   useEffect(() => {
     if (userId) {
@@ -50,14 +50,12 @@ const ProfilePage = () => {
         profileData={profileData as USER}
         isOwner={isOwner}
         userId={userId}
-        friendStatus={friendRequestStatus}
+        friendRequestStatus={friendRequestStatus}
         setProfileData={setProfileData}
+        setFriendRequestStatus={setFriendRequestStatus}
       />
 
-      <ProfileTabs
-        profileData={profileData as USER}
-        isOwner={isOwner}
-      />
+      <ProfileTabs profileData={profileData as USER} isOwner={isOwner} />
     </div>
   );
 };

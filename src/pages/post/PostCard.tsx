@@ -22,6 +22,7 @@ import {
 import PostComments from "./components/PostComments";
 import { COMMENT, POST } from "@/utils/interface";
 import { formateDateAgo, clientUrl } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 interface PostCardProps {
   post: POST;
@@ -87,24 +88,28 @@ const PostCard = ({
         <CardContent className="p-6 dark:text-white">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-3 cursor-pointer">
-              <Avatar>
-                <AvatarImage
-                  src={post?.user?.avatarPhotoUrl}
-                  alt={post?.user?.fullName}
-                />
-                <AvatarFallback className="bg-gray-800 text-white">
-                  {post?.user?.fullName?.substring(0, 2) || "FU"}
-                </AvatarFallback>
-              </Avatar>
+              <Link to={`/profile/${post?.user?.id}`}>
+                <Avatar className="h-12 w-12">
+                  <AvatarImage
+                    src={post?.user?.avatarPhotoUrl}
+                    alt={post?.user?.fullName}
+                  />
+                  <AvatarFallback className="bg-zinc-700 text-white text-2xl">
+                    {post?.user?.fullName?.substring(0, 2) || "FU"}
+                  </AvatarFallback>
+                </Avatar>
+              </Link>
 
               <div>
-                <p className="text-s font-bold flex items-center">
-                  {post?.user?.fullName || "Facebook User"}
+                <Link to={`/profile/${post?.user?.id}`}>
+                  <p className="text-s font-bold flex items-center">
+                    {post?.user?.fullName || "Facebook User"}
 
-                  {post?.user?.followers.length > 5000 && (
-                    <BadgeCheck className="ml-2 h-4 w-4 text-[#1877F2]" />
-                  )}
-                </p>
+                    {post?.user?.followers.length > 5000 && (
+                      <BadgeCheck className="ml-2 h-4 w-4 text-[#1877F2]" />
+                    )}
+                  </p>
+                </Link>
 
                 <p className="font-sm text-gray-500">
                   {formateDateAgo(post?.createdAt as string)}

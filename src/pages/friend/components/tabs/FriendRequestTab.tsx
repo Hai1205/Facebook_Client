@@ -6,7 +6,7 @@ import { useAuthStore } from "@/stores/useAuthStore";
 import { UserPlus } from "lucide-react";
 
 export default function FriendRequestTab() {
-  const { getUserFriendsRequests } = useUserStore();
+  const { getUserFriendsRequests, responseFriendRequest } = useUserStore();
   const { userAuth } = useAuthStore();
 
   const [friendRequests, setFriendRequests] =
@@ -31,12 +31,20 @@ export default function FriendRequestTab() {
     fetchFriendRequests();
   }, [getUserFriendsRequests, userAuth]);
 
-  const handleAccept = (id: string) => {
-    setFriendRequests(friendRequests.filter((request) => request.id !== id));
+  const handleAccept = async (FR: FRIEND_REQUEST) => {
+    setFriendRequests(friendRequests.filter((request) => request.id !== FR.id));
+  
+    const formData = new FormData();
+    formData.append("status", "ACCEPT");
+    await responseFriendRequest(userAuth?.id as string, FR.from.id as string, formData);
   };
 
-  const handleDelete = (id: string) => {
-    setFriendRequests(friendRequests.filter((request) => request.id !== id));
+  const handleDelete = async (FR: FRIEND_REQUEST) => {
+    setFriendRequests(friendRequests.filter((request) => request.id !== FR.id));
+
+    const formData = new FormData();
+    formData.append("status", "REJECT");
+    await responseFriendRequest(userAuth?.id as string, FR.from.id as string, formData);
   };
 
   if (loading) {

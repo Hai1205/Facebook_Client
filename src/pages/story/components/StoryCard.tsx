@@ -57,11 +57,15 @@ const StoryCard = ({
     }
 
     const formData = new FormData();
+    formData.append("privacy", "PUBLIC");
     if (selectedFile) {
-      formData.append("media", selectedFile);
+      formData.append("file", selectedFile);
     }
-    await createStory(userAuth?.id as string, formData);
-    resetStoryState();
+
+    const result = await createStory(userAuth?.id as string, formData);
+    if (result) {
+      resetStoryState();
+    }
   };
 
   const handleClosePreview = () => {
@@ -81,6 +85,10 @@ const StoryCard = ({
       setStoryIndex(currentIndex);
       showStory(story);
     }
+  };
+
+  const handleAddStoryClick = () => {
+    fileInputRef.current?.click();
   };
 
   const showStory = (storyItem: STORY) => {
@@ -121,7 +129,7 @@ const StoryCard = ({
     <>
       <Card
         className="w-40 h-60 relative overflow-hidden group cursor-pointer rounded-xl"
-        onClick={isAddStory ? undefined : handleStoryClick}
+        onClick={isAddStory ? handleAddStoryClick : handleStoryClick}
       >
         <CardContent className="p-0 h-full">
           {isAddStory ? (
@@ -134,7 +142,7 @@ const StoryCard = ({
                     className="object-cover"
                   />
 
-                  <AvatarFallback className="bg-zinc-800 text-zinc-700 !rounded-none">
+                  <AvatarFallback className="bg-zinc-800 text-white text-6xl !rounded-none">
                     {userAuth?.fullName?.substring(0, 2) || "FU"}
                   </AvatarFallback>
                 </Avatar>
@@ -145,11 +153,14 @@ const StoryCard = ({
                   variant="ghost"
                   size="sm"
                   className="p-0 h-10 w-10 rounded-full bg-blue-600 hover:bg-[#166FE5] transition duration-200"
-                  onClick={() => fileInputRef.current?.click()}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAddStoryClick();
+                  }}
                 >
                   <Plus className="h-5 w-5 text-white" />
                 </Button>
-                <p className="text-xs font-semibold mt-1">Create Story</p>
+                <p className="text-xs font-semibold mt-1">Tạo story</p>
               </div>
 
               <input
@@ -179,7 +190,7 @@ const StoryCard = ({
               )}
 
               <div className="absolute top-2 left-2 ring-2 ring-blue-500 rounded-full ">
-                <Avatar className="w-8 h-8">
+                <Avatar className="w-10 h-10">
                   <AvatarImage
                     src={story?.user?.avatarPhotoUrl}
                     alt={story?.user?.fullName}

@@ -1,4 +1,5 @@
 import {
+	FRIEND_STATUS,
 	MEDIA_TYPE,
 	NOTI_TYPE,
 	PRIVACY,
@@ -125,7 +126,7 @@ export interface FRIEND_REQUEST {
 	id?: string;
 	from: USER;
 	to: USER;
-	status: string;
+	status: FRIEND_STATUS;
 	createdAt?: string;
 	updatedAt?: string;
 }

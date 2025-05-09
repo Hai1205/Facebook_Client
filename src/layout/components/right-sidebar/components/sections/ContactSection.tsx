@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { USER } from "@/utils/interface";
 import { useNavigate } from "react-router-dom";
 import { useOpenStore } from "@/stores/useOpenStore";
-import { ChatContainer } from "@/pages/chat/ChatContainer";
+import { useChatStore } from "@/stores/useChatStore";
 
 interface ContactSectionProps {
   contacts: USER[];
@@ -14,31 +14,17 @@ interface ContactSectionProps {
 export const ContactSection = ({ contacts }: ContactSectionProps) => {
   const navigate = useNavigate();
   const { setActiveTab } = useOpenStore();
+  const { startChat } = useChatStore();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [activeChats, setActiveChats] = useState<USER[]>([]);
 
   const filteredContacts = contacts.filter((contact) =>
     contact.fullName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const startChat = (user: USER) => {
-    if (activeChats.some((chat) => chat.id === user.id)) {
-      setActiveChats([
-        user,
-        ...activeChats.filter((chat) => chat.id !== user.id),
-      ]);
-    } else {
-      setActiveChats((prev) => {
-        const newChats = [user, ...prev.filter((chat) => chat.id !== user.id)];
-        return newChats.slice(0, 4);
-      });
-    }
-  };
-
-  const closeChat = (userId: string) => {
-    setActiveChats(activeChats.filter((chat) => chat.id !== userId));
+  const handleStartChat = (contact: USER) => {
+    startChat(contact);
   };
 
   const handleNavigation = (path: string, name: string) => {
@@ -91,7 +77,7 @@ export const ContactSection = ({ contacts }: ContactSectionProps) => {
             <div
               key={contact.id}
               className="flex items-center space-x-3 p-2 hover:bg-gray-800 rounded-lg cursor-pointer"
-              onClick={() => startChat(contact)}
+              onClick={() => handleStartChat(contact)}
             >
               <div className="relative">
                 <Avatar
@@ -140,8 +126,6 @@ export const ContactSection = ({ contacts }: ContactSectionProps) => {
           <div className="text-gray-400 text-center py-2">No contact found</div>
         )}
       </div>
-
-      <ChatContainer activeChats={activeChats} closeChat={closeChat} />
     </div>
   );
 };

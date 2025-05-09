@@ -18,6 +18,10 @@ export const getUser = async (userId: string): Promise<any> => {
   return await axiosInstance.get(`${endpoint}/get-user/${userId}`);
 };
 
+export const getUserProfile = async (currentUserId: string, targetUserId: string): Promise<any> => {
+  return await axiosInstance.get(`${endpoint}/get-user-profile/${currentUserId}/${targetUserId}`);
+};
+
 export const getUserFriendsRequests = async (userId: string): Promise<any> => {
   return await axiosInstance.get(`${endpoint}/get-user-friend-request/${userId}`);
 };
@@ -104,10 +108,12 @@ export const unFriend = async (
 
 export const responseFriendRequest = async (
   currentUserId: string,
-  opponentId: string
+  opponentId: string,
+  formData: FormData
 ): Promise<any> => {
   return await axiosInstance.post(
-    `${endpoint}/response-friend-request/${currentUserId}/${opponentId}`
+    `${endpoint}/response-friend-request/${currentUserId}/${opponentId}`,
+    formData
   );
 };
 

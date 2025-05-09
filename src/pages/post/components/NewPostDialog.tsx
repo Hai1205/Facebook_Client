@@ -23,12 +23,19 @@ import {
 } from "@/components/ui/select";
 import { PRIVACY_CHOICE } from "@/utils/choices";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { POST } from "@/utils/interface";
 
 interface NewPostDialogProps {
   isPostFormOpen?: boolean;
+  setIsPostFormOpen: (value: boolean) => void;
+  onPostUploaded?: (updatedPost: POST) => void;
 }
 
-const NewPostDialog = ({ isPostFormOpen }: NewPostDialogProps) => {
+const NewPostDialog = ({
+  isPostFormOpen,
+  setIsPostFormOpen,
+  onPostUploaded,
+}: NewPostDialogProps) => {
   const { userAuth } = useAuthStore();
   const { isLoading, createPost } = usePostStore();
 
@@ -95,13 +102,20 @@ const NewPostDialog = ({ isPostFormOpen }: NewPostDialogProps) => {
     const formData = new FormData();
     formData.append("content", postContent);
     if (selectedFile) {
-      formData.append("media", selectedFile);
+      formData.append("file", selectedFile);
     }
+    formData.append("privacy", postPrivacy);
+
     const result = await createPost(userAuth?.id as string, formData);
 
     if (result) {
       setPostContent("");
       resetShowFile();
+      setIsPostFormOpen(false);
+    }
+
+    if(onPostUploaded){
+      onPostUploaded(result);
     }
   };
 
@@ -121,7 +135,7 @@ const NewPostDialog = ({ isPostFormOpen }: NewPostDialogProps) => {
         <Separator />
 
         <div className="flex items-center space-x-3 py-4">
-          <Avatar className="h-10 w-10">
+          <Avatar className="h-14 w-14">
             <AvatarImage
               src={userAuth?.avatarPhotoUrl}
               alt={userAuth?.fullName}
@@ -138,11 +152,11 @@ const NewPostDialog = ({ isPostFormOpen }: NewPostDialogProps) => {
               value={postPrivacy}
               onValueChange={(value) => setPostPrivacy(value)}
             >
-              <SelectTrigger id="edit-privacy">
+              <SelectTrigger id="edit-privacy" className="h-6 w-23">
                 <SelectValue placeholder="Public" />
               </SelectTrigger>
 
-              <SelectContent className="bg-gray-800">
+              <SelectContent className="bg-zinc-800">
                 {PRIVACY_CHOICE.map((item) => (
                   <SelectItem
                     key={item.value}
@@ -250,6 +264,7 @@ const NewPostDialog = ({ isPostFormOpen }: NewPostDialogProps) => {
             <Button
               className="bg-[#1877F2] hover:bg-[#166FE5] text-white"
               onClick={handlePost}
+              disabled={isLoading || (!postContent.trim() && !selectedFile)}
             >
               {isLoading ? "Posting..." : "Post"}
             </Button>

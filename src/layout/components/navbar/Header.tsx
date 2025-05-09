@@ -30,18 +30,24 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { NotificationsDropdown } from "@/pages/notification/NotificationsDropdown";
 import { MessagesDropdown } from "@/pages/chat/MessagesDropdown";
-import FacebookLoader from "./components/FacebookLoader";
 import { useOpenStore } from "@/stores/useOpenStore";
 import { SearchResults } from "./components/SearchResults";
 import { debounce } from "lodash";
+import { useNotiStore } from "@/stores/useNotiStore";
+import { usePostStore } from "@/stores/usePostStore";
+import FacebookLoader from "./components/FacebookLoader";
+import { useMessageStore } from "@/stores/useMessageStore";
 
 const Header = () => {
   const { userAuth, isAuth, isAdmin, logout, checkAdmin } = useAuthStore();
   const { searchUsers } = useUserStore();
   const { activeTab, setActiveTab } = useOpenStore();
   const { startChat } = useChatStore();
+  const { notifications, getUserNotifications } = useNotiStore();
+  const { getUserFeed, homePosts, getUserStoryFeed, homeStories } =
+    usePostStore();
+    const { contacts, getContacts } = useMessageStore();
 
-  const [isLoading, setIsLoading] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -52,6 +58,41 @@ const Header = () => {
 
   const [showNotifications, setShowNotifications] = useState(false);
   const [showMessages, setShowMessages] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const fetchData = useCallback(async () => {
+    setIsLoading(true);
+
+    if (homePosts.length === 0) {
+      await getUserFeed(userAuth?.id || "");
+    }
+
+    if (homeStories.length === 0 && userAuth?.id) {
+      await getUserStoryFeed(userAuth.id);
+    }
+
+    if (notifications.length === 0 && userAuth?.id) {
+      await getUserNotifications(userAuth.id as string);
+    }
+    
+    if (contacts.length === 0 && userAuth?.id) {
+      await getContacts(userAuth?.id as string);
+    }
+
+    setIsLoading(false);
+  }, [getContacts, 
+    getUserFeed, 
+    getUserNotifications, 
+    getUserStoryFeed, 
+    homePosts.length, 
+    homeStories.length, 
+    notifications.length, 
+    contacts.length, 
+    userAuth?.id]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const toggleNotifications = () => {
     setShowNotifications(!showNotifications);
@@ -82,9 +123,7 @@ const Header = () => {
 
   useEffect(() => {
     const check = async () => {
-      setIsLoading(true);
       await checkAdmin();
-      setIsLoading(false);
     };
 
     check();
@@ -133,8 +172,6 @@ const Header = () => {
 
     if (query.length >= 1) {
       debouncedSearchRef.current(query);
-    } else {
-      setIsSearchOpen(false);
     }
   };
 
@@ -170,6 +207,7 @@ const Header = () => {
     if (inputRef.current) {
       inputRef.current.focus();
     }
+    setIsSearchOpen(true);
   };
 
   const navItems = [
@@ -216,6 +254,7 @@ const Header = () => {
                       performSearch(searchQuery);
                     }}
                   />
+
                   <Input
                     ref={inputRef}
                     className="pl-10 pr-10 w-56 md:w-72 h-10 bg-gray-800 border-none rounded-full text-sm transition-all duration-300 focus:ring-2 focus:ring-blue-500"
@@ -230,6 +269,7 @@ const Header = () => {
                       }
                     }}
                   />
+
                   {searchQuery && (
                     <button
                       type="button"

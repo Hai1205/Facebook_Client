@@ -29,7 +29,7 @@ const NewPostForm = ({
               alt={userAuth?.fullName}
             />
 
-            <AvatarFallback className="bg-gray-800">
+            <AvatarFallback className="bg-zinc-700 text-white">
               {userAuth?.fullName?.substring(0, 2)}
             </AvatarFallback>
           </Avatar>
@@ -71,7 +71,7 @@ const NewPostForm = ({
               </div>
             </DialogTrigger>
 
-            <NewPostDialog isPostFormOpen={isPostFormOpen} />
+            <NewPostDialog isPostFormOpen={isPostFormOpen} setIsPostFormOpen={setIsPostFormOpen} />
           </Dialog>
         </div>
       </CardContent>

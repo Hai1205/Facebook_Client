@@ -7,32 +7,32 @@ import { useAuthStore } from "@/stores/useAuthStore";
 import { useChatStore } from "@/stores/useChatStore";
 import EditUserDialog from "@/pages/admin/userManagement/components/EditUserDialog";
 import { formatNumberStyle } from "@/lib/utils";
-import { FriendButton } from "@/layout/components/navbar/components/FriendButton";
-import { FollowButton } from "@/layout/components/navbar/components/FollowButton";
+import { FriendButton } from "@/pages/profile/components/buttons/FriendButton";
+import { FollowButton } from "@/pages/profile/components/buttons/FollowButton";
 import { FRIEND_STATUS } from "@/utils/types";
-import EditCoverPhotoDialog from "./EditCoverPhotoDialog";
+import EditCoverPhotoDialog from "./dialogs/EditCoverPhotoDialog";
 
 interface ProfileHeaderProps {
   userId: string | undefined;
   profileData: USER;
-  friendStatus: FRIEND_STATUS;
+  friendRequestStatus: FRIEND_STATUS;
   isOwner: boolean;
   setProfileData: (profileData: USER) => void;
+  setFriendRequestStatus: (friendRequestStatus: FRIEND_STATUS) => void;
 }
 
 const ProfileHeader = ({
   profileData,
   isOwner,
-  friendStatus,
+  friendRequestStatus,
   setProfileData,
+  setFriendRequestStatus,
 }: ProfileHeaderProps) => {
   const { userAuth } = useAuthStore();
   const { startChat } = useChatStore();
 
   const [isEditProfileModel, setIsEditProfileModel] = useState(false);
   const [isEditCoverPhotoModel, setIsEditCoverPhotoModel] = useState(false);
-  const [friendRequestStatus, setFriendRequestStatus] =
-    useState<FRIEND_STATUS>(friendStatus);
 
   const handleFriendStatusChange = (newStatus: FRIEND_STATUS) => {
     setFriendRequestStatus(newStatus);
@@ -98,6 +98,9 @@ const ProfileHeader = ({
             src={profileData.coverPhotoUrl}
             alt={`${profileData.fullName}'s cover`}
             className="w-full h-full object-cover"
+            style={{
+              background: "linear-gradient(135deg, #1010D5 0%, #323257 100%)",
+            }}
           />
         ) : (
           <div
@@ -135,11 +138,8 @@ const ProfileHeader = ({
               alt={profileData.fullName}
             />
 
-            <AvatarFallback className="dark:bg-zinc-700 text-3xl">
-              {profileData?.fullName
-                ?.split(" ")
-                .map((name) => name[0])
-                .join("")}
+            <AvatarFallback className="bg-zinc-700 text-6xl">
+              {profileData?.fullName?.substring(0, 2)}
             </AvatarFallback>
           </Avatar>
 
@@ -174,7 +174,7 @@ const ProfileHeader = ({
                 <div className="mt-4 md:mt-0 flex space-x-2">
                   <FriendButton
                     targetUserId={profileData.id || ""}
-                    initialStatus={friendRequestStatus}
+                    friendRequestStatus={friendRequestStatus}
                     onStatusChange={handleFriendStatusChange}
                     className="bg-zinc-800 hover:bg-zinc-900 text-white"
                   />

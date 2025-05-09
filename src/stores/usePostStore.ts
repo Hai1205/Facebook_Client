@@ -28,6 +28,8 @@ export interface PostStore {
   message: string | null;
   isLoading: boolean;
   error: string | null;
+  homePosts: any[];
+  homeStories: any[];
 
   getAllPost: () => Promise<any>;
   getAllStory: () => Promise<any>;
@@ -52,20 +54,26 @@ export interface PostStore {
   deleteReport: (reportId: string) => Promise<any>;
   searchReports: (query: string) => Promise<any>;
   updatePost: (postId: string, formData: FormData) => Promise<any>;
+  addPostToHome: (post: any) => void;
+  updatePostInHome: (updatedPost: any) => void;
+  addStoryToHome: (story: any) => void;
+  updateStoryInHome: (updatedStory: any) => void;
   reset: () => any;
 }
 
 const initialState = {
-	status: 0,
-	message: null,
-	isLoading: false,
-	error: null,
-}     
+  status: 0,
+  message: null,
+  isLoading: false,
+  error: null,
+  homePosts: [],
+  homeStories: [],
+}
 
 export const usePostStore = create<PostStore>()(
   persist(
-    (set) => ({
-      ...initialState,    
+    (set, get) => ({
+      ...initialState,
 
       getAllPost: async () => {
         set({ isLoading: true, error: null });
@@ -74,6 +82,7 @@ export const usePostStore = create<PostStore>()(
           const response = await getAllPost();
           const { posts } = response.data;
 
+          set({ homePosts: posts });
           return posts;
         } catch (error: any) {
           console.error(error);
@@ -86,30 +95,31 @@ export const usePostStore = create<PostStore>()(
           set({ isLoading: false });
         }
       },
-      
+
       getAllStory: async () => {
         set({ isLoading: true, error: null });
-        
+
         try {
           const response = await getAllStory();
           const { stories } = response.data;
 
+          set({ homeStories: stories });
           return stories;
         } catch (error: any) {
           console.error(error);
           const { message } = error.response.data;
           set({ error: message });
-          
+
           toast.error(message);
           return false;
         } finally {
           set({ isLoading: false });
         }
       },
-      
+
       getAllReport: async () => {
         set({ isLoading: true, error: null });
-        
+
         try {
           const response = await getAllReport();
           const { reports } = response.data;
@@ -119,14 +129,14 @@ export const usePostStore = create<PostStore>()(
           console.error(error);
           const { message } = error.response.data;
           set({ error: message });
-          
+
           toast.error(message);
           return false;
         } finally {
           set({ isLoading: false });
         }
       },
-      
+
       getUserPosts: async (userId: string) => {
         set({ isLoading: true, error: null });
 
@@ -154,6 +164,7 @@ export const usePostStore = create<PostStore>()(
           const response = await getUserFeed(userId);
           const { posts } = response.data;
 
+          set({ homePosts: posts });
           return posts;
         } catch (error: any) {
           console.error(error);
@@ -166,7 +177,7 @@ export const usePostStore = create<PostStore>()(
           set({ isLoading: false });
         }
       },
-      
+
       getUserStoryFeed: async (userId: string) => {
         set({ isLoading: true, error: null });
 
@@ -174,6 +185,7 @@ export const usePostStore = create<PostStore>()(
           const response = await getUserStoryFeed(userId);
           const { stories } = response.data;
 
+          set({ homeStories: stories });
           return stories;
         } catch (error: any) {
           console.error(error);
@@ -186,13 +198,17 @@ export const usePostStore = create<PostStore>()(
           set({ isLoading: false });
         }
       },
-      
+
       createPost: async (userId: string, formData: FormData) => {
         set({ isLoading: true, error: null });
 
         try {
           const response = await createPost(userId, formData);
           const { post, message } = response.data;
+
+          // Thêm bài viết mới vào đầu danh sách homePosts
+          const { addPostToHome } = get();
+          addPostToHome(post);
 
           toast.success(message);
           return post;
@@ -215,6 +231,9 @@ export const usePostStore = create<PostStore>()(
           const response = await createStory(userId, formData);
           const { story, message } = response.data;
 
+          const { addStoryToHome } = get();
+          addStoryToHome(story);
+
           toast.success(message);
           return story;
         } catch (error: any) {
@@ -235,6 +254,11 @@ export const usePostStore = create<PostStore>()(
         try {
           const response = await deletePost(postId);
           const { message } = response.data;
+
+          // Xóa bài viết khỏi homePosts
+          set((state) => ({
+            homePosts: state.homePosts.filter((post) => post.id !== postId)
+          }));
 
           toast.success(message);
           return message;
@@ -257,6 +281,11 @@ export const usePostStore = create<PostStore>()(
           const response = await deleteStory(storyId);
           const { message } = response.data;
 
+          // Xóa story khỏi homeStories
+          set((state) => ({
+            homeStories: state.homeStories.filter((story) => story.id !== storyId)
+          }));
+
           toast.success(message);
           return true;
         } catch (error: any) {
@@ -276,9 +305,13 @@ export const usePostStore = create<PostStore>()(
 
         try {
           const response = await likePost(postId, userId);
-          const { message } = response.data;
+          const { updatedPost } = response.data;
 
-          toast.success(message);
+          if (updatedPost) {
+            const { updatePostInHome } = get();
+            updatePostInHome(updatedPost);
+          }
+
           return true;
         } catch (error: any) {
           console.error(error);
@@ -301,7 +334,13 @@ export const usePostStore = create<PostStore>()(
 
         try {
           const response = await commentPost(postId, userId, formData);
-          const { message } = response.data;
+          const { message, updatedPost } = response.data;
+
+          // Cập nhật bài viết trong homePosts
+          if (updatedPost) {
+            const { updatePostInHome } = get();
+            updatePostInHome(updatedPost);
+          }
 
           toast.success(message);
           return true;
@@ -322,7 +361,13 @@ export const usePostStore = create<PostStore>()(
 
         try {
           const response = await sharePost(postId, userId);
-          const { message } = response.data;
+          const { message, sharedPost } = response.data;
+
+          // Thêm bài viết đã chia sẻ vào đầu danh sách
+          if (sharedPost) {
+            const { addPostToHome } = get();
+            addPostToHome(sharedPost);
+          }
 
           toast.success(message);
           return true;
@@ -444,13 +489,19 @@ export const usePostStore = create<PostStore>()(
       updatePost: async (postId: string, formData: FormData) => {
         set({ isLoading: true, error: null });
 
-        try { 
+        try {
           const response = await updatePost(postId, formData);
-          const { message } = response.data;
+          const { message, updatedPost } = response.data;
+
+          // Cập nhật bài viết trong homePosts
+          if (updatedPost) {
+            const { updatePostInHome } = get();
+            updatePostInHome(updatedPost);
+          }
 
           toast.success(message);
           return true;
-        } catch (error: any) {  
+        } catch (error: any) {
           console.error(error);
           const { message } = error.response.data;
           set({ error: message });
@@ -460,6 +511,38 @@ export const usePostStore = create<PostStore>()(
         } finally {
           set({ isLoading: false });
         }
+      },
+
+      // Thêm một bài viết mới vào đầu danh sách homePosts
+      addPostToHome: (post) => {
+        set((state) => ({
+          homePosts: [post, ...state.homePosts]
+        }));
+      },
+
+      // Cập nhật một bài viết trong homePosts
+      updatePostInHome: (updatedPost) => {
+        set((state) => ({
+          homePosts: state.homePosts.map((post) =>
+            post.id === updatedPost.id ? updatedPost : post
+          )
+        }));
+      },
+
+      // Thêm một story mới vào đầu danh sách homeStories
+      addStoryToHome: (story) => {
+        set((state) => ({
+          homeStories: [story, ...state.homeStories]
+        }));
+      },
+
+      // Cập nhật một story trong homeStories
+      updateStoryInHome: (updatedStory) => {
+        set((state) => ({
+          homeStories: state.homeStories.map((story) =>
+            story.id === updatedStory.id ? updatedStory : story
+          )
+        }));
       },
 
       reset: () => { set({ ...initialState }); },

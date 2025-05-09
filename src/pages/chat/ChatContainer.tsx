@@ -23,7 +23,7 @@ export function ChatContainer() {
       distance: 300,
     };
   }, []);
-  
+
   return (
     <div className="fixed bottom-0 right-0 z-30">
       {visibleChats.map((user, index) => {

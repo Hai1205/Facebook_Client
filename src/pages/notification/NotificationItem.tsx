@@ -14,6 +14,7 @@ export default function NotificationItem({
     FOLLOW: "text-purple-500 border-purple-500",
     LIKE: "text-green-500 border-green-500",
     COMMENT: "text-blue-500 border-blue-500",
+    FRIEND_REQUEST: "text-yellow-500 border-yellow-500",
   };
 
   return (
@@ -33,13 +34,15 @@ export default function NotificationItem({
 
         <div
           className={`absolute -bottom-1 -right-1 rounded-full p-1 ${
-            typesStyles[notification.type]
+            typesStyles[notification.type] || "text-gray-500 border-gray-500"
           }`}
         >
           {notification.type === "FOLLOW" ? (
             <UserRoundPlus className="h-5 w-5" />
           ) : notification.type === "LIKE" ? (
             <ThumbsUp className="h-5 w-5" />
+          ) : notification.type === "FRIEND_REQUEST" ? (
+            <UserRoundPlus className="h-5 w-5" />
           ) : (
             <MessageSquareMore className="h-5 w-5" />
           )}
@@ -53,6 +56,8 @@ export default function NotificationItem({
             ? " followed you"
             : notification.type === "LIKE"
             ? " liked your post"
+            : notification.type === "FRIEND_REQUEST"
+            ? " sent you a friend request"
             : " commented on your post"}
         </p>
 

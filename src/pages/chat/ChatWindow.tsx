@@ -18,6 +18,7 @@ import { VoiceCallWindow } from "./VoiceCallWindow";
 import { CONVERSATION, MESSAGE, USER } from "@/utils/interface";
 import { useChatStore } from "@/stores/useChatStore";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { Link } from "react-router-dom";
 
 type SENDER = "user" | "me";
 
@@ -139,15 +140,20 @@ export function ChatWindow({
         {/* Chat header */}
         <div className="p-2 flex items-center justify-between border-b border-gray-700 cursor-pointer">
           <div className="flex items-center">
-            <Avatar className="h-8 w-8 mr-2">
-              <AvatarImage src={user.avatarPhotoUrl} />
-              <AvatarFallback className="bg-blue-600">
-                {user.fullName.substring(0, 2)}
-              </AvatarFallback>
-            </Avatar>
+            <Link to={`/profile/${user.id}`}>
+              <Avatar className="h-8 w-8 mr-2">
+                <AvatarImage src={user.avatarPhotoUrl} />
+                <AvatarFallback className="bg-blue-600">
+                  {user.fullName.substring(0, 2)}
+                </AvatarFallback>
+              </Avatar>
+            </Link>
 
             <div>
-              <p className="font-semibold text-sm">{user.fullName}</p>
+              <Link to={`/profile/${user.id}`}>
+                <p className="font-semibold text-sm">{user.fullName}</p>
+              </Link>
+
               <p className="text-xs text-green-500">Active now</p>
             </div>
           </div>

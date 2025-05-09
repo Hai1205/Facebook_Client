@@ -6,11 +6,14 @@ import { useAuthStore } from "@/stores/useAuthStore";
 import { formatTime } from "@/lib/utils";
 
 const OTPVerificationPage: React.FC = () => {
+  const { isLoading, checkOTP, sendOTP } = useAuthStore();
+
   const navigate = useNavigate();
 
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
   const [error, setError] = useState("");
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const hasRun = useRef(false);
 
   // Countdown timer state - 5 minutes (300 seconds)
   const [timeLeft, setTimeLeft] = useState(300);
@@ -26,6 +29,14 @@ const OTPVerificationPage: React.FC = () => {
     inputRefs.current = inputRefs.current.slice(0, 6);
   }, []);
 
+  useEffect(() => {
+    if (hasRun.current) return;
+    hasRun.current = true;
+    handleResendCode();
+    
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Countdown timer effect
   useEffect(() => {
     if (timeLeft <= 0) {
@@ -39,8 +50,6 @@ const OTPVerificationPage: React.FC = () => {
 
     return () => clearInterval(timer);
   }, [timeLeft]);
-
-  const { isLoading, checkOTP, sendOTP } = useAuthStore();
 
   const handleChange = (index: number, value: string) => {
     if (error) setError("");

@@ -8,8 +8,8 @@ import { Link } from "react-router-dom";
 
 interface FriendRequestCardProps {
   request: FRIEND_REQUEST;
-  onAccept: (id: string) => void;
-  onDelete: (id: string) => void;
+  onAccept: (request: FRIEND_REQUEST) => void;
+  onDelete: (request: FRIEND_REQUEST) => void;
 }
 
 const FriendRequestCard = ({
@@ -60,7 +60,7 @@ const FriendRequestCard = ({
         <div className="grid grid-cols-1 gap-2 mt-3">
           <Button
             className="w-full bg-blue-600 hover:bg-[#166FE5] text-white"
-            onClick={() => onAccept(request.id as string)}
+            onClick={() => onAccept(request)}
           >
             Accept
           </Button>
@@ -69,7 +69,7 @@ const FriendRequestCard = ({
             variant="outline"
             size="sm"
             className="bg-gray-800 hover:bg-red-600 text-white border-gray-600 text-xs h-8 px-3 rounded-md"
-            onClick={() => onDelete(request.id as string)}
+            onClick={() => onDelete(request)}
           >
             Delete
           </Button>

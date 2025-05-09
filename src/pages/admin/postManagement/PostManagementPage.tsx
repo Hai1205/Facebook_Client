@@ -23,7 +23,6 @@ import {
 import { PostsEmptyState } from "@/layout/components/EmptyState";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { POST } from "@/utils/interface";
-import UploadPostDialog from "./components/UploadPostDialog";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import EditPostDialog from "./components/EditPostDialog";
 import { usePostStore } from "@/stores/usePostStore";
@@ -31,6 +30,8 @@ import { formatDateInDDMMYYY, formatNumberStyle } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { TablePostSkeleton } from "./components/TablePostSkeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import NewPostDialog from "@/pages/post/components/NewPostDialog";
+import { ViewPostModal } from "@/pages/post/components/ViewPostModal";
 
 export default function PostManagementPage() {
   const { isLoading, getAllPost, searchPosts } = usePostStore();
@@ -45,6 +46,7 @@ export default function PostManagementPage() {
 
   const [selectedPost, setSelectedPost] = useState<POST | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isViewOpen, setViewOpen] = useState(false);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -78,6 +80,11 @@ export default function PostManagementPage() {
   const handleEditPost = (post: POST) => {
     setSelectedPost(post);
     setIsEditDialogOpen(true);
+  };
+
+  const handleViewPost = (post: POST) => {
+    setSelectedPost(post);
+    setViewOpen(true);
   };
 
   const handlePostUpdated = (updatedPost: POST) => {
@@ -114,9 +121,9 @@ export default function PostManagementPage() {
               </Button>
             </DialogTrigger>
 
-            <UploadPostDialog
-              isOpen={isAddPostOpen}
-              onOpenChange={setIsAddPostOpen}
+            <NewPostDialog
+              isPostFormOpen={isAddPostOpen}
+              setIsPostFormOpen={setIsAddPostOpen}
               onPostUploaded={handlePostUploaded}
             />
           </Dialog>
@@ -253,7 +260,7 @@ export default function PostManagementPage() {
                               <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
                               <DropdownMenuItem
-                                // onClick={() => handleEditPost(post)}
+                                onClick={() => handleViewPost(post)}
                                 className="cursor-pointer"
                               >
                                 <Eye className="mr-2 h-4 w-4 cursor-pointer" />
@@ -298,6 +305,12 @@ export default function PostManagementPage() {
         onOpenChange={setIsEditDialogOpen}
         post={selectedPost}
         onPostUpdated={handlePostUpdated}
+      />
+      
+      <ViewPostModal
+        isOpen={isViewOpen}
+        onOpenChange={setViewOpen}
+        post={selectedPost as POST}
       />
     </div>
   );

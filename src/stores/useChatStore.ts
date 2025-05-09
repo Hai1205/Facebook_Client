@@ -94,15 +94,15 @@ export const useChatStore = create<ChatStore>()(
 
       updateConversationWithLatestMessage: (message: any) => {
         const conversations = get().conversations;
-        const updatedConversations = conversations.map((conv) => {
-          if (conv.id === message.conversationId) {
+        const updatedConversations = conversations.map((conversation) => {
+          if (conversation.id === message.conversationId) {
             return {
-              ...conv,
+              ...conversation,
               lastMessage: message,
               updatedAt: new Date().toISOString(),
             };
           }
-          return conv;
+          return conversation;
         });
         set({ conversations: updatedConversations });
       },
@@ -298,7 +298,6 @@ export const useChatStore = create<ChatStore>()(
           const response = await createGroupConversation(formData);
           const { users } = response.data;
 
-          // Cập nhật danh sách cuộc hội thoại sau khi tạo mới
           const conversations = get().conversations;
           if (users && conversations) {
             set({ conversations: [...conversations, users] });
@@ -324,7 +323,6 @@ export const useChatStore = create<ChatStore>()(
           const response = await addUserToGroup(conversationId, userId);
           const { users } = response.data;
 
-          // Cập nhật cuộc hội thoại hiện tại sau khi thêm người dùng
           const currentConversation = get().currentConversation;
           if (
             users &&
@@ -354,7 +352,6 @@ export const useChatStore = create<ChatStore>()(
           const response = await deleteUserFromGroup(conversationId, userId);
           const { users } = response.data;
 
-          // Cập nhật cuộc hội thoại hiện tại sau khi xóa người dùng
           const currentConversation = get().currentConversation;
           if (
             users &&
@@ -385,20 +382,12 @@ export const useChatStore = create<ChatStore>()(
 
       startChat: (user: USER) => {
         set((state) => {
-          if (state.activeChats.some((chat) => chat.id === user.id)) {
-            return {
-              activeChats: [
-                user,
-                ...state.activeChats.filter((chat) => chat.id !== user.id),
-              ],
-            };
-          } else {
-            const newChats = [
-              user,
-              ...state.activeChats.filter((chat) => chat.id !== user.id),
-            ];
-            return { activeChats: newChats.slice(0, 4) };
+          if (state.activeChats.some(chat => chat.id === user.id)) {
+            return state;
           }
+
+          const newChats = [user, ...state.activeChats];
+          return { activeChats: newChats.slice(0, 4) };
         });
       },
 

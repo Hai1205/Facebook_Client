@@ -22,8 +22,10 @@ import {
     getFriendRequestStatus,
     getUserProfile
 } from "@/utils/api/usersApi";
+import { USER } from "@/utils/interface";
 
 interface UserStore {
+    suggestedUsers: USER[];
     isLoading: boolean;
     error: string | null;
     status: number;
@@ -51,6 +53,7 @@ interface UserStore {
 }
 
 const initialState = {
+    suggestedUsers: [],
     isLoading: false,
     error: null,
     status: 0,
@@ -120,7 +123,7 @@ export const useUserStore = create<UserStore>()(
                     set({ isLoading: false });
                 }
             },
-           
+
             getUserProfile: async (currentUserId: string, targetUserId: string) => {
                 set({ isLoading: true, error: null });
 
@@ -239,6 +242,7 @@ export const useUserStore = create<UserStore>()(
                     const response = await getSuggestedUsers(userId);
                     const { users } = response.data;
 
+                    set({ suggestedUsers: users });
                     return users;
                 } catch (error: any) {
                     console.error(error)

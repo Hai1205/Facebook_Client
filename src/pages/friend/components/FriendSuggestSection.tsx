@@ -15,10 +15,10 @@ interface FriendSuggestSectionProps {
 
 const FriendSuggestSection = ({ limit }: FriendSuggestSectionProps) => {
   const { userAuth } = useAuthStore();
-  const { getSuggestedUsers, sendFriendRequest } = useUserStore();
+  const { sendFriendRequest, suggestedUsers } = useUserStore();
   const { setActiveTab } = useOpenStore();
 
-  const [friendSuggest, setFriendSuggest] = useState<USER[]>([]);
+  const [friendSuggest, setFriendSuggest] = useState<USER[]>(suggestedUsers.slice(0, limit));
   const [scrollPosition, setScrollPosition] = useState(0);
   const [maxScroll, setMaxScroll] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -50,22 +50,6 @@ const FriendSuggestSection = ({ limit }: FriendSuggestSectionProps) => {
       setScrollPosition(container.scrollLeft);
     }
   };
-
-  useEffect(() => {
-    const fetchFriendRequests = async () => {
-      const result = await getSuggestedUsers(userAuth?.id as string);
-
-      if (result) {
-        if (limit && limit > 0) {
-          setFriendSuggest(result.slice(0, limit));
-        } else {
-          setFriendSuggest(result);
-        }
-      }
-    };
-
-    fetchFriendRequests();
-  }, [getSuggestedUsers, userAuth, limit]);
 
   const handleSendFriendRequest = (userId: string) => {
     sendFriendRequest(userAuth?.id as string, userId);

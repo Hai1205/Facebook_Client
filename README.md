@@ -105,6 +105,6 @@ The frontend will be available at [http://localhost:3000](http://localhost:3000)
 
 | Student ID     | Full Name           |
 |----------------|---------------------|
-| 3122410095     | Nguyễn Hoàng Hải    |
-| 3122410117     | Nguyễn Văn Hiếu     |
-| 3122410365     | Đoàn Tuấn Tài       |
+| 3122410095     | Nguyen Hoang Hai    |
+| 3122410117     | Nguyen Van Hieu     |
+| 3122410365     | Doan Tuan Tai       |

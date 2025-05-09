@@ -206,7 +206,6 @@ export const usePostStore = create<PostStore>()(
           const response = await createPost(userId, formData);
           const { post, message } = response.data;
 
-          // Thêm bài viết mới vào đầu danh sách homePosts
           const { addPostToHome } = get();
           addPostToHome(post);
 
@@ -255,7 +254,6 @@ export const usePostStore = create<PostStore>()(
           const response = await deletePost(postId);
           const { message } = response.data;
 
-          // Xóa bài viết khỏi homePosts
           set((state) => ({
             homePosts: state.homePosts.filter((post) => post.id !== postId)
           }));
@@ -281,7 +279,6 @@ export const usePostStore = create<PostStore>()(
           const response = await deleteStory(storyId);
           const { message } = response.data;
 
-          // Xóa story khỏi homeStories
           set((state) => ({
             homeStories: state.homeStories.filter((story) => story.id !== storyId)
           }));
@@ -336,7 +333,6 @@ export const usePostStore = create<PostStore>()(
           const response = await commentPost(postId, userId, formData);
           const { message, updatedPost } = response.data;
 
-          // Cập nhật bài viết trong homePosts
           if (updatedPost) {
             const { updatePostInHome } = get();
             updatePostInHome(updatedPost);
@@ -363,7 +359,6 @@ export const usePostStore = create<PostStore>()(
           const response = await sharePost(postId, userId);
           const { message, sharedPost } = response.data;
 
-          // Thêm bài viết đã chia sẻ vào đầu danh sách
           if (sharedPost) {
             const { addPostToHome } = get();
             addPostToHome(sharedPost);
@@ -493,7 +488,6 @@ export const usePostStore = create<PostStore>()(
           const response = await updatePost(postId, formData);
           const { message, updatedPost } = response.data;
 
-          // Cập nhật bài viết trong homePosts
           if (updatedPost) {
             const { updatePostInHome } = get();
             updatePostInHome(updatedPost);
@@ -513,14 +507,12 @@ export const usePostStore = create<PostStore>()(
         }
       },
 
-      // Thêm một bài viết mới vào đầu danh sách homePosts
       addPostToHome: (post) => {
         set((state) => ({
           homePosts: [post, ...state.homePosts]
         }));
       },
 
-      // Cập nhật một bài viết trong homePosts
       updatePostInHome: (updatedPost) => {
         set((state) => ({
           homePosts: state.homePosts.map((post) =>
@@ -529,14 +521,12 @@ export const usePostStore = create<PostStore>()(
         }));
       },
 
-      // Thêm một story mới vào đầu danh sách homeStories
       addStoryToHome: (story) => {
         set((state) => ({
           homeStories: [story, ...state.homeStories]
         }));
       },
 
-      // Cập nhật một story trong homeStories
       updateStoryInHome: (updatedStory) => {
         set((state) => ({
           homeStories: state.homeStories.map((story) =>

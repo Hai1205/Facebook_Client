@@ -4,8 +4,9 @@ import { useStatStore } from "@/stores/useStatStore";
 import { USER } from "@/utils/interface";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { UserSkeletonLoading } from "./UserSkeletonLoading";
+import { UserSkeletonLoading } from "./skeletons/UserSkeletonLoading";
 import { formatNumberStyle } from "@/lib/utils";
+import { BadgeCheck } from "lucide-react";
 
 export function TopUsers() {
   const { isLoading, getTopUsersStat } = useStatStore();
@@ -50,9 +51,15 @@ export function TopUsers() {
                 </Avatar>
 
                 <div className="cursor-pointer">
-                  <div className="font-medium hover:underline text-white">
-                    {user.fullName}
-                  </div>
+                  <p className="text-s font-bold flex items-center">
+                    <span className="font-medium hover:underline text-white">
+                      {user?.fullName || "Facebook User"}
+                    </span>
+
+                    {user?.celebrity && (
+                      <BadgeCheck className="ml-2 h-4 w-4 text-[#1877F2]" />
+                    )}
+                  </p>
 
                   <div className="text-sm text-muted-foreground hover:underline">
                     {user.email}

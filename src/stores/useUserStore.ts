@@ -278,7 +278,7 @@ export const useUserStore = create<UserStore>()(
             },
 
             updateUser: async (userId, formData) => {
-                set({ isLoading: true, error: null });
+                set({ error: null });
 
                 try {
                     const response = await updateUser(userId, formData);

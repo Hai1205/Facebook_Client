@@ -117,7 +117,7 @@ const VideoCard = ({
               <p className="text-s font-bold flex items-center">
                 {post?.user?.fullName || "Facebook User"}
 
-                {post?.user?.followers.length > 5000 && (
+                {post?.user?.celebrity && (
                   <BadgeCheck className="ml-2 h-4 w-4 text-[#1877F2]" />
                 )}
               </p>

@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -61,7 +62,7 @@ const EditUserDialog = ({
     }
   }, [isOpen, user]);
 
-  const handleChange = (field: keyof USER, value: string) => {
+  const handleChange = (field: keyof USER, value: string | boolean) => {
     setUserData((prev) => (prev ? { ...prev, [field]: value } : prev));
   };
 
@@ -87,6 +88,10 @@ const EditUserDialog = ({
       formData.append("role", userData.role);
       formData.append("status", userData.status);
 
+      if (userData.isCelebrity) {
+        formData.append("isCelebrity", "true");
+      }
+
       if (userData.dateOfBirth) {
         formData.append("dateOfBirth", formattedDate);
       }
@@ -109,6 +114,7 @@ const EditUserDialog = ({
     }
   };
 
+  console.log(userData)
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={handleClose}>
@@ -283,6 +289,26 @@ const EditUserDialog = ({
                           ))}
                         </SelectContent>
                       </Select>
+                    </div>
+                  )}
+
+                  {/* Celebrity Checkbox */}
+                  {isAdmin && (
+                    <div className="flex items-center space-x-2 mt-3">
+                      <Checkbox
+                        id="isCelebrity"
+                        checked={userData?.isCelebrity}
+                        onCheckedChange={(checked) => {
+                          handleChange("isCelebrity", checked);
+                        }}
+                      />
+
+                      <Label
+                        htmlFor="isCelebrity"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
+                        Celebrity
+                      </Label>
                     </div>
                   )}
                 </ScrollArea>

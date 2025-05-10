@@ -9,11 +9,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, UserX } from "lucide-react";
+import { BadgeCheck, MoreHorizontal, UserX } from "lucide-react";
 import { useUserStore } from "@/stores/useUserStore";
 import { USER } from "@/utils/interface";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { getMutualFriends } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 interface MutualFriendsProps {
   user: USER;
@@ -66,30 +67,29 @@ const MutualFriends = ({ user, isOwner }: MutualFriendsProps) => {
                 className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg flex items-start justify-between"
               >
                 <div className="flex items-center space-x-4">
-                  <Avatar>
-                    {friend?.avatarPhotoUrl ? (
+                  <Link to={`/profile/${friend?.id}`}>
+                    <Avatar>
                       <AvatarImage
                         src={friend?.avatarPhotoUrl}
                         alt={friend?.fullName}
                       />
-                    ) : (
-                      <AvatarFallback className="dark:bg-gray-400">
+
+                      <AvatarFallback className="bg-zinc-700 text-white">
                         {friend?.fullName?.substring(0, 2)}
                       </AvatarFallback>
-                    )}
-                  </Avatar>
+                    </Avatar>
+                  </Link>
 
                   <div>
-                    <p className="font-semibold dark:text-gray-100">
-                      {friend?.fullName}
-                    </p>
+                    <Link to={`/profile/${friend?.id}`}>
+                      <p className="font-bold flex items-center">
+                        <span className="text-xl text-white">{friend?.fullName}</span>
 
-                    <p className="text-sm text-gray-400">
-                      {friend?.followers?.length}{" "}
-                      {friend?.followers?.length === 1
-                        ? "follower"
-                        : "followers"}
-                    </p>
+                        {friend?.celebrity && (
+                          <BadgeCheck className="ml-2 h-4 w-4 text-[#1877F2]" />
+                        )}
+                      </p>
+                    </Link>
                   </div>
                 </div>
 

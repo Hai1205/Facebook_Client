@@ -1,5 +1,5 @@
 import { useCallback, useState, useEffect } from "react";
-import { Search, Filter } from "lucide-react";
+import { Search, Filter, BadgeCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -187,28 +187,6 @@ export default function ReportManagementPage() {
         onConfirm={handleConfirm}
         isResponding={isResponding}
       />
-
-      {/* Approve Application Dialog */}
-      {/* <ApproveReportDialog
-        isOpen={isApproveDialogOpen}
-        onOpenChange={setIsApproveDialogOpen}
-        selectedReport={selectedReport}
-        onConfirm={confirm}
-        status={status}
-        handleReportChange={handleReportChange}
-        isResponding={isResponding}
-      /> */}
-
-      {/* Reject Application Dialog */}
-      {/* <RejectReportDialog
-        isOpen={isRejectDialogOpen}
-        onOpenChange={setIsRejectDialogOpen}
-        onConfirm={confirm}
-        report={selectedReport}
-        status={status}
-        handleReportChange={handleReportChange}
-        isResponding={isResponding}
-      /> */}
 
       <div className="space-y-4">
         <Card className="bg-zinc-900">
@@ -414,9 +392,15 @@ export default function ReportManagementPage() {
                               </Avatar>
 
                               <div className="flex flex-col">
-                                <span className="font-medium hover:underline text-white">
-                                  {report?.sender?.fullName || "Facebook User"}
-                                </span>
+                              <p className="text-s font-bold flex items-center">
+                                    <span className="font-medium hover:underline text-white">
+                                      {report?.sender?.fullName || "Facebook User"}
+                                    </span>
+
+                                    {report?.sender?.celebrity && (
+                                      <BadgeCheck className="ml-2 h-4 w-4 text-[#1877F2]" />
+                                    )}
+                                  </p>
 
                                 <span className="text-sm text-muted-foreground hover:underline">
                                   {report?.sender?.email}

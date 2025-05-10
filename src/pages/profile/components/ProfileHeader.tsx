@@ -147,7 +147,7 @@ const ProfileHeader = ({
             <h1 className="text-3xl font-bold flex items-center">
               {profileData?.fullName}
 
-              {profileData.followers.length > 5000 && (
+              {profileData.celebrity && (
                 <BadgeCheck className="ml-2 h-6 w-6 text-[#1877F2]" />
               )}
             </h1>
@@ -176,6 +176,7 @@ const ProfileHeader = ({
                     targetUserId={profileData.id || ""}
                     friendRequestStatus={friendRequestStatus}
                     onStatusChange={handleFriendStatusChange}
+                    onFollowChange={handleFollowChange}
                     className="bg-zinc-800 hover:bg-zinc-900 text-white"
                   />
 

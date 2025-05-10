@@ -184,7 +184,7 @@ export function ChatWindow({
             </button>
 
             <button
-              className="p-1 rounded-full hover:bg-gray-800 text-gray-400"
+              className="p-1 rounded-full text-gray-400"
               onClick={(e) => {
                 e.stopPropagation();
                 onClose();

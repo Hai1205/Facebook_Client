@@ -1,6 +1,14 @@
 import { Link, useSearchParams } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
-import { Eye, MoreHorizontal, Pencil, Plus, Search, Trash } from "lucide-react";
+import {
+  BadgeCheck,
+  Eye,
+  MoreHorizontal,
+  Pencil,
+  Plus,
+  Search,
+  Trash,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -197,9 +205,15 @@ export default function PostManagementPage() {
                             </Avatar>
 
                             <div className="flex flex-col">
-                              <span className="font-medium hover:underline text-white">
-                                {post?.user?.fullName || "Facebook User"}
-                              </span>
+                              <p className="text-s font-bold flex items-center">
+                                <span className="font-medium hover:underline text-white">
+                                  {post?.user?.fullName || "Facebook User"}
+                                </span>
+
+                                {post?.user?.celebrity && (
+                                  <BadgeCheck className="ml-2 h-4 w-4 text-[#1877F2]" />
+                                )}
+                              </p>
 
                               <span className="text-sm text-muted-foreground hover:underline">
                                 {post?.user?.email}
@@ -306,7 +320,7 @@ export default function PostManagementPage() {
         post={selectedPost}
         onPostUpdated={handlePostUpdated}
       />
-      
+
       <ViewPostModal
         isOpen={isViewOpen}
         onOpenChange={setViewOpen}

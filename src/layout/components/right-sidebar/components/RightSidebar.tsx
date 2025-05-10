@@ -10,9 +10,10 @@ import { FRIEND_REQUEST, GROUP_CONVERSATION, USER } from "@/utils/interface";
 import { getUsersWithBirthdayToday } from "@/lib/utils";
 import { useUserStore } from "@/stores/useUserStore";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { RESPOND_STATUS } from "@/utils/types";
 
 export default function RightSidebar() {
-  const { getUserFriendsRequests } = useUserStore();
+  const { responseFriendRequest, getUserFriendsRequests } = useUserStore();
   const { userAuth } = useAuthStore();
 
   const [friendRequests, setFriendRequests] = useState<FRIEND_REQUEST[]>([]);
@@ -41,12 +42,28 @@ export default function RightSidebar() {
     fetchData();
   }, [fetchUserFriendsRequests, userAuth]);
 
-  const handleAccept = (id: string) => {
-    setFriendRequests(friendRequests.filter((request) => request.id !== id));
+  const handleRespondRequest = useCallback(
+    async (status: RESPOND_STATUS, targetUserId: string) => {
+      const formData = new FormData();
+      formData.append("status", status);
+
+      await responseFriendRequest(
+        userAuth?.id as string,
+        targetUserId,
+        formData
+      );
+    },
+    [responseFriendRequest, userAuth]
+  );
+
+  const handleAccept = async (FR: FRIEND_REQUEST) => {
+    setFriendRequests(friendRequests.filter((request) => request.id !== FR?.id));
+    await handleRespondRequest("ACCEPT", FR?.from?.id as string);
   };
 
-  const handleDelete = (id: string) => {
-    setFriendRequests(friendRequests.filter((request) => request.id !== id));
+  const handleDelete = async (FR: FRIEND_REQUEST) => {
+    setFriendRequests(friendRequests.filter((request) => request.id !== FR?.id));
+    await handleRespondRequest("REJECT", FR?.from?.id as string);
   };
 
   const hasData =

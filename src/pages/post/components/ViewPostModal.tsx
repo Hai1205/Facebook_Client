@@ -64,7 +64,7 @@ export function ViewPostModal({ isOpen, onOpenChange, post }: ViewPostModalProps
                   className="flex items-center justify-between border-b border-zinc-800 p-4"
                 >
                   <h3 className="text-lg font-medium text-white">
-                    Post by {post.user.fullName}
+                    Post by {post?.user?.fullName}
                   </h3>
 
                   <Button

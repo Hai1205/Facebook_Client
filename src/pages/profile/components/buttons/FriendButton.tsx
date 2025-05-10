@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { useUserStore } from "@/stores/useUserStore";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { FRIEND_STATUS } from "@/utils/types";
+import { FRIEND_STATUS, RESPOND_STATUS } from "@/utils/types";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,6 +24,7 @@ export interface FriendButtonProps
   targetUserId: string;
   friendRequestStatus?: FRIEND_STATUS;
   onStatusChange?: (newStatus: FRIEND_STATUS) => void;
+  onFollowChange?: (isFollowing: boolean) => void;
   size?: "default" | "sm" | "lg" | "icon";
   showIcon?: boolean;
   showText?: boolean;
@@ -34,6 +35,7 @@ export function FriendButton({
   targetUserId,
   friendRequestStatus,
   onStatusChange,
+  onFollowChange,
   size = "default",
   showIcon = true,
   showText = true,
@@ -64,6 +66,7 @@ export function FriendButton({
         const prevStatus = currentStatus;
         setCurrentStatus("SENT");
         onStatusChange?.("SENT");
+        onFollowChange?.(true)
 
         const result = await sendFriendRequest(userAuth.id, targetUserId);
         if (!result) {
@@ -96,6 +99,7 @@ export function FriendButton({
       const prevStatus = currentStatus;
       setCurrentStatus("NONE");
       onStatusChange?.("NONE");
+      onFollowChange?.(false);
 
       const result = await unFriend(userAuth.id, targetUserId);
       if (!result) {
@@ -109,7 +113,7 @@ export function FriendButton({
     }
   };
 
-  const handleResponseFriendRequest = async (action: "ACCEPT" | "DECLINE") => {
+  const handleResponseFriendRequest = async (action: RESPOND_STATUS) => {
     if (!userAuth?.id || !targetUserId || isLoading) return;
 
     try {
@@ -206,7 +210,7 @@ export function FriendButton({
           </DropdownMenuItem>
 
           <DropdownMenuItem
-            onClick={() => handleResponseFriendRequest("DECLINE")}
+            onClick={() => handleResponseFriendRequest("REJECT")}
             className="cursor-pointer"
           >
             <X className="h-4 w-4 mr-2" /> Delete

@@ -8,6 +8,7 @@ import {
   Pencil,
   UserPlus,
   RefreshCw,
+  BadgeCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -110,7 +111,7 @@ export default function UserManagementPage() {
     PENDING: "text-yellow-500 border-yellow-500",
     LOCK: "text-red-500 border-red-500",
   };
-  
+
   const gendersStyles = {
     MALE: "text-blue-500 border-blue-500",
     FEMALE: "text-pink-500 border-pink-500",
@@ -210,7 +211,7 @@ export default function UserManagementPage() {
             onClick={() => setIsAddUserOpen(true)}
           >
             <UserPlus className="h-4 w-4" />
-            Add USER
+            Add user
           </Button>
         </div>
       </div>
@@ -416,6 +417,7 @@ export default function UserManagementPage() {
                                     src={user?.avatarPhotoUrl}
                                     alt={user?.fullName || "USER"}
                                   />
+
                                   <AvatarFallback className="text-white">
                                     {user?.fullName
                                       ? user.fullName.substring(0, 2)
@@ -424,9 +426,15 @@ export default function UserManagementPage() {
                                 </Avatar>
 
                                 <div className="flex flex-col">
-                                  <span className="font-medium hover:underline text-white">
-                                    {user?.fullName || "Unknown Artist"}
-                                  </span>
+                                  <p className="text-s font-bold flex items-center">
+                                    <span className="font-medium hover:underline text-white">
+                                      {user?.fullName || "Facebook User"}
+                                    </span>
+
+                                    {user?.celebrity && (
+                                      <BadgeCheck className="ml-2 h-4 w-4 text-[#1877F2]" />
+                                    )}
+                                  </p>
 
                                   <span className="text-sm text-muted-foreground hover:underline">
                                     {user?.email}
@@ -439,7 +447,7 @@ export default function UserManagementPage() {
                           <TableCell className="text-center">
                             <Badge
                               variant="outline"
-                                className={gendersStyles[user.gender]}
+                              className={gendersStyles[user.gender]}
                             >
                               {user.gender}
                             </Badge>

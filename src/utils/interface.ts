@@ -25,6 +25,7 @@ export interface USER {
 	bio: BIO;
 	role: USER_ROLE;
 	status: USER_STATUS;
+	celebrity: boolean;
 	createdAt?: string;
 	updatedAt?: string;
 }
@@ -51,17 +52,17 @@ export interface BIO {
 }
 
 export interface POST {
-	id?: string;
-	user: USER;
-	content: string;
-	mediaUrl: string;
-	mediaType: MEDIA_TYPE;
-	likes: USER[];
-	comments: COMMENT[];
-	shares: USER[];
-	privacy: PRIVACY;
-	createdAt?: string;
-	updatedAt?: string;
+  id?: string;
+  user: USER;
+  content: string;
+  mediaUrl: string;
+  mediaType: MEDIA_TYPE;
+  likes: USER[];
+  comments: COMMENT[];
+  shares: USER[];
+  privacy: PRIVACY;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface STORY {

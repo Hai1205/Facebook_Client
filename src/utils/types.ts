@@ -6,6 +6,8 @@ export type USER_GENDER = "MALE" | "FEMALE" | "OTHER";
 
 export type FRIEND_STATUS = "NONE" | "SENT" | "FRIEND" | "PENDING" | "REJECT" | "ACCEPT";
 
+export type RESPOND_STATUS = "ACCEPT" | "REJECT";
+
 export type MEDIA_TYPE = "IMAGE" | "VIDEO";
 
 export type PRIVACY = "PUBLIC" | "PRIVATE";

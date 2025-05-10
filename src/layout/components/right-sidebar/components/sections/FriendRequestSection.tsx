@@ -7,8 +7,8 @@ import { Link } from "react-router-dom";
 
 interface FriendRequestSectionProps {
   requests: FRIEND_REQUEST[];
-  onAccept: (id: string) => void;
-  onDelete: (id: string) => void;
+  onAccept: (request: FRIEND_REQUEST) => void;
+  onDelete: (request: FRIEND_REQUEST) => void;
 }
 
 export const FriendRequestSection = ({
@@ -43,21 +43,25 @@ export const FriendRequestSection = ({
           return (
             <div key={request.id} className="bg-gray-800 rounded-lg p-3">
               <div className="flex items-start space-x-2">
-                <Avatar className="h-10 w-10">
-                  <AvatarImage
-                    src={request.from.avatarPhotoUrl || "/placeholder.svg"}
-                  />
+                <Link to={`/profile/${request.from.id}`}>
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage
+                      src={request.from.avatarPhotoUrl || "/placeholder.svg"}
+                    />
 
-                  <AvatarFallback className="bg-zinc-800">
-                    {request.from.fullName.substring(0, 2)}
-                  </AvatarFallback>
-                </Avatar>
+                    <AvatarFallback className="bg-zinc-800">
+                      {request.from.fullName.substring(0, 2)}
+                    </AvatarFallback>
+                  </Avatar>
+                </Link>
 
                 <div className="flex-1">
                   <div className="flex justify-between items-start">
-                    <h4 className="font-medium text-sm">
-                      {request.from.fullName}
-                    </h4>
+                    <Link to={`/profile/${request.from.id}`}>
+                      <h4 className="font-medium text-sm">
+                        {request.from.fullName}
+                      </h4>
+                    </Link>
 
                     <span className="text-xs text-blue-500">
                       {formateDateAgo(request.from.createdAt as string)}
@@ -74,7 +78,7 @@ export const FriendRequestSection = ({
                     <Button
                       size="sm"
                       className="bg-blue-600 hover:bg-[#166FE5] text-white text-xs h-8 px-3 rounded-md"
-                      onClick={() => onAccept(request.id as string)}
+                      onClick={() => onAccept(request)}
                     >
                       Accept
                     </Button>
@@ -83,7 +87,7 @@ export const FriendRequestSection = ({
                       variant="outline"
                       size="sm"
                       className="bg-gray-800 hover:bg-red-600 text-white border-gray-600 text-xs h-8 px-3 rounded-md"
-                      onClick={() => onDelete(request.id as string)}
+                      onClick={() => onDelete(request)}
                     >
                       Delete
                     </Button>

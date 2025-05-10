@@ -39,7 +39,7 @@ const NewPostForm = ({
               <Input
                 placeholder={`what's on your mind, ${userAuth?.fullName}`}
                 readOnly
-                className="cursor-pointer rounded-full h-12  dark:bg-[rgb(58,59,60)] placeholder:text-gray-500 dark:placeholder:text-gray-400  "
+                className="cursor-pointer rounded-full h-12 bg-[rgb(58,59,60)] placeholder:text-gray-400  "
               />
               <Separator className="my-2 dark:bg-slate-400" />
 

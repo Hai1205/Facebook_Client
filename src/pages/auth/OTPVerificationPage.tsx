@@ -202,7 +202,7 @@ const OTPVerificationPage: React.FC = () => {
           className="mt-6 mb-4 bg-[#1877F2] hover:bg-[#166FE5]"
           isLoading={isLoading}
         >
-          VERIFY
+          Verify
         </LoadingButton>
 
         <div className="text-center mb-4">

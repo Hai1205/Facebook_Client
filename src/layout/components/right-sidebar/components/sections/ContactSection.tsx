@@ -66,7 +66,7 @@ export const ContactSection = ({ contacts }: ContactSectionProps) => {
             placeholder="Search contact..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="bg-gray-800 border-gray-700 text-sm text-gray-200 focus:ring-blue-500 placeholder:text-gray-400"
+            className="bg-[rgb(58,59,60)] border-gray-700 text-sm text-gray-400 focus:ring-blue-500 placeholder:text-gray-400"
           />
         </div>
       )}

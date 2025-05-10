@@ -240,7 +240,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="bg-black border-b border-gray-800 text-white h-16 fixed top-0 left-0 right-0 z-50 flex items-center px-4">
+      <header className="bg-black border-b border-zinc-800 text-white h-16 fixed top-0 left-0 right-0 z-50 flex items-center px-4">
         <div className="w-full flex justify-between items-center">
           {/* Left: Logo and Search */}
           <div className="flex items-center gap-4">
@@ -266,7 +266,7 @@ const Header = () => {
 
                   <Input
                     ref={inputRef}
-                    className="pl-10 pr-10 w-56 md:w-72 h-10 bg-gray-800 border-none rounded-full text-sm transition-all duration-300 focus:ring-2 focus:ring-blue-500"
+                    className="pl-10 pr-10 w-56 md:w-72 h-10 bg-[rgb(58,59,60)] border-none rounded-full text-sm transition-all duration-300 focus:ring-2 focus:ring-blue-500"
                     placeholder="Searching on Facebook..."
                     value={searchQuery}
                     onChange={handleSearchInputChange}
@@ -335,7 +335,7 @@ const Header = () => {
                     className={`rounded-full bg-gray-800 text-white hover:bg-gray-800 ${
                       showNotifications
                         ? "bg-[#1877F2]/20 text-blue-500"
-                        : "hover:bg-gray-800 text-gray-300"
+                        : "hover:bg-gray-800 bg-zinc-800 text-gray-300"
                     }`}
                   >
                     <Bell className="h-5 w-5" />
@@ -349,7 +349,7 @@ const Header = () => {
                     className={`rounded-full bg-gray-800 text-white hover:bg-gray-800 ${
                       showMessages
                         ? "bg-[#1877F2]/20 text-blue-500"
-                        : "hover:bg-gray-800 text-gray-300"
+                        : "hover:bg-gray-800 bg-zinc-800 text-gray-300"
                     }`}
                   >
                     <MessageCircle className="h-5 w-5" />

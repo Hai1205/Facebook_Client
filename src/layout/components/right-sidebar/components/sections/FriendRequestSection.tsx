@@ -41,7 +41,7 @@ export const FriendRequestSection = ({
           );
 
           return (
-            <div key={request.id} className="bg-gray-800 rounded-lg p-3">
+            <div key={request.id} className="bg-zinc-800 rounded-lg p-3">
               <div className="flex items-start space-x-2">
                 <Link to={`/profile/${request.from.id}`}>
                   <Avatar className="h-10 w-10">
@@ -49,7 +49,7 @@ export const FriendRequestSection = ({
                       src={request.from.avatarPhotoUrl || "/placeholder.svg"}
                     />
 
-                    <AvatarFallback className="bg-zinc-800">
+                    <AvatarFallback className="bg-zinc-700">
                       {request.from.fullName.substring(0, 2)}
                     </AvatarFallback>
                   </Avatar>

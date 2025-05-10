@@ -184,7 +184,7 @@ const RegisterPage: React.FC = () => {
           className="mt-4 bg-[#1877F2] hover:bg-[#166FE5]"
           isLoading={isLoading}
         >
-          REGISTER
+          Register
         </LoadingButton>
       </form>
 

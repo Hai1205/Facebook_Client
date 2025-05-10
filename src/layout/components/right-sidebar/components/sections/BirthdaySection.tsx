@@ -9,7 +9,7 @@ export const BirthdaySection = ({ birthdays }: Birthday) => (
   <>
     <h3 className="text-gray-400 font-semibold text-sm mb-3">Birthdays</h3>
 
-    <div className="bg-gray-800 rounded-lg p-3">
+    <div className="bg-zinc-800 rounded-lg p-3">
       <div className="flex items-center space-x-3">
         <div className="bg-gray-800 rounded-full p-2">
           <Gift className="h-5 w-5 text-blue-400" />

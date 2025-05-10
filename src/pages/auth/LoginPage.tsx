@@ -117,7 +117,7 @@ const LoginPage: React.FC = () => {
           isLoading={isLoading}
           className="w-full login-button"
         >
-          LOG IN
+          Log in
         </LoadingButton>
       </form>
 

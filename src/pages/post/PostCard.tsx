@@ -3,13 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import {
-  BadgeCheck,
-  MessageCircle,
-  MoreHorizontal,
-  Share2,
-  ThumbsUp,
-} from "lucide-react";
+import { BadgeCheck, MessageCircle, Share2, ThumbsUp } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import {
   Dialog,
@@ -21,8 +15,9 @@ import {
 } from "@/components/ui/dialog";
 import PostComments from "./components/PostComments";
 import { COMMENT, POST } from "@/utils/interface";
-import { formateDateAgo, clientUrl } from "@/lib/utils";
+import { formateDateAgo, clientUrl, formatNumberStyle } from "@/lib/utils";
 import { Link } from "react-router-dom";
+import ExtendOption from "./components/ExtendOption";
 
 interface PostCardProps {
   post: POST;
@@ -117,9 +112,7 @@ const PostCard = ({
               </div>
             </div>
 
-            <Button variant="ghost" className="dark:hover:bg-gray-500">
-              <MoreHorizontal className="dark:text-white h-4 w-4" />
-            </Button>
+            <ExtendOption content={post} contentType="POST" />
           </div>
 
           <p className="mb-4">{post?.content}</p>
@@ -141,8 +134,8 @@ const PostCard = ({
 
           <div className="flex justify-between items-center mb-4">
             <span className="text-sm text-gray-500 dark:text-gray-400 hover:border-b-2 border-gray-400 cursor-pointer ">
-              {post?.likes?.length}{" "}
-              {post?.likes?.length === 1 ? "like" : "likes"}
+              {formatNumberStyle(post?.likes?.length)}{" "}
+              {post?.likes?.length < 2 ? "like" : "likes"}
             </span>
 
             <div className="flex gap-3">
@@ -150,13 +143,13 @@ const PostCard = ({
                 className="text-sm text-gray-500 dark:text-gray-400 hover:border-b-2 border-gray-400 cursor-pointer "
                 onClick={() => setShowComments(!showComments)}
               >
-                {post?.comments?.length}{" "}
-                {post?.comments?.length === 1 ? "comment" : "comments"}
+                {formatNumberStyle(post?.comments?.length)}{" "}
+                {post?.comments?.length < 2 ? "comment" : "comments"}
               </span>
 
               <span className="text-sm text-gray-500 dark:text-gray-400 hover:border-b-2 border-gray-400 cursor-pointer ">
-                {post?.shares?.length}{" "}
-                {post?.shares?.length === 1 ? "share" : "shares"}
+                {formatNumberStyle(post?.share?.length)}{" "}
+                {post?.share?.length < 2 ? "share" : "shares"}
               </span>
             </div>
           </div>

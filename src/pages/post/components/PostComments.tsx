@@ -5,7 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { COMMENT, POST, USER } from "@/utils/interface";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { formateDateAgo } from "@/lib/utils";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import ExtendOption from "./ExtendOption";
+// import { formateDateAgo } from "@/lib/utils";
 
 interface PostCommentsProps {
   post: POST;
@@ -18,9 +20,10 @@ const PostComments = ({
   onComment,
   commentInputRef,
 }: PostCommentsProps) => {
+  const { userAuth } = useAuthStore();
+  
   const [showAllComments, setShowAllComments] = useState(false);
   const [commentText, setCommentText] = useState("");
-  const { userAuth } = useAuthStore();
 
   const visibleComments: COMMENT[] = showAllComments
     ? (post?.comments?.map((comment) =>
@@ -47,30 +50,57 @@ const PostComments = ({
     <div className="mt-4">
       <h3 className="font-semibold mb-2">Comments</h3>
 
-      <div className="max-h-60 overflow-y-auto pr-2">
-        {visibleComments?.map((comment, index) => (
-          <div key={index} className="flex items-start space-x-2 mb-2">
-            <Avatar className="w-8 h-8">
-              {comment?.user?.avatarPhotoUrl ? (
+      <ScrollArea className="h-[170px]">
+        <div className="pr-2">
+          {post?.comments?.length > 2 && (
+            <p
+              className="w-40 mt-2 text-blue-500 dark:text-gray-300 cursor-pointer"
+              onClick={() => setShowAllComments(!showAllComments)}
+            >
+              {showAllComments ? (
+                <>
+                  Show less <ChevronUp className="ml-2 h-4 w-4" />
+                </>
+              ) : (
+                <>
+                  Show more <ChevronDown className="ml-2 h-4 w-4" />
+                </>
+              )}
+            </p>
+          )}
+
+          {visibleComments?.map((comment, index) => (
+            <div key={index} className="flex items-start space-x-2 mb-2">
+              <Avatar className="w-12 h-12">
                 <AvatarImage
                   src={comment?.user?.avatarPhotoUrl}
                   alt={comment?.user?.fullName}
                 />
-              ) : (
-                <AvatarFallback className="dark:bg-gray-400">
+
+                <AvatarFallback className="bg-zinc-700 text-xl text-white">
                   {comment?.user?.fullName.substring(0, 2)}
                 </AvatarFallback>
-              )}
-            </Avatar>
+              </Avatar>
 
-            <div className="flex flex-col">
-              <div className="rounded-lg p-2">
-                <p className="font-bold text-sm">{comment?.user?.fullName}</p>
+              <div className="flex flex-col flex-grow">
+                <div className="rounded-lg p-2 flex justify-between items-start">
+                  <div>
+                    <p className="font-bold text-sm">
+                      {comment?.user?.fullName}
+                    </p>
+                    <p className="text-sm">{comment?.text}</p>
+                  </div>
 
-                <p className="text-sm">{comment?.text}</p>
-              </div>
+                  {comment?.id && (
+                    <ExtendOption
+                      content={comment}
+                      contentType="COMMENT"
+                      postId={post?.id}
+                    />
+                  )}
+                </div>
 
-              <div className="flex items-center mt-1 text-xs text-gray-400">
+                {/* <div className="flex items-center text-xs text-gray-400">
                 <Button variant="ghost" size="sm">
                   Like
                 </Button>
@@ -80,42 +110,24 @@ const PostComments = ({
                 </Button>
 
                 <span>{formateDateAgo(comment?.createdAt || "")}</span>
+              </div> */}
               </div>
             </div>
-          </div>
-        ))}
-
-        {post?.comments?.length > 2 && (
-          <p
-            className="w-40 mt-2 text-blue-500 dark:text-gray-300 cursor-pointer"
-            onClick={() => setShowAllComments(!showAllComments)}
-          >
-            {showAllComments ? (
-              <>
-                Show Less <ChevronUp className="ml-2 h-4 w-4" />
-              </>
-            ) : (
-              <>
-                Show All Comments <ChevronDown className="ml-2 h-4 w-4" />
-              </>
-            )}
-          </p>
-        )}
-      </div>
+          ))}
+        </div>
+      </ScrollArea>
 
       {userAuth && (
         <div className="flex items-center space-x-2 mt-4">
-          <Avatar className="w-8 h-8">
-            {userAuth?.avatarPhotoUrl ? (
-              <AvatarImage
-                src={userAuth?.avatarPhotoUrl}
-                alt={userAuth?.fullName}
-              />
-            ) : (
-              <AvatarFallback className="dark:bg-gray-400">
-                {userAuth?.fullName.substring(0, 2)}
-              </AvatarFallback>
-            )}
+          <Avatar className="w-12 h-12">
+            <AvatarImage
+              src={userAuth?.avatarPhotoUrl}
+              alt={userAuth?.fullName}
+            />
+
+            <AvatarFallback className="bg-zinc-700 text-xl">
+              {userAuth?.fullName.substring(0, 2)}
+            </AvatarFallback>
           </Avatar>
 
           <Input

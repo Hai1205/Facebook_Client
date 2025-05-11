@@ -5,12 +5,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { usePostStore } from "@/stores/usePostStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { toast } from "react-toastify";
-
-export type ReportContentType = "post" | "comment" | "user" | "story";
+import { REPORT_TYPE } from "@/utils/types";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ReportModalProps {
   contentId: string;
-  contentType: ReportContentType;
+  contentType: REPORT_TYPE;
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
 }
@@ -29,13 +29,13 @@ export default function ReportModal({
 
   const getTitle = () => {
     switch (contentType) {
-      case "post":
+      case "POST":
         return "Report Post";
-      case "comment":
+      case "COMMENT":
         return "Report Comment";
-      case "user":
+      case "USER":
         return "Report User";
-      case "story":
+      case "STORY":
         return "Report Story";
       default:
         return "Report Content";
@@ -44,12 +44,14 @@ export default function ReportModal({
 
   const getDescription = () => {
     switch (contentType) {
-      case "post":
+      case "POST":
         return "Please select a reason why you're reporting this post";
-      case "comment":
+      case "COMMENT":
         return "Please select a reason why you're reporting this comment";
-      case "user":
+      case "USER":
         return "Please select a reason why you're reporting this user";
+      case "STORY":
+        return "Please select a reason why you're reporting this story";
       default:
         return "Please select a reason for your report";
     }
@@ -85,7 +87,7 @@ export default function ReportModal({
     ];
 
     switch (contentType) {
-      case "post":
+      case "POST":
         return [
           ...commonOptions,
           {
@@ -104,7 +106,7 @@ export default function ReportModal({
             description: "Please specify in the additional information",
           },
         ];
-      case "comment":
+      case "COMMENT":
         return [
           ...commonOptions,
           {
@@ -118,7 +120,7 @@ export default function ReportModal({
             description: "Please specify in the additional information",
           },
         ];
-      case "user":
+      case "USER":
         return [
           ...commonOptions,
           {
@@ -137,7 +139,7 @@ export default function ReportModal({
             description: "Please specify in the additional information",
           },
         ];
-      case "story":
+      case "STORY":
         return [
           ...commonOptions,
           {
@@ -170,12 +172,18 @@ export default function ReportModal({
     }
   };
 
+  const handleOptionClick = (optionId: string) => {
+    if (reportReason === optionId) {
+      setReportReason("");
+    }
+  };
+
   const reportOptions = getReportOptions();
 
   return (
     <>
       <Transition show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={onOpenChange}>
+        <Dialog as="div" className="relative z-50" onClose={onOpenChange}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -199,7 +207,7 @@ export default function ReportModal({
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-lg bg-gray-900 text-gray-100 border border-gray-800 p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-lg bg-zinc-900 text-gray-100 border border-gray-800 p-6 text-left align-middle shadow-xl transition-all">
                   <Dialog.Title
                     as="h3"
                     className="text-xl font-semibold leading-6"
@@ -212,66 +220,73 @@ export default function ReportModal({
 
                   <div className="py-4">
                     <div className="h-[200px] pr-2 my-2 overflow-y-auto">
-                      <RadioGroup
-                        value={reportReason}
-                        onChange={setReportReason}
-                        className="space-y-1"
-                      >
-                        {reportOptions.map((option) => (
-                          <RadioGroup.Option
-                            key={option.id}
-                            value={option.id}
-                            className={({ active, checked }) =>
-                              `${
-                                active
-                                  ? "ring-2 ring-gray-600 ring-opacity-60 ring-offset-2 ring-offset-gray-800"
-                                  : ""
+                      <ScrollArea className="h-[200px]">
+                        <RadioGroup
+                          value={reportReason}
+                          onChange={(value) => {
+                            setReportReason(value);
+                          }}
+                          className="space-y-1"
+                        >
+                          {reportOptions.map((option) => (
+                            <RadioGroup.Option
+                              key={option.id}
+                              value={option.id}
+                              onClick={() => handleOptionClick(option.id)}
+                              className={({ active, checked }) =>
+                                `${
+                                  active
+                                    ? "ring-2 ring-gray-600 ring-opacity-60 ring-offset-2 ring-offset-gray-800"
+                                    : ""
+                                }
+                                ${
+                                  checked
+                                    ? "bg-gray-800 bg-opacity-75 text-white"
+                                    : "bg-gray-900"
+                                }
+                                relative flex cursor-pointer rounded-md p-1.5 hover:bg-gray-800 focus:outline-none`
                               }
-                              ${
-                                checked
-                                  ? "bg-gray-800 bg-opacity-75 text-white"
-                                  : "bg-gray-900"
-                              }
-                              relative flex cursor-pointer rounded-md p-1.5 hover:bg-gray-800 focus:outline-none`
-                            }
-                          >
-                            {({ checked }) => (
-                              <div className="flex w-full items-start space-x-3">
-                                <div className="flex-shrink-0 text-white">
-                                  <div
-                                    className={`
-                                      h-4 w-4 rounded-full border ${
-                                        checked
-                                          ? "border-gray-200 bg-gray-200"
-                                          : "border-gray-600"
-                                      }
-                                      flex items-center justify-center
-                                    `}
-                                  >
-                                    {checked && (
-                                      <div className="h-2 w-2 rounded-full bg-gray-900" />
-                                    )}
+                            >
+                              {({ checked }) => (
+                                <div className="flex w-full items-start space-x-3">
+                                  <div className="flex-shrink-0 text-white">
+                                    <div
+                                      className={`
+                                        h-4 w-4 rounded-full border ${
+                                          checked
+                                            ? "border-gray-200 bg-gray-200"
+                                            : "border-gray-600"
+                                        }
+                                        flex items-center justify-center
+                                      `}
+                                    >
+                                      {checked && (
+                                        <div className="h-2 w-2 rounded-full bg-gray-900" />
+                                      )}
+                                    </div>
+                                  </div>
+
+                                  <div className="grid gap-0.5 leading-none">
+                                    <RadioGroup.Label
+                                      as="p"
+                                      className="text-sm font-medium"
+                                    >
+                                      {option.title}
+                                    </RadioGroup.Label>
+
+                                    <RadioGroup.Description
+                                      as="span"
+                                      className="text-xs text-gray-400"
+                                    >
+                                      {option.description}
+                                    </RadioGroup.Description>
                                   </div>
                                 </div>
-                                <div className="grid gap-0.5 leading-none">
-                                  <RadioGroup.Label
-                                    as="p"
-                                    className="text-sm font-medium"
-                                  >
-                                    {option.title}
-                                  </RadioGroup.Label>
-                                  <RadioGroup.Description
-                                    as="span"
-                                    className="text-xs text-gray-400"
-                                  >
-                                    {option.description}
-                                  </RadioGroup.Description>
-                                </div>
-                              </div>
-                            )}
-                          </RadioGroup.Option>
-                        ))}
-                      </RadioGroup>
+                              )}
+                            </RadioGroup.Option>
+                          ))}
+                        </RadioGroup>
+                      </ScrollArea>
                     </div>
 
                     <div className="mt-4">
@@ -281,12 +296,13 @@ export default function ReportModal({
                       >
                         Additional Information
                       </label>
+
                       <Textarea
                         id="additional-info"
                         placeholder="Please provide more details about your report..."
                         value={additionalInfo}
                         onChange={(e) => setAdditionalInfo(e.target.value)}
-                        className="bg-gray-800 border-gray-700 focus:border-gray-600 focus:ring-gray-600 placeholder:text-gray-500"
+                        className="bg-[rgb(58,59,60)] border-gray-700 focus:border-gray-600 focus:ring-gray-600 placeholder:text-gray-500"
                       />
                     </div>
                   </div>
@@ -296,10 +312,11 @@ export default function ReportModal({
                       type="button"
                       variant="ghost"
                       onClick={() => onOpenChange(false)}
-                      className="text-gray-400 hover:text-gray-200 hover:bg-gray-800"
+                      className="text-gray-400 hover:text-gray-200 hover:bg-gray-800 bg-gray-900"
                     >
                       Cancel
                     </Button>
+
                     <Button
                       type="button"
                       onClick={handleSubmit}

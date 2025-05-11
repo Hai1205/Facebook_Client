@@ -44,7 +44,6 @@ const ProfilePage = () => {
     return <ProfileHeaderSkeleton />;
   }
 
-  console.log(profileData)
   return (
     <div className="w-full">
       <ProfileHeader

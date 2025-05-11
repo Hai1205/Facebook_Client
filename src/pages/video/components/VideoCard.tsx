@@ -1,14 +1,7 @@
 import { useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  BadgeCheck,
-  MessageCircle,
-  MoreHorizontal,
-  Send,
-  Share2,
-  ThumbsUp,
-} from "lucide-react";
+import { BadgeCheck, MessageCircle, Share2, ThumbsUp } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -17,13 +10,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import VideoComments from "./VideoComments";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Input } from "@/components/ui/input";
-import { COMMENT, POST, USER } from "@/utils/interface";
-import { useAuthStore } from "@/stores/useAuthStore";
-import { clientUrl, formateDateAgo } from "@/lib/utils";
+import { COMMENT, POST } from "@/utils/interface";
+import { clientUrl, formateDateAgo, formatNumberStyle } from "@/lib/utils";
+import ExtendOption from "@/pages/post/components/ExtendOption";
+import PostComments from "@/pages/post/components/PostComments";
+import { Separator } from "@/components/ui/separator";
 
 interface VideoCardProps {
   post: POST;
@@ -40,11 +32,8 @@ const VideoCard = ({
   onComment,
   onLike,
 }: VideoCardProps) => {
-  const { userAuth } = useAuthStore();
-
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
   const [showComments, setShowComments] = useState(false);
-  const [commentText, setCommentText] = useState("");
   const commentInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleCommentClick = () => {
@@ -53,16 +42,6 @@ const VideoCard = ({
       setTimeout(() => {
         commentInputRef?.current?.focus();
       }, 0);
-    }
-  };
-
-  const handleCommentSubmit = async () => {
-    if (commentText.trim()) {
-      onComment({
-        text: commentText,
-        user: userAuth as USER,
-      });
-      setCommentText("");
     }
   };
 
@@ -128,9 +107,7 @@ const VideoCard = ({
             </div>
           </div>
 
-          <Button variant="ghost" className="dark:hover:bg-gray-500">
-            <MoreHorizontal className="dark:text-white h-4 w-4" />
-          </Button>
+          <ExtendOption content={post} contentType="POST" />
         </div>
 
         <div className="relative aspect-video bg-black mb-4">
@@ -142,94 +119,90 @@ const VideoCard = ({
           )}
         </div>
 
-        <div className="md:flex justify-between px-2 mb-2 items-center">
-          <div className="flex space-x-4">
-            <Button
-              variant="ghost"
-              className={`flex dark:hover:bg-gray-600 items-center  ${
-                isLiked ? "text-blue-600" : ""
-              }`}
-              onClick={onLike}
-            >
-              <ThumbsUp className="mr-2 h-4 w-4" />
+        <div className="flex justify-between items-center mb-4 px-4">
+          <span className="text-sm text-gray-500 dark:text-gray-400 hover:border-b-2 border-gray-400 cursor-pointer">
+            {formatNumberStyle(post?.likes?.length)}{" "}
+            {post?.likes?.length < 2 ? "like" : "likes"}
+          </span>
 
-              <span>Like</span>
-            </Button>
-
-            <Button
-              variant="ghost"
-              className={`flex items-center dark:hover:bg-gray-600 `}
-              onClick={handleCommentClick}
-            >
-              <MessageCircle className="mr-2 h-4 w-4" />
-
-              <span>Comment</span>
-            </Button>
-            <Dialog
-              open={isShareDialogOpen}
-              onOpenChange={setIsShareDialogOpen}
-            >
-              <DialogTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="flex items-center dark:hover:bg-gray-500"
-                  onClick={onShare}
-                >
-                  <Share2 className="mr-2 h-4 w-4" />
-
-                  <span>share</span>
-                </Button>
-              </DialogTrigger>
-
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Share This Post</DialogTitle>
-
-                  <DialogDescription>
-                    Choose how you want to share this post
-                  </DialogDescription>
-                </DialogHeader>
-
-                <div className="flex flex-col space-y-4 ">
-                  <Button onClick={() => handleShare("facebook")}>
-                    Share on Facebook
-                  </Button>
-
-                  <Button onClick={() => handleShare("twitter")}>
-                    Share on Twitter
-                  </Button>
-
-                  <Button onClick={() => handleShare("linkedin")}>
-                    Share on Linkedin
-                  </Button>
-
-                  <Button onClick={() => handleShare("copy")}>Copy Link</Button>
-                </div>
-              </DialogContent>
-            </Dialog>
-          </div>
-
-          <div className="flex space-x-4 ml-2 text-sm text-gray-500 dark:text-gray-400">
-            <Button variant="ghost" size="sm">
-              {post?.likes?.length}{" "}
-              {post?.likes?.length === 1 ? "like" : "likes"}
-            </Button>
-
-            <Button
-              variant="ghost"
-              size="sm"
+          <div className="flex gap-3">
+            <span
+              className="text-sm text-gray-500 dark:text-gray-400 hover:border-b-2 border-gray-400 cursor-pointer"
               onClick={() => setShowComments(!showComments)}
             >
-              {post?.comments?.length}{" "}
-              {post?.comments?.length === 1 ? "comment" : "comments"}
-            </Button>
+              {formatNumberStyle(post?.comments?.length)}{" "}
+              {post?.comments?.length < 2 ? "comment" : "comments"}
+            </span>
 
-            <Button variant="ghost" size="sm">
-              {post?.shares?.length}{" "}
-              {post?.shares?.length === 1 ? "share" : "shares"}
-            </Button>
+            <span className="text-sm text-gray-500 dark:text-gray-400 hover:border-b-2 border-gray-400 cursor-pointer">
+              {formatNumberStyle(post?.share?.length)}{" "}
+              {post?.share?.length < 2 ? "share" : "shares"}
+            </span>
           </div>
         </div>
+
+        <Separator className="mb-2 dark:bg-gray-400 mx-4" />
+
+        <div className="flex justify-between mb-2 px-4">
+          <Button
+            variant="ghost"
+            className={`flex-1 dark:hover:bg-gray-600 ${
+              isLiked ? "text-blue-600" : ""
+            }`}
+            onClick={onLike}
+          >
+            <ThumbsUp className="mr-2 h-4 w-4" /> Like
+          </Button>
+
+          <Button
+            variant="ghost"
+            className="flex-1 dark:hover:bg-gray-600"
+            onClick={handleCommentClick}
+          >
+            <MessageCircle className="mr-2 h-4 w-4" /> Comment
+          </Button>
+
+          <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
+            <DialogTrigger asChild>
+              <Button
+                variant="ghost"
+                className="flex-1 dark:hover:bg-gray-500"
+                onClick={onShare}
+              >
+                <Share2 className="mr-2 h-4 w-4" />
+                Share
+              </Button>
+            </DialogTrigger>
+
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Share This Post</DialogTitle>
+
+                <DialogDescription>
+                  Choose how you want to share this post
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="flex flex-col space-y-4">
+                <Button onClick={() => handleShare("facebook")}>
+                  Share on Facebook
+                </Button>
+
+                <Button onClick={() => handleShare("twitter")}>
+                  Share on Twitter
+                </Button>
+
+                <Button onClick={() => handleShare("linkedin")}>
+                  Share on Linkedin
+                </Button>
+
+                <Button onClick={() => handleShare("copy")}>Copy Link</Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        <Separator className="mb-2 dark:bg-gray-400 mx-4" />
 
         <AnimatePresence>
           {showComments && (
@@ -238,39 +211,13 @@ const VideoCard = ({
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3 }}
+              className="px-4 pb-4"
             >
-              <ScrollArea className="h-[300px] w-full rounded-md border p-4">
-                <VideoComments comments={(post?.comments as COMMENT[]) || []} />
-              </ScrollArea>
-
-              {userAuth && (
-                <div className="flex items-center mt-4 p-2">
-                  <Avatar className="h-10 w-10 rounded mr-3">
-                    <AvatarImage
-                      src={userAuth?.avatarPhotoUrl}
-                      alt={userAuth?.fullName}
-                    />
-                    <AvatarFallback className="dark:bg-gray-400">
-                      {userAuth?.fullName?.substring(0, 2)}
-                    </AvatarFallback>
-                  </Avatar>
-
-                  <Input
-                    className="flex-1 mr-2 dark:border-gray-400"
-                    placeholder="Write a comment..."
-                    value={commentText}
-                    ref={commentInputRef}
-                    onChange={(e) => setCommentText(e.target.value)}
-                    onKeyDown={(e) =>
-                      e.key === "Enter" && handleCommentSubmit()
-                    }
-                  />
-
-                  <Button onClick={handleCommentSubmit}>
-                    <Send className="h-4 w-4" />
-                  </Button>
-                </div>
-              )}
+              <PostComments
+                post={post}
+                onComment={(comment) => onComment(comment)}
+                commentInputRef={commentInputRef}
+              />
             </motion.div>
           )}
         </AnimatePresence>

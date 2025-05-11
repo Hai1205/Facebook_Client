@@ -1,7 +1,10 @@
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import ExtendOption from "@/pages/post/components/ExtendOption";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { STORY } from "@/utils/interface";
 
 interface ShowStoryPreviewProps {
   file: string | null;
@@ -9,8 +12,7 @@ interface ShowStoryPreviewProps {
   onClose: () => void;
   onPost: () => void;
   isNewStory: boolean;
-  fullName: string;
-  avatar: string | null;
+  currentStory: STORY | undefined;
   isLoading: boolean;
   onNext?: () => void;
   onPrevious?: () => void;
@@ -22,17 +24,39 @@ const ShowStoryPreview = ({
   onClose,
   onPost,
   isNewStory,
-  fullName,
-  avatar,
+  currentStory,
   isLoading,
   onNext,
   onPrevious,
 }: ShowStoryPreviewProps) => {
+  const { userAuth } = useAuthStore();
+
   const videoRef = useRef<HTMLVideoElement>(null);
   const [progress, setProgress] = useState<number>(0);
   const MAX_DURATION = 20;
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+
+  const fullName = useMemo(() => {
+    return isNewStory
+      ? userAuth?.fullName || ""
+      : currentStory?.user?.fullName || "";
+  }, [currentStory?.user?.fullName, isNewStory, userAuth?.fullName]);
+
+  const avatar = useMemo(() => {
+    return isNewStory
+      ? userAuth?.avatarPhotoUrl || null
+      : currentStory?.user?.avatarPhotoUrl || null;
+  }, [
+    currentStory?.user?.avatarPhotoUrl,
+    isNewStory,
+    userAuth?.avatarPhotoUrl,
+  ]);
+
+  const storyId = useMemo(() => {
+    return !isNewStory && currentStory ? currentStory.id : undefined;
+  }, [currentStory, isNewStory]);
 
   useEffect(() => {
     const originalOverflow = document.body.style.overflow;
@@ -74,23 +98,25 @@ const ShowStoryPreview = ({
 
       setProgress(0);
 
-      progressIntervalRef.current = setInterval(() => {
-        setProgress((prev) => {
-          const newProgress = prev + 100 / MAX_DURATION / 10;
+      if (!isReportModalOpen) {
+        progressIntervalRef.current = setInterval(() => {
+          setProgress((prev) => {
+            const newProgress = prev + 100 / MAX_DURATION / 10;
 
-          if (newProgress >= 100) {
-            clearInterval(progressIntervalRef.current as NodeJS.Timeout);
-            if (onNext) {
-              onNext();
-            } else {
-              onClose();
+            if (newProgress >= 100) {
+              clearInterval(progressIntervalRef.current as NodeJS.Timeout);
+              if (onNext) {
+                onNext();
+              } else {
+                onClose();
+              }
+              return 100;
             }
-            return 100;
-          }
 
-          return newProgress;
-        });
-      }, 100);
+            return newProgress;
+          });
+        }, 100);
+      }
 
       return () => {
         if (progressIntervalRef.current) {
@@ -98,7 +124,7 @@ const ShowStoryPreview = ({
         }
       };
     }
-  }, [isNewStory, onClose, onNext, file]);
+  }, [isNewStory, onClose, onNext, file, isReportModalOpen]);
 
   const isVideoType = (type: string | null): boolean => {
     if (!type) return false;
@@ -150,6 +176,37 @@ const ShowStoryPreview = ({
     e.stopPropagation();
   };
 
+  // Theo dõi trạng thái của ReportModal để tạm dừng hoặc tiếp tục tiến trình
+  const handleReportModalChange = (isOpen: boolean) => {
+    setIsReportModalOpen(isOpen);
+
+    if (!isOpen && !isNewStory) {
+      // Reset lại interval khi ReportModal đóng
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+      }
+
+      // Tiếp tục tiến trình đếm thời gian
+      progressIntervalRef.current = setInterval(() => {
+        setProgress((prev) => {
+          const newProgress = prev + 100 / MAX_DURATION / 10;
+
+          if (newProgress >= 100) {
+            clearInterval(progressIntervalRef.current as NodeJS.Timeout);
+            if (onNext) {
+              onNext();
+            } else {
+              onClose();
+            }
+            return 100;
+          }
+
+          return newProgress;
+        });
+      }, 100);
+    }
+  };
+
   return (
     <div
       ref={containerRef}
@@ -195,6 +252,16 @@ const ShowStoryPreview = ({
             {fullName || "Facebook User"}
           </span>
         </div>
+
+        {!isNewStory && storyId && userAuth?.id && (
+          <div className="absolute top-4 right-14 z-30">
+            <ExtendOption
+              content={currentStory as STORY}
+              contentType="STORY"
+              onReportModalChange={handleReportModalChange}
+            />
+          </div>
+        )}
 
         {!isNewStory && (
           <>

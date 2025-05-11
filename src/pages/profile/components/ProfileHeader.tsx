@@ -11,6 +11,7 @@ import { FriendButton } from "@/pages/profile/components/buttons/FriendButton";
 import { FollowButton } from "@/pages/profile/components/buttons/FollowButton";
 import { FRIEND_STATUS } from "@/utils/types";
 import EditCoverPhotoDialog from "./dialogs/EditCoverPhotoDialog";
+import ExtendOption from "@/pages/post/components/ExtendOption";
 
 interface ProfileHeaderProps {
   userId: string | undefined;
@@ -111,6 +112,14 @@ const ProfileHeader = ({
             aria-label={`${profileData.fullName}'s cover`}
           />
         )}
+
+        <div className="absolute top-4 right-4 z-20">
+          {
+            !isOwner && (
+              <ExtendOption content={profileData} contentType="USER" />
+            )
+          }
+        </div>
 
         {isOwner && (
           <div className="absolute bottom-4 right-4 z-20">

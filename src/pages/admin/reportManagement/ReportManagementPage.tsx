@@ -51,7 +51,8 @@ interface FILTER {
 const initialFilters: FILTER = { status: [], contentType: [] };
 
 export default function ReportManagementPage() {
-  const { isLoading, searchReports } = usePostStore();
+  const { isLoading, searchReports, resolveReport } = usePostStore();
+
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get("query") || "";
   const [searchQuery, setSearchQuery] = useState(query);
@@ -94,13 +95,13 @@ export default function ReportManagementPage() {
     setIsViewDetailsOpen(true);
   };
 
-  const toggleFilter = (value: string) => {
+  const toggleFilter = (value: string, type: "status" | "contentType") => {
     setActiveFilters((prev) => {
       const updated = { ...prev };
-      if (updated.status.includes(value)) {
-        updated.status = updated.status.filter((item) => item !== value);
+      if (updated[type].includes(value)) {
+        updated[type] = updated[type].filter((item) => item !== value);
       } else {
-        updated.status = [...updated.status, value];
+        updated[type] = [...updated[type], value];
       }
       return updated;
     });
@@ -122,6 +123,12 @@ export default function ReportManagementPage() {
       params.delete("status");
     }
 
+    if (activeFilters.contentType.length > 0) {
+      params.set("contentType", activeFilters.contentType.join(","));
+    } else {
+      params.delete("contentType");
+    }
+
     setSearchParams(params);
     closeMenuMenuFilters();
   };
@@ -131,15 +138,20 @@ export default function ReportManagementPage() {
 
   useEffect(() => {
     const status = searchParams.get("status");
-    if (status) {
-      setActiveFilters({
-        status: status.split(","),
-        contentType: status.split(","),
-      });
-    }
-  }, [searchParams]);
+    const contentType = searchParams.get("contentType");
 
-  const { resolveReport } = usePostStore();
+    const newFilters = { ...initialFilters };
+
+    if (status) {
+      newFilters.status = status.split(",");
+    }
+
+    if (contentType) {
+      newFilters.contentType = contentType.split(",");
+    }
+
+    setActiveFilters(newFilters);
+  }, [searchParams]);
 
   const [isResponding, setIsResponding] = useState(false);
   const handleConfirm = async (status: string) => {
@@ -220,7 +232,7 @@ export default function ReportManagementPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="h-8 gap-1 bg-blue-600 hover:bg-[#166FE5] text-white"
+                      className="h-8 gap-1 bg-[#1877F2] hover:bg-[#166FE5] text-white"
                       onClick={() => setOpenMenuFilters((prev) => !prev)}
                     >
                       <Filter className="h-4 w-4" />
@@ -241,7 +253,9 @@ export default function ReportManagementPage() {
                           <Checkbox
                             id="status-accept"
                             checked={activeFilters.status.includes("ACCEPT")}
-                            onCheckedChange={() => toggleFilter("ACCEPT")}
+                            onCheckedChange={() =>
+                              toggleFilter("ACCEPT", "status")
+                            }
                             className="mr-2"
                           />
 
@@ -252,7 +266,9 @@ export default function ReportManagementPage() {
                           <Checkbox
                             id="status-pending"
                             checked={activeFilters.status.includes("PENDING")}
-                            onCheckedChange={() => toggleFilter("PENDING")}
+                            onCheckedChange={() =>
+                              toggleFilter("PENDING", "status")
+                            }
                             className="mr-2"
                           />
 
@@ -263,7 +279,9 @@ export default function ReportManagementPage() {
                           <Checkbox
                             id="status-reject"
                             checked={activeFilters.status.includes("REJECT")}
-                            onCheckedChange={() => toggleFilter("REJECT")}
+                            onCheckedChange={() =>
+                              toggleFilter("REJECT", "status")
+                            }
                             className="mr-2"
                           />
 
@@ -282,7 +300,9 @@ export default function ReportManagementPage() {
                           <Checkbox
                             id="type-post"
                             checked={activeFilters.contentType.includes("POST")}
-                            onCheckedChange={() => toggleFilter("POST")}
+                            onCheckedChange={() =>
+                              toggleFilter("POST", "contentType")
+                            }
                             className="mr-2"
                           />
 
@@ -295,11 +315,13 @@ export default function ReportManagementPage() {
                             checked={activeFilters.contentType.includes(
                               "STORY"
                             )}
-                            onCheckedChange={() => toggleFilter("STORY")}
+                            onCheckedChange={() =>
+                              toggleFilter("STORY", "contentType")
+                            }
                             className="mr-2"
                           />
 
-                          <label htmlFor="type-story">Pending</label>
+                          <label htmlFor="type-story">Story</label>
                         </div>
 
                         <div className="flex items-center">
@@ -308,22 +330,26 @@ export default function ReportManagementPage() {
                             checked={activeFilters.contentType.includes(
                               "COMMENT"
                             )}
-                            onCheckedChange={() => toggleFilter("COMMENT")}
+                            onCheckedChange={() =>
+                              toggleFilter("COMMENT", "contentType")
+                            }
                             className="mr-2"
                           />
 
-                          <label htmlFor="type-comment">Reject</label>
+                          <label htmlFor="type-comment">Comment</label>
                         </div>
 
                         <div className="flex items-center">
                           <Checkbox
                             id="type-user"
                             checked={activeFilters.contentType.includes("USER")}
-                            onCheckedChange={() => toggleFilter("USER")}
+                            onCheckedChange={() =>
+                              toggleFilter("USER", "contentType")
+                            }
                             className="mr-2"
                           />
 
-                          <label htmlFor="type-user">Reject</label>
+                          <label htmlFor="type-user">User</label>
                         </div>
                       </div>
                     </div>
@@ -339,7 +365,11 @@ export default function ReportManagementPage() {
                         Clear Filters
                       </Button>
 
-                      <Button size="sm" onClick={applyFilters}>
+                      <Button
+                        size="sm"
+                        onClick={applyFilters}
+                        className="bg-[#1877F2] hover:bg-[#166FE5] text-white"
+                      >
                         Apply Filters
                       </Button>
                     </div>
@@ -354,7 +384,7 @@ export default function ReportManagementPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="text-center">User</TableHead>
+                    <TableHead className="text-center">Sender</TableHead>
 
                     <TableHead className="text-center">Type</TableHead>
 
@@ -392,15 +422,16 @@ export default function ReportManagementPage() {
                               </Avatar>
 
                               <div className="flex flex-col">
-                              <p className="text-s font-bold flex items-center">
-                                    <span className="font-medium hover:underline text-white">
-                                      {report?.sender?.fullName || "Facebook User"}
-                                    </span>
+                                <p className="text-s font-bold flex items-center">
+                                  <span className="font-medium hover:underline text-white">
+                                    {report?.sender?.fullName ||
+                                      "Facebook User"}
+                                  </span>
 
-                                    {report?.sender?.celebrity && (
-                                      <BadgeCheck className="ml-2 h-4 w-4 text-[#1877F2]" />
-                                    )}
-                                  </p>
+                                  {report?.sender?.celebrity && (
+                                    <BadgeCheck className="ml-2 h-4 w-4 text-[#1877F2]" />
+                                  )}
+                                </p>
 
                                 <span className="text-sm text-muted-foreground hover:underline">
                                   {report?.sender?.email}

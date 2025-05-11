@@ -42,6 +42,10 @@ export const commentPost = async (postId: string, userId: string, formData: Form
     return await axiosInstance.post(`${endpoint}/comment-post/${postId}/${userId}`, formData)
 }
 
+export const deleteComment = async (commentId: string, postId: string): Promise<any> => {
+    return await axiosInstance.delete(`${endpoint}/delete-comment/${commentId}/${postId}`)
+}
+
 export const sharePost = async (postId: string, userId: string): Promise<any> => {
     return await axiosInstance.post(`${endpoint}/share-post/${postId}/${userId}`);
 }

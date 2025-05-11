@@ -372,7 +372,7 @@ const Header = () => {
                           alt={userAuth?.fullName}
                         />
 
-                        <AvatarFallback className="bg-gray-800">
+                        <AvatarFallback className="bg-zinc-800">
                           {userAuth?.fullName?.substring(0, 2) || "U"}
                         </AvatarFallback>
                       </Avatar>

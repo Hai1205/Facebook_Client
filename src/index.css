@@ -134,3 +134,22 @@
 .login-button:hover {
   background-color: #166FE5 !important;
 }
+
+/* Custom ScrollArea styles */
+.custom-scrollbar [data-radix-scroll-area-viewport]>div {
+  padding-right: 10px !important;
+}
+
+.custom-scrollbar [data-radix-scroll-area-scrollbar] {
+  width: 8px !important;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.custom-scrollbar [data-radix-scroll-area-thumb] {
+  background-color: rgba(156, 163, 175, 0.7) !important;
+  border-radius: 4px !important;
+}
+
+.dark .custom-scrollbar [data-radix-scroll-area-thumb] {
+  background-color: rgba(156, 163, 175, 0.7) !important;
+}

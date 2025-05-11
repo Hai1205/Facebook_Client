@@ -16,8 +16,9 @@ import { USER } from "@/utils/interface";
 import { useUserStore } from "@/stores/useUserStore";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import LoadingSpinner from "@/components/ui/loading";
-import { Save, UserIcon } from "lucide-react";
+import { Save } from "lucide-react";
 import { GENDER_CHOICE, ROLE_CHOICE, STATUS_CHOICE } from "@/utils/choices";
+import { logTestFormData } from "@/lib/utils";
 
 interface EditUserDialogProps {
   isOpen: boolean;
@@ -88,8 +89,8 @@ const EditUserDialog = ({
       formData.append("role", userData.role);
       formData.append("status", userData.status);
 
-      if (userData.isCelebrity) {
-        formData.append("isCelebrity", "true");
+      if (userData.celebrity) {
+        formData.append("celebrity", "true");
       }
 
       if (userData.dateOfBirth) {
@@ -100,6 +101,7 @@ const EditUserDialog = ({
         formData.append("avatarPhoto", avatarFile);
       }
 
+      logTestFormData(formData);
       setIsLoading(true);
       const res = await updateUser(user.id as string, formData);
       setIsLoading(false);
@@ -114,7 +116,6 @@ const EditUserDialog = ({
     }
   };
 
-  console.log(userData)
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={handleClose}>
@@ -161,8 +162,8 @@ const EditUserDialog = ({
                             }
                             alt={userData?.fullName}
                           />
-                          <AvatarFallback>
-                            <UserIcon />
+                          <AvatarFallback className="text-6xl">
+                            {userData?.fullName?.substring(0, 2)}
                           </AvatarFallback>
                         </Avatar>
 
@@ -296,10 +297,10 @@ const EditUserDialog = ({
                   {isAdmin && (
                     <div className="flex items-center space-x-2 mt-3">
                       <Checkbox
-                        id="isCelebrity"
-                        checked={userData?.isCelebrity}
+                        id="celebrity"
+                        checked={userData?.celebrity}
                         onCheckedChange={(checked) => {
-                          handleChange("isCelebrity", checked);
+                          handleChange("celebrity", checked);
                         }}
                       />
 

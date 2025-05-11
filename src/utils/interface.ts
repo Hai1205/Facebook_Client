@@ -59,7 +59,7 @@ export interface POST {
   mediaType: MEDIA_TYPE;
   likes: USER[];
   comments: COMMENT[];
-  shares: USER[];
+  share: USER[];
   privacy: PRIVACY;
   createdAt?: string;
   updatedAt?: string;

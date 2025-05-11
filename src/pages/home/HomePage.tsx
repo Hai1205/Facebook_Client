@@ -11,12 +11,7 @@ import VideoCard from "../video/components/VideoCard";
 import FriendSuggestSection from "../friend/components/FriendSuggestSection";
 
 const HomePage = () => {
-  const {
-    likePost,
-    commentPost,
-    sharePost,
-    homePosts,
-  } = usePostStore();
+  const { likePost, commentPost, sharePost, homePosts } = usePostStore();
   const { getSuggestedUsers } = useUserStore();
   const { userAuth } = useAuthStore();
 

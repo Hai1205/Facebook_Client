@@ -219,16 +219,7 @@ const StoryCard = ({
           onClose={handleClosePreview}
           onPost={handleCreateStoryPost}
           isNewStory={isNewStory}
-          fullName={
-            isNewStory
-              ? userAuth?.fullName || ""
-              : currentStory?.user?.fullName || ""
-          }
-          avatar={
-            isNewStory
-              ? userAuth?.avatarPhotoUrl || null
-              : currentStory?.user?.avatarPhotoUrl || null
-          }
+          currentStory={!isNewStory && currentStory ? currentStory : undefined}
           isLoading={isLoading}
           onNext={handleNextStory}
           onPrevious={handlePreviousStory}

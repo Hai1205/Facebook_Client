@@ -21,6 +21,7 @@ import {
   getAllReport,
   getUserStoryFeed,
   getUserFeed,
+  deleteComment,
 } from "@/utils/api/postApi";
 
 export interface PostStore {
@@ -41,6 +42,7 @@ export interface PostStore {
   createStory: (userId: string, formData: FormData) => Promise<any>;
   deletePost: (postId: string) => Promise<any>;
   deleteStory: (storyId: string) => Promise<any>;
+  deleteComment: (commentId: string, postId: string) => Promise<any>;
   likePost: (postId: string, userId: string) => Promise<any>;
   commentPost: (
     postId: string,
@@ -49,14 +51,16 @@ export interface PostStore {
   ) => Promise<any>;
   sharePost: (postId: string, userId: string) => Promise<any>;
   searchPosts: (query: string) => Promise<any>;
-  report: (userId: string, postId: string, formData: FormData) => Promise<any>;
+  report: (userId: string, contentId: string, formData: FormData) => Promise<any>;
   resolveReport: (reportId: string, formData: FormData) => Promise<any>;
   deleteReport: (reportId: string) => Promise<any>;
   searchReports: (query: string) => Promise<any>;
   updatePost: (postId: string, formData: FormData) => Promise<any>;
   addPostToHome: (post: any) => void;
+  removePostFromHome: (postId: string) => void;
   updatePostInHome: (updatedPost: any) => void;
   addStoryToHome: (story: any) => void;
+  removeStoryToHome: (storyId: string) => void;
   updateStoryInHome: (updatedStory: any) => void;
   reset: () => any;
 }
@@ -254,9 +258,8 @@ export const usePostStore = create<PostStore>()(
           const response = await deletePost(postId);
           const { message } = response.data;
 
-          set((state) => ({
-            homePosts: state.homePosts.filter((post) => post.id !== postId)
-          }));
+          const { removePostFromHome } = get();
+          removePostFromHome(postId);
 
           toast.success(message);
           return message;
@@ -279,9 +282,34 @@ export const usePostStore = create<PostStore>()(
           const response = await deleteStory(storyId);
           const { message } = response.data;
 
-          set((state) => ({
-            homeStories: state.homeStories.filter((story) => story.id !== storyId)
-          }));
+          const { removeStoryToHome } = get();
+          removeStoryToHome(storyId);
+
+          toast.success(message);
+          return true;
+        } catch (error: any) {
+          console.error(error);
+          const { message } = error.response.data;
+          set({ error: message });
+
+          toast.error(message);
+          return false;
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      deleteComment: async (commentId: string, postId: string) => {
+        set({ isLoading: true, error: null });
+
+        try {
+          const response = await deleteComment(commentId, postId);
+          const { post, message } = response.data;
+
+          if (post) {
+            const { updatePostInHome } = get();
+            updatePostInHome(post);
+          }
 
           toast.success(message);
           return true;
@@ -331,14 +359,13 @@ export const usePostStore = create<PostStore>()(
 
         try {
           const response = await commentPost(postId, userId, formData);
-          const { message, updatedPost } = response.data;
+          const { post } = response.data;
 
-          if (updatedPost) {
+          if (post) {
             const { updatePostInHome } = get();
-            updatePostInHome(updatedPost);
+            updatePostInHome(post);
           }
 
-          toast.success(message);
           return true;
         } catch (error: any) {
           console.error(error);
@@ -398,11 +425,11 @@ export const usePostStore = create<PostStore>()(
         }
       },
 
-      report: async (postId: string, userId: string, formData: FormData) => {
-        set({ isLoading: true, error: null });
+      report: async (userId: string, contentId: string, formData: FormData) => {
+        set({ error: null });
 
         try {
-          const response = await report(userId, postId, formData);
+          const response = await report(userId, contentId, formData);
           const { message } = response.data;
 
           toast.success(message);
@@ -420,7 +447,7 @@ export const usePostStore = create<PostStore>()(
       },
 
       resolveReport: async (reportId: string, formData: FormData) => {
-        set({ isLoading: true, error: null });
+        set({ error: null });
 
         try {
           const response = await resolveReport(reportId, formData);
@@ -513,6 +540,12 @@ export const usePostStore = create<PostStore>()(
         }));
       },
 
+      removePostFromHome: (postId) => {
+        set((state) => ({
+          homePosts: state.homePosts.filter((post) => post.id !== postId)
+        }));
+      },
+
       updatePostInHome: (updatedPost) => {
         set((state) => ({
           homePosts: state.homePosts.map((post) =>
@@ -524,6 +557,12 @@ export const usePostStore = create<PostStore>()(
       addStoryToHome: (story) => {
         set((state) => ({
           homeStories: [story, ...state.homeStories]
+        }));
+      },
+      
+      removeStoryToHome: (storyId) => {
+        set((state) => ({
+          homeStories: state.homeStories.filter((story) => story.id !== storyId)
         }));
       },
 

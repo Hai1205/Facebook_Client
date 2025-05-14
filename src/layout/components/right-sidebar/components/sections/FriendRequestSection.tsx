@@ -56,24 +56,24 @@ export const FriendRequestSection = ({
                 </Link>
 
                 <div className="flex-1">
-                  <div className="flex justify-between items-start">
-                    <Link to={`/profile/${request.from.id}`}>
-                      <h4 className="font-medium text-sm">
-                        {request.from.fullName}
-                      </h4>
-                    </Link>
+                  <Link to={`/profile/${request.from.id}`}>
+                    <h4 className="font-medium text-sm">
+                      {request.from.fullName}
+                    </h4>
+                  </Link>
+
+                  <div className="flex justify-between items-center">
+                    {mutualFriendsCount > 0 && (
+                      <p className="text-xs text-gray-400">
+                        {mutualFriendsCount} mutual
+                        {mutualFriendsCount > 1 ? " friends" : " friend"}
+                      </p>
+                    )}
 
                     <span className="text-xs text-blue-500">
                       {formateDateAgo(request.from.createdAt as string)}
                     </span>
                   </div>
-
-                  {mutualFriendsCount > 0 && (
-                    <p className="text-xs text-gray-400 mt-1">
-                      {mutualFriendsCount} mutual
-                      {mutualFriendsCount > 1 ? " friends" : " friend"}
-                    </p>
-                  )}
                   <div className="flex space-x-2 mt-2">
                     <Button
                       size="sm"

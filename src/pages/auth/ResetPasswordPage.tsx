@@ -53,11 +53,10 @@ const ResetPasswordPage: React.FC = () => {
     }
 
     const data = new FormData();
-    data.append("email", email);
     data.append("newPassword", formData.newPassword);
     data.append("rePassword", formData.rePassword);
 
-    const res = await forgotPassword(data);
+    const res = await forgotPassword(email, data);
 
     if (!res) {
       return;

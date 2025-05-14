@@ -40,8 +40,12 @@ const ExtendOption = ({
   }, [content, contentType]);
 
   const isOwner = useMemo(() => {
-    return contentId === userAuth?.id;
-  }, [contentId, userAuth?.id]);
+    if (contentType === "USER") {
+      return (content as USER)?.id as string === userAuth?.id;
+    }
+    
+    return (content as POST | COMMENT | STORY)?.user?.id as string === userAuth?.id;
+  }, [content, contentType, userAuth?.id]);
 
   const handleDelete = async () => {
     if (contentType === "POST") {

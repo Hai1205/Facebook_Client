@@ -1,5 +1,5 @@
 import type React from "react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import {
   X,
   Minus,
@@ -18,9 +18,11 @@ import { VoiceCallWindow } from "./VoiceCallWindow";
 import { CONVERSATION, MESSAGE, USER } from "@/utils/interface";
 import { useChatStore } from "@/stores/useChatStore";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useMessageStore } from "@/stores/useMessageStore";
+import { MessageLoader } from "./components/MessageLoader";
 
-type SENDER = "user" | "me";
+type SENDER = "other" | "me";
 
 interface DisplayMessage {
   id: string;
@@ -44,12 +46,16 @@ export function ChatWindow({
 }: ChatWindowProps) {
   const { getOrCreateConversation, getMessages } = useChatStore();
   const { userAuth } = useAuthStore();
+  const { generateBotResponse } = useMessageStore();
+
+  const navigate = useNavigate();
 
   const [conversation, setConversation] = useState<CONVERSATION | null>(null);
   const [messages, setMessages] = useState<DisplayMessage[]>([]);
   const [input, setInput] = useState("");
   const [isVoiceCallOpen, setIsVoiceCallOpen] = useState(false);
   const [isVideoCallOpen, setIsVideoCallOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -57,19 +63,23 @@ export function ChatWindow({
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const isChatBot = useMemo(() => {
+    return user?.bio?.workplace === "Chat Bot";
+  }, [user]);
+
   useEffect(() => {
     const fetchConversation = async () => {
-      if (userAuth?.id && user?.id) {
+      if (!isChatBot && userAuth?.id && user?.id) {
         const conversation = await getOrCreateConversation(
-          userAuth.id,
-          user.id
+          userAuth?.id,
+          user?.id
         );
         setConversation(conversation);
       }
     };
 
     fetchConversation();
-  }, [getOrCreateConversation, userAuth?.id, user?.id]);
+  }, [getOrCreateConversation, userAuth?.id, user?.id, isChatBot]);
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -95,24 +105,38 @@ export function ChatWindow({
     scrollToBottom();
   }, [messages]);
 
+  const handleViewProfile = () => {
+    if (isChatBot) return;
+
+    navigate(`/profile/${user?.id}`);
+  };
+
   const handleSendMessage = () => {
-    if (input.trim()) {
-      setMessages([
-        ...messages,
-        {
-          id: Date.now().toString(),
-          content: input.trim(),
-          sender: "me",
-          timestamp: new Date(),
-        },
-      ]);
-      setInput("");
+    if (!input.trim()) {
+      return;
+    }
+
+    setMessages([
+      ...messages,
+      {
+        id: Date.now().toString(),
+        content: input.trim(),
+        sender: "me",
+        timestamp: new Date(),
+      },
+    ]);
+
+    setInput("");
+
+    if (isChatBot) {
+      fetchChatBotResponse(input.trim());
     }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
+
       handleSendMessage();
     }
   };
@@ -129,6 +153,28 @@ export function ChatWindow({
     setIsVideoCallOpen(true);
   };
 
+  const fetchChatBotResponse = async (userInput: string) => {
+    if (!isChatBot && userInput !== "") return;
+
+    try {
+      setIsLoading(true);
+
+      const apiResponseText = await generateBotResponse(userInput);
+
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          id: Date.now().toString(),
+          content: apiResponseText,
+          sender: "other",
+          timestamp: new Date(),
+        },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="relative flex flex-col">
       <div
@@ -140,38 +186,40 @@ export function ChatWindow({
         {/* Chat header */}
         <div className="p-2 flex items-center justify-between border-b border-gray-700 cursor-pointer">
           <div className="flex items-center">
-            <Link to={`/profile/${user.id}`}>
-              <Avatar className="h-8 w-8 mr-2">
-                <AvatarImage src={user.avatarPhotoUrl} />
-                <AvatarFallback className="bg-blue-600">
-                  {user.fullName.substring(0, 2)}
-                </AvatarFallback>
-              </Avatar>
-            </Link>
+            <Avatar className="h-8 w-8 mr-2" onClick={handleViewProfile}>
+              <AvatarImage src={user.avatarPhotoUrl} />
+              <AvatarFallback className="bg-blue-600">
+                {user.fullName.substring(0, 2)}
+              </AvatarFallback>
+            </Avatar>
 
             <div>
-              <Link to={`/profile/${user.id}`}>
-                <p className="font-semibold text-sm">{user.fullName}</p>
-              </Link>
+              <p className="font-semibold text-sm" onClick={handleViewProfile}>
+                {user.fullName}
+              </p>
 
               <p className="text-xs text-green-500">Active now</p>
             </div>
           </div>
 
           <div className="flex items-center space-x-1">
-            <button
-              className="p-1 rounded-full hover:bg-gray-800 text-gray-400"
-              onClick={handlePhoneClick}
-            >
-              <Phone className="h-4 w-4" />
-            </button>
+            {!isChatBot && (
+              <>
+                <button
+                  className="p-1 rounded-full hover:bg-gray-800 text-gray-400"
+                  onClick={handlePhoneClick}
+                >
+                  <Phone className="h-4 w-4" />
+                </button>
 
-            <button
-              className="p-1 rounded-full hover:bg-gray-800 text-gray-400"
-              onClick={handleVideoClick}
-            >
-              <Video className="h-4 w-4" />
-            </button>
+                <button
+                  className="p-1 rounded-full hover:bg-gray-800 text-gray-400"
+                  onClick={handleVideoClick}
+                >
+                  <Video className="h-4 w-4" />
+                </button>
+              </>
+            )}
 
             <button
               className="p-1 rounded-full hover:bg-gray-800 text-gray-400"
@@ -206,7 +254,7 @@ export function ChatWindow({
                     message.sender === "me" ? "justify-end" : "justify-start"
                   } mb-3`}
                 >
-                  {message.sender === "user" && (
+                  {message.sender === "other" && (
                     <Avatar className="h-8 w-8 mr-2 mt-1 flex-shrink-0">
                       <AvatarImage src={user.avatarPhotoUrl} />
                       <AvatarFallback className="bg-blue-600">
@@ -232,6 +280,8 @@ export function ChatWindow({
                   </div>
                 </div>
               ))}
+
+              {isLoading && <MessageLoader user={user} />}
 
               <div ref={messagesEndRef} />
             </ScrollArea>
@@ -259,7 +309,7 @@ export function ChatWindow({
                   onChange={(e) => setInput(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Aa"
-                  className="flex-1 bg-gray-800 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex-1 bg-gray-800 rounded-full px-4 py-2 text-sm border border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
 
                 <button

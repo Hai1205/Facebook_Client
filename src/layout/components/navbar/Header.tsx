@@ -36,7 +36,6 @@ import { debounce } from "lodash";
 import { useNotiStore } from "@/stores/useNotiStore";
 import { usePostStore } from "@/stores/usePostStore";
 import FacebookLoader from "./components/FacebookLoader";
-// import { useMessageStore } from "@/stores/useMessageStore";
 
 const Header = () => {
   const { userAuth, isAuth, isAdmin, logout, checkAdmin } = useAuthStore();
@@ -46,7 +45,6 @@ const Header = () => {
   const { notifications, getUserNotifications } = useNotiStore();
   const { getUserFeed, homePosts, getUserStoryFeed, homeStories } =
     usePostStore();
-  // const { contacts, getContacts } = useMessageStore();
 
   const [isSearching, setIsSearching] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -76,17 +74,12 @@ const Header = () => {
         await getUserNotifications(userAuth?.id as string);
       }
 
-      // if (contacts.length === 0) {
-      //   await getContacts(userAuth?.id as string);
-      // }
-
       if (suggestedUsers.length === 0) {
         await getSuggestedUsers(userAuth?.id as string);
       }
     }
     setIsLoading(false);
   }, [
-    // getContacts,
     getUserFeed,
     getUserNotifications,
     getUserStoryFeed,
@@ -95,7 +88,6 @@ const Header = () => {
     homePosts.length,
     homeStories.length,
     notifications.length,
-    // contacts.length,
     userAuth?.id,
   ]);
 

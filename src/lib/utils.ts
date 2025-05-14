@@ -9,6 +9,10 @@ export const socketUrl = import.meta.env.VITE_SOCKET_URL as string;
 
 export const clientUrl = import.meta.env.VITE_CLIENT_URL as string;
 
+export const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY as string;
+
+export const geminiApiUrl = import.meta.env.VITE_GEMINI_URL as string;
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }

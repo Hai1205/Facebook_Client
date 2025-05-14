@@ -34,8 +34,8 @@ export const changePassword = async (userId: string, formData: FormData): Promis
   return await axiosInstance.put(`${endpoint}/change-password/${userId}`, formData);
 };
 
-export const forgotPassword = async (formData: FormData): Promise<any> => {
-  return await axiosInstance.put(`${endpoint}/forgot-password`, formData);
+export const forgotPassword = async (email: string, formData: FormData): Promise<any> => {
+  return await axiosInstance.put(`${endpoint}/forgot-password/${email}`, formData);
 };
 
 export const resetPassword = async (userId: string): Promise<any> => {

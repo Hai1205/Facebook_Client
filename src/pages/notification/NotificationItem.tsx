@@ -27,24 +27,24 @@ export default function NotificationItem({
         <Avatar className="h-10 w-10">
           <AvatarImage src={notification?.from?.avatarPhotoUrl || ""} />
 
-          <AvatarFallback className="bg-gray-600">
+          <AvatarFallback className="bg-zinc-700">
             <UserRoundPlus className="h-5 w-5" />
           </AvatarFallback>
         </Avatar>
 
         <div
-          className={`absolute -bottom-1 -right-1 rounded-full p-1 ${
+          className={`absolute -bottom-1 -right-1 rounded-full p-1 bg-zinc-800 border ${
             typesStyles[notification.type] || "text-gray-500 border-gray-500"
           }`}
         >
           {notification.type === "FOLLOW" ? (
-            <UserRoundPlus className="h-5 w-5" />
+            <UserRoundPlus className="h-4 w-4" />
           ) : notification.type === "LIKE" ? (
-            <ThumbsUp className="h-5 w-5" />
+            <ThumbsUp className="h-4 w-4" />
           ) : notification.type === "FRIEND_REQUEST" ? (
-            <UserRoundPlus className="h-5 w-5" />
+            <UserRoundPlus className="h-4 w-4" />
           ) : (
-            <MessageSquareMore className="h-5 w-5" />
+            <MessageSquareMore className="h-4 w-4" />
           )}
         </div>
       </div>

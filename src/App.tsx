@@ -16,7 +16,7 @@ import VideoPage from "./pages/video/VideoPage";
 import PrivateRoute from "./layout/components/protected-route/PrivateRoute";
 import SettingPage from "./pages/settings/SettingPage";
 import { IncomingCallNotification } from "./pages/chat/VoiceCallComponents/components/IncomingCallNotification";
-import { CallManager } from "./pages/chat/CallManager";
+import { CallManager } from "./pages/chat/VoiceCallComponents/CallManager";
 import AdminRoute from "./layout/components/protected-route/AdminRoute";
 import AdminDashboardPage from "./pages/admin/adminDashboard/AdminDashboardPage";
 import UserManagementPage from "./pages/admin/userManagement/UserManagementPage";

@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useNotiStore } from "@/stores/useNotiStore";
 import NotificationItem from "./NotificationItem";
-
+import { ScrollArea } from "@/components/ui/scroll-area";
 export function NotificationsDropdown() {
   const { notifications } = useNotiStore();
 
@@ -11,14 +11,14 @@ export function NotificationsDropdown() {
   );
 
   return (
-    <div className="absolute right-0 mt-2 w-80 bg-gray-800 rounded-lg shadow-lg border border-gray-700 overflow-hidden z-50">
+    <div className="absolute right-0 mt-2 w-80 bg-zinc-800 rounded-lg shadow-lg border border-gray-700 overflow-hidden z-50">
       <div className="p-4 border-b border-gray-700">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold">Notifications</h3>
         </div>
       </div>
 
-      <div className="max-h-96 overflow-y-auto">
+      <ScrollArea className="h-[300px]">
         {hasNotifications ? (
           notifications.map((notification) => (
             <NotificationItem
@@ -31,7 +31,7 @@ export function NotificationsDropdown() {
             No notifications yet
           </div>
         )}
-      </div>
+      </ScrollArea>
     </div>
   );
 }

@@ -7,10 +7,10 @@ import { useAuthStore } from "@/stores/useAuthStore";
 
 const ForgotPasswordPage: React.FC = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
 
   const { isLoading, sendOTP } = useAuthStore();
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);

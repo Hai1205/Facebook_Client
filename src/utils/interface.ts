@@ -52,17 +52,17 @@ export interface BIO {
 }
 
 export interface POST {
-  id?: string;
-  user: USER;
-  content: string;
-  mediaUrl: string;
-  mediaType: MEDIA_TYPE;
-  likes: USER[];
-  comments: COMMENT[];
-  share: USER[];
-  privacy: PRIVACY;
-  createdAt?: string;
-  updatedAt?: string;
+	id?: string;
+	user: USER;
+	content: string;
+	mediaUrl: string;
+	mediaType: MEDIA_TYPE;
+	likes: USER[];
+	comments: COMMENT[];
+	share: USER[];
+	privacy: PRIVACY;
+	createdAt?: string;
+	updatedAt?: string;
 }
 
 export interface STORY {
@@ -157,4 +157,13 @@ export interface GROUP_CONVERSATION {
 	participants: number;
 	avatarPhotoUrl: string;
 	active: boolean;
+}
+
+export interface CHAT {
+	id: string;
+	user: USER;
+	lastMessage: string;
+	time: string;
+	unread: boolean;
+	online: boolean;
 }

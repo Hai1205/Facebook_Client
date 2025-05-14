@@ -1,9 +1,10 @@
 import { useMemo, useState } from "react";
-import { ChatWindow } from "./ChatWindow";
+import { ChatWindow } from "../ChatWindow";
 import { useChatStore } from "@/stores/useChatStore";
 
 export function ChatContainer() {
   const { activeChats, closeChat } = useChatStore();
+
   const [minimizedChats, setMinimizedChats] = useState<Record<string, boolean>>(
     {}
   );

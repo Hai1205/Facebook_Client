@@ -1,4 +1,4 @@
-import { countUnreadMessages, getContacts, getConversation, getLatestMessages } from "@/utils/api/messageApi";
+import { countUnreadMessages, generateBotResponse, getContacts, getConversation, getLatestMessages } from "@/utils/api/messageApi";
 import { USER } from "@/utils/interface";
 import { toast } from "react-toastify";
 import { create } from "zustand";
@@ -16,6 +16,7 @@ interface MessageStore {
     getContacts: (userId: string) => Promise<any>;
     getLatestMessages: (userId: string) => Promise<any>;
     countUnreadMessages: (userId: string) => Promise<any>;
+    generateBotResponse: (text: string) => Promise<any>;
     reset: () => void;
 }
 
@@ -109,6 +110,19 @@ export const useMessageStore = create<MessageStore>()(
                     set({ error: message });
 
                     toast.error(message);
+                    return false;
+                } finally {
+                    set({ isLoading: false });
+                }
+            },
+            
+            generateBotResponse: async (text: string) => {
+                set({ isLoading: true, error: null });
+
+                try {
+                  return await generateBotResponse(text);
+                } catch (error: any) {
+                    console.error(error)
                     return false;
                 } finally {
                     set({ isLoading: false });

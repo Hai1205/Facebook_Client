@@ -39,7 +39,7 @@ export interface AuthStore {
 	login: (formData: FormData) => Promise<any>;
 	loginGoogle: (formData: FormData) => Promise<any>;
 	logout: () => Promise<any>;
-	forgotPassword: (formData: FormData) => Promise<any>;
+	forgotPassword: (email: string, formData: FormData) => Promise<any>;
 	changePassword: (userId: string, formData: FormData) => Promise<any>;
 	resetPassword: (userId: string) => Promise<any>;
 	setUserAuth: (user: USER | null) => any;
@@ -258,11 +258,11 @@ export const useAuthStore = create<AuthStore>()(
 				}
 			},
 
-			forgotPassword: async (formData) => {
+			forgotPassword: async (email, formData) => {
 				set({ isLoading: true, error: null });
 
 				try {
-					const response = await forgotPassword(formData);
+					const response = await forgotPassword(email, formData);
 					const { message } = response.data;
 
 					toast.success(message);

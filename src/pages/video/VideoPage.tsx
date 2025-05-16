@@ -75,9 +75,7 @@ const VideoPage = () => {
               post={post}
               isLiked={likePosts.has(post?.id || "")}
               onLike={() => handleLike(post?.id || "")}
-              onComment={(comment: COMMENT) =>
-                handleComment(post?.id || "", comment)
-              }
+              onComment={handleComment}
               onShare={() => handleShare(post?.id || "")}
             />
           ))}

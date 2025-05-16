@@ -358,13 +358,7 @@ export const usePostStore = create<PostStore>()(
         set({ isLoading: true, error: null });
 
         try {
-          const response = await commentPost(postId, userId, formData);
-          const { post } = response.data;
-
-          if (post) {
-            const { updatePostInHome } = get();
-            updatePostInHome(post);
-          }
+          await commentPost(postId, userId, formData);
 
           return true;
         } catch (error: any) {

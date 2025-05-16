@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronUp, Send } from "lucide-react";
+import { BadgeCheck, ChevronDown, ChevronUp, Send } from "lucide-react";
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,8 @@ import { COMMENT, POST, USER } from "@/utils/interface";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ExtendOption from "./ExtendOption";
-// import { formateDateAgo } from "@/lib/utils";
+import { formateDateAgo } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 interface PostCommentsProps {
   post: POST;
@@ -21,19 +22,22 @@ const PostComments = ({
   commentInputRef,
 }: PostCommentsProps) => {
   const { userAuth } = useAuthStore();
-  
+
   const [showAllComments, setShowAllComments] = useState(false);
   const [commentText, setCommentText] = useState("");
 
   const visibleComments: COMMENT[] = showAllComments
-    ? (post?.comments?.map((comment) =>
-        typeof comment === "string" ? { text: comment } : comment
-      ) as COMMENT[])
+    ? (post?.comments
+        ?.map((comment) =>
+          typeof comment === "string" ? { text: comment } : comment
+        )
+        .reverse() as COMMENT[])
     : (post?.comments
         ?.slice(0, 2)
         .map((comment) =>
           typeof comment === "string" ? { text: comment } : comment
-        ) as COMMENT[]);
+        )
+        .reverse() as COMMENT[]);
 
   const handleCommentSubmit = async () => {
     if (commentText.trim()) {
@@ -83,11 +87,18 @@ const PostComments = ({
               </Avatar>
 
               <div className="flex flex-col flex-grow">
-                <div className="rounded-lg p-2 flex justify-between items-start">
+                <div className="rounded-lg flex justify-between items-start">
                   <div>
-                    <p className="font-bold text-sm">
-                      {comment?.user?.fullName}
-                    </p>
+                    <Link to={`/profile/${comment?.user?.id}`}>
+                      <p className="text-s font-bold flex items-center">
+                        {comment?.user?.fullName || "Facebook User"}
+
+                        {comment?.user?.celebrity && (
+                          <BadgeCheck className="ml-2 h-4 w-4 text-[#1877F2]" />
+                        )}
+                      </p>
+                    </Link>
+
                     <p className="text-sm">{comment?.text}</p>
                   </div>
 
@@ -100,17 +111,9 @@ const PostComments = ({
                   )}
                 </div>
 
-                {/* <div className="flex items-center text-xs text-gray-400">
-                <Button variant="ghost" size="sm">
-                  Like
-                </Button>
-
-                <Button variant="ghost" size="sm">
-                  Reply
-                </Button>
-
-                <span>{formateDateAgo(comment?.createdAt || "")}</span>
-              </div> */}
+                <div className="flex items-center text-xs text-gray-400">
+                  <span>{formateDateAgo(comment?.createdAt || "")}</span>
+                </div>
               </div>
             </div>
           ))}

@@ -35,11 +35,10 @@ export const formatDuration = (seconds: number) => {
   return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
 };
 
-export const formateDateAgo = (date: string) => {
-  if (!date) return "Unknown time";
-  const createdDate = parseISO(date);
-  return formatDistanceToNow(createdDate, { addSuffix: true })
-}
+export const formateDateAgo = (date?: string) => {
+  const createdDate = date ? parseISO(date) : new Date();
+  return formatDistanceToNow(createdDate, { addSuffix: true });
+};
 
 export const formatDateInDDMMYYY = (date: string) => {
   return new Date(date).toLocaleDateString('en-GB')

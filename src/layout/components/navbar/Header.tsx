@@ -39,11 +39,11 @@ import FacebookLoader from "./components/FacebookLoader";
 
 const Header = () => {
   const { userAuth, isAuth, isAdmin, logout, checkAdmin } = useAuthStore();
-  const { searchUsers, getSuggestedUsers, suggestedUsers } = useUserStore();
+  const { searchUsers, getSuggestedUsers } = useUserStore();
   const { activeTab, setActiveTab } = useOpenStore();
   const { startChat } = useChatStore();
-  const { notifications, getUserNotifications } = useNotiStore();
-  const { getUserFeed, homePosts, getUserStoryFeed, homeStories } =
+  const { getUserNotifications } = useNotiStore();
+  const { getUserFeed, getUserStoryFeed } = usePostStore();
     usePostStore();
 
   const [isSearching, setIsSearching] = useState(false);
@@ -61,33 +61,33 @@ const Header = () => {
   const fetchData = useCallback(async () => {
     setIsLoading(true);
 
-    if (homePosts.length === 0) {
+    // if (homePosts.length === 0) {
       await getUserFeed(userAuth?.id || "");
-    }
+    // }
+    setIsLoading(false);
 
     if (userAuth?.id) {
-      if (homeStories.length === 0) {
+      // if (homeStories.length === 0) {
         await getUserStoryFeed(userAuth?.id as string);
-      }
+      // }
 
-      if (notifications.length === 0) {
+      // if (notifications.length === 0) {
         await getUserNotifications(userAuth?.id as string);
-      }
+      // }
 
-      if (suggestedUsers.length === 0) {
+      // if (suggestedUsers.length === 0) {
         await getSuggestedUsers(userAuth?.id as string);
-      }
+      // }
     }
-    setIsLoading(false);
   }, [
     getUserFeed,
     getUserNotifications,
     getUserStoryFeed,
     getSuggestedUsers,
-    suggestedUsers.length,
-    homePosts.length,
-    homeStories.length,
-    notifications.length,
+    // suggestedUsers.length,
+    // homePosts.length,
+    // homeStories.length,
+    // notifications.length,
     userAuth?.id,
   ]);
 

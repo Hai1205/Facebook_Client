@@ -1,40 +1,53 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BadgeCheck, MessageCircle, Share2, ThumbsUp } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { COMMENT, POST } from "@/utils/interface";
-import { clientUrl, formateDateAgo, formatNumberStyle } from "@/lib/utils";
+import { COMMENT, POST, USER } from "@/utils/interface";
+import { formateDateAgo, formatNumberStyle } from "@/lib/utils";
 import ExtendOption from "@/pages/post/components/ExtendOption";
 import PostComments from "@/pages/post/components/PostComments";
 import { Separator } from "@/components/ui/separator";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 interface VideoCardProps {
   post: POST;
   isLiked: boolean;
   onShare: () => void;
-  onComment: (comment: COMMENT) => void;
+  onComment: (postId: string, comment: COMMENT) => void;
   onLike: () => void;
 }
 
 const VideoCard = ({
   post,
-  isLiked,
+  isLiked: initialIsLiked = false,
   onShare,
   onComment,
   onLike,
 }: VideoCardProps) => {
-  const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
-  const [showComments, setShowComments] = useState(false);
+  const { userAuth } = useAuthStore();
+
   const commentInputRef = useRef<HTMLInputElement | null>(null);
+
+  const [likeCount, setLikeCount] = useState(post?.likes?.length || 0);
+  const [shareCount, setShareCount] = useState(post?.share?.length || 0);
+  const [isLiked, setIsLiked] = useState(initialIsLiked);
+  const [showComments, setShowComments] = useState(false);
+  const [comments, setComments] = useState<COMMENT[]>(post?.comments || []);
+
+  useEffect(() => {
+    if (post?.likes && userAuth) {
+      const userLiked = post.likes.some(
+        (user: USER) => user.id === userAuth.id
+      );
+      setIsLiked(userLiked);
+      setLikeCount(post.likes.length);
+    }
+
+    if (post?.share) {
+      setShareCount(post.share.length);
+    }
+  }, [post, userAuth]);
 
   const handleCommentClick = () => {
     setShowComments(!showComments);
@@ -45,29 +58,27 @@ const VideoCard = ({
     }
   };
 
-  const handleShare = (platform: string) => {
-    const url = `${clientUrl}/${post?.id}`;
-    let shareUrl;
+  const handleLikeClick = () => {
+    onLike();
 
-    switch (platform) {
-      case "facebook":
-        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=}`;
-        break;
-      case "twitter":
-        shareUrl = `https://twitter.com/intent/tweet?url=}`;
-        break;
-      case "linkedin":
-        shareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=}`;
-        break;
-      case "copy":
-        navigator.clipboard.writeText(url);
-        setIsShareDialogOpen(false);
-        return;
-      default:
-        return;
+    if (isLiked) {
+      setLikeCount((prev) => Math.max(0, prev - 1));
+    } else {
+      setLikeCount((prev) => prev + 1);
     }
-    window.open(shareUrl, "_blank");
-    setIsShareDialogOpen(false);
+    setIsLiked(!isLiked);
+  };
+
+  const handleShareClick = () => {
+    onShare();
+
+    setShareCount((prev) => prev + 1);
+  };
+
+  const handleAddComment = (comment: COMMENT) => {
+    setComments((prev) => [...prev, comment]);
+
+    onComment(post?.id || "", comment);
   };
 
   return (
@@ -121,8 +132,7 @@ const VideoCard = ({
 
         <div className="flex justify-between items-center mb-4 px-4">
           <span className="text-sm text-gray-500 dark:text-gray-400 hover:border-b-2 border-gray-400 cursor-pointer">
-            {formatNumberStyle(post?.likes?.length)}{" "}
-            {post?.likes?.length < 2 ? "like" : "likes"}
+            {formatNumberStyle(likeCount)} {likeCount < 2 ? "like" : "likes"}
           </span>
 
           <div className="flex gap-3">
@@ -130,13 +140,13 @@ const VideoCard = ({
               className="text-sm text-gray-500 dark:text-gray-400 hover:border-b-2 border-gray-400 cursor-pointer"
               onClick={() => setShowComments(!showComments)}
             >
-              {formatNumberStyle(post?.comments?.length)}{" "}
-              {post?.comments?.length < 2 ? "comment" : "comments"}
+              {formatNumberStyle(comments.length)}{" "}
+              {comments.length < 2 ? "comment" : "comments"}
             </span>
 
             <span className="text-sm text-gray-500 dark:text-gray-400 hover:border-b-2 border-gray-400 cursor-pointer">
-              {formatNumberStyle(post?.share?.length)}{" "}
-              {post?.share?.length < 2 ? "share" : "shares"}
+              {formatNumberStyle(shareCount)}{" "}
+              {shareCount < 2 ? "share" : "shares"}
             </span>
           </div>
         </div>
@@ -149,7 +159,7 @@ const VideoCard = ({
             className={`flex-1 dark:hover:bg-gray-600 ${
               isLiked ? "text-blue-600" : ""
             }`}
-            onClick={onLike}
+            onClick={handleLikeClick}
           >
             <ThumbsUp className="mr-2 h-4 w-4" /> Like
           </Button>
@@ -162,44 +172,13 @@ const VideoCard = ({
             <MessageCircle className="mr-2 h-4 w-4" /> Comment
           </Button>
 
-          <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
-            <DialogTrigger asChild>
-              <Button
-                variant="ghost"
-                className="flex-1 dark:hover:bg-gray-500"
-                onClick={onShare}
-              >
-                <Share2 className="mr-2 h-4 w-4" />
-                Share
-              </Button>
-            </DialogTrigger>
-
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Share This Post</DialogTitle>
-
-                <DialogDescription>
-                  Choose how you want to share this post
-                </DialogDescription>
-              </DialogHeader>
-
-              <div className="flex flex-col space-y-4">
-                <Button onClick={() => handleShare("facebook")}>
-                  Share on Facebook
-                </Button>
-
-                <Button onClick={() => handleShare("twitter")}>
-                  Share on Twitter
-                </Button>
-
-                <Button onClick={() => handleShare("linkedin")}>
-                  Share on Linkedin
-                </Button>
-
-                <Button onClick={() => handleShare("copy")}>Copy Link</Button>
-              </div>
-            </DialogContent>
-          </Dialog>
+          <Button
+            variant="ghost"
+            className={`flex-1 dark:hover:bg-gray-600 `}
+            onClick={handleShareClick}
+          >
+            <Share2 className="mr-2 h-4 w-4" /> share
+          </Button>
         </div>
 
         <Separator className="mb-2 dark:bg-gray-400 mx-4" />
@@ -214,8 +193,8 @@ const VideoCard = ({
               className="px-4 pb-4"
             >
               <PostComments
-                post={post}
-                onComment={(comment) => onComment(comment)}
+                post={{ ...post, comments }}
+                onComment={handleAddComment}
                 commentInputRef={commentInputRef}
               />
             </motion.div>

@@ -1,42 +1,71 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { BadgeCheck, MessageCircle, Share2, ThumbsUp } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import PostComments from "./components/PostComments";
-import { COMMENT, POST } from "@/utils/interface";
-import { formateDateAgo, clientUrl, formatNumberStyle } from "@/lib/utils";
+import { COMMENT, POST, USER } from "@/utils/interface";
+import { formateDateAgo, formatNumberStyle } from "@/lib/utils";
 import { Link } from "react-router-dom";
 import ExtendOption from "./components/ExtendOption";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 interface PostCardProps {
   post: POST;
-  isLiked: boolean;
+  isLiked?: boolean;
   onShare: () => void;
-  onComment: (comment: COMMENT) => void;
+  onComment: (postId: string, comment: COMMENT) => void;
   onLike: () => void;
 }
 
 const PostCard = ({
   post,
-  isLiked,
+  isLiked: initialIsLiked = false,
   onShare,
   onComment,
   onLike,
 }: PostCardProps) => {
-  const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
+  const { userAuth } = useAuthStore();
   const [showComments, setShowComments] = useState(false);
   const commentInputRef = useRef<HTMLInputElement | null>(null);
+
+  const [isLiked, setIsLiked] = useState(initialIsLiked);
+  const [likeCount, setLikeCount] = useState(post?.likes?.length || 0);
+  const [shareCount, setShareCount] = useState(post?.share?.length || 0);
+  const [comments, setComments] = useState<COMMENT[]>(post?.comments || []);
+
+  useEffect(() => {
+    if (post?.likes && userAuth) {
+      const userLiked = post.likes.some(
+        (user: USER) => user.id === userAuth.id
+      );
+      setIsLiked(userLiked);
+      setLikeCount(post.likes.length);
+    }
+
+    if (post?.comments) {
+      setComments(post.comments);
+    }
+  }, [post, userAuth]);
+
+  const handleLikeClick = () => {
+    if (isLiked) {
+      setLikeCount((prev) => Math.max(0, prev - 1));
+    } else {
+      setLikeCount((prev) => prev + 1);
+    }
+    setIsLiked(!isLiked);
+
+    onLike();
+  };
+
+  const handleShareClick = async () => {
+    onShare();
+
+    setShareCount((prev) => prev + 1);
+  };
 
   const handleCommentClick = () => {
     setShowComments(!showComments);
@@ -47,29 +76,10 @@ const PostCard = ({
     }
   };
 
-  const handleShare = (platform: string) => {
-    const url = `${clientUrl}/${post?.id}`;
-    let shareUrl;
+  const handleAddComment = (comment: COMMENT) => {
+    setComments((prev) => [...prev, comment]);
 
-    switch (platform) {
-      case "facebook":
-        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=}`;
-        break;
-      case "twitter":
-        shareUrl = `https://twitter.com/intent/tweet?url=}`;
-        break;
-      case "linkedin":
-        shareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=}`;
-        break;
-      case "copy":
-        navigator.clipboard.writeText(url);
-        setIsShareDialogOpen(false);
-        return;
-      default:
-        return;
-    }
-    window.open(shareUrl, "_blank");
-    setIsShareDialogOpen(false);
+    onComment(post?.id || "", comment);
   };
 
   return (
@@ -134,8 +144,7 @@ const PostCard = ({
 
           <div className="flex justify-between items-center mb-4">
             <span className="text-sm text-gray-500 dark:text-gray-400 hover:border-b-2 border-gray-400 cursor-pointer ">
-              {formatNumberStyle(post?.likes?.length)}{" "}
-              {post?.likes?.length < 2 ? "like" : "likes"}
+              {formatNumberStyle(likeCount)} {likeCount < 2 ? "like" : "likes"}
             </span>
 
             <div className="flex gap-3">
@@ -143,13 +152,13 @@ const PostCard = ({
                 className="text-sm text-gray-500 dark:text-gray-400 hover:border-b-2 border-gray-400 cursor-pointer "
                 onClick={() => setShowComments(!showComments)}
               >
-                {formatNumberStyle(post?.comments?.length)}{" "}
-                {post?.comments?.length < 2 ? "comment" : "comments"}
+                {formatNumberStyle(comments.length)}{" "}
+                {comments.length < 2 ? "comment" : "comments"}
               </span>
 
               <span className="text-sm text-gray-500 dark:text-gray-400 hover:border-b-2 border-gray-400 cursor-pointer ">
-                {formatNumberStyle(post?.share?.length)}{" "}
-                {post?.share?.length < 2 ? "share" : "shares"}
+                {formatNumberStyle(shareCount)}{" "}
+                {shareCount < 2 ? "share" : "shares"}
               </span>
             </div>
           </div>
@@ -162,9 +171,12 @@ const PostCard = ({
               className={`flex-1 dark:hover:bg-gray-600 ${
                 isLiked ? "text-blue-600" : ""
               }`}
-              onClick={onLike}
+              onClick={handleLikeClick}
             >
-              <ThumbsUp className="mr-2 h-4 w-4" /> Like
+              <ThumbsUp
+                className={`mr-2 h-4 w-4 ${isLiked ? "fill-current" : ""}`}
+              />
+              {isLiked ? "Liked" : "Like"}
             </Button>
 
             <Button
@@ -175,47 +187,13 @@ const PostCard = ({
               <MessageCircle className="mr-2 h-4 w-4" /> Comment
             </Button>
 
-            <Dialog
-              open={isShareDialogOpen}
-              onOpenChange={setIsShareDialogOpen}
+            <Button
+              variant="ghost"
+              className={`flex-1 dark:hover:bg-gray-600 `}
+              onClick={handleShareClick}
             >
-              <DialogTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="flex-1 dark:hover:bg-gray-500"
-                  onClick={onShare}
-                >
-                  <Share2 className="mr-2 h-4 w-4" />
-                  share
-                </Button>
-              </DialogTrigger>
-
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Share This Post</DialogTitle>
-
-                  <DialogDescription>
-                    Choose how you want to share this post
-                  </DialogDescription>
-                </DialogHeader>
-
-                <div className="flex flex-col space-y-4 ">
-                  <Button onClick={() => handleShare("facebook")}>
-                    Share on Facebook
-                  </Button>
-
-                  <Button onClick={() => handleShare("twitter")}>
-                    Share on Twitter
-                  </Button>
-
-                  <Button onClick={() => handleShare("linkedin")}>
-                    Share on Linkedin
-                  </Button>
-
-                  <Button onClick={() => handleShare("copy")}>Copy Link</Button>
-                </div>
-              </DialogContent>
-            </Dialog>
+              <Share2 className="mr-2 h-4 w-4" /> share
+            </Button>
           </div>
 
           <Separator className="mb-2 dark:bg-gray-400" />
@@ -229,11 +207,9 @@ const PostCard = ({
                 transition={{ duration: 0.3 }}
               >
                 <PostComments
-                  post={post}
-                  onComment={onComment}
-                  commentInputRef={
-                    commentInputRef as React.RefObject<HTMLInputElement>
-                  }
+                  post={{ ...post, comments }}
+                  onComment={handleAddComment}
+                  commentInputRef={commentInputRef}
                 />
               </motion.div>
             )}

@@ -1,8 +1,8 @@
 import { COMMENT, POST } from "@/utils/interface";
-import PostsContent from "../PostContent";
 import ProfileIntro from "./ProfileIntro";
 import NewPostForm from "@/pages/post/components/NewPostForm";
 import { useState } from "react";
+import PostCard from "@/pages/post/PostCard";
 
 interface ProfilePostsProps {
   likePosts: Set<unknown>;
@@ -10,7 +10,7 @@ interface ProfilePostsProps {
   isOwner: boolean;
   onEditBio: () => void;
   onLike: (postId: string) => void;
-  onComment: (comment: COMMENT, postId: string) => void;
+  onComment: (postId: string, comment: COMMENT) => void;
   onShare: (postId: string) => void;
 }
 
@@ -42,13 +42,11 @@ const ProfilePosts = ({
         />
 
         {profileData.posts?.map((post: POST) => (
-          <PostsContent
-            key={post?.id}
+          <PostCard
             post={post}
-            profileData={profileData}
             isLiked={likePosts.has(post?.id)}
             onLike={() => onLike(post?.id || "")}
-            onComment={(comment: COMMENT) => onComment(comment, post?.id || "")}
+            onComment={onComment}
             onShare={() => onShare(post?.id || "")}
           />
         ))}

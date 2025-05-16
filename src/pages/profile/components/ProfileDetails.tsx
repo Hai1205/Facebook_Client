@@ -7,6 +7,7 @@ import ProfilePosts from "./tabs/ProfilePosts";
 import ProfileAbout from "./tabs/ProfileAbout";
 import ProfilePhotos from "./tabs/ProfilePhotos";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { toast } from "react-toastify";
 
 interface ProfileDetailsProps {
   activeTab: "posts" | "about" | "friends" | "photos";
@@ -32,7 +33,7 @@ const ProfileDetails = ({
       return;
     }
 
-    const posts = profileData.posts;
+    const posts = profileData.posts.reverse();
     if (posts) {
       setUserPosts(posts);
     }
@@ -67,18 +68,18 @@ const ProfileDetails = ({
     );
 
     await likePost(postId, userAuth?.id as string);
-    fetchUserPosts();
   };
 
-  const handleCommentPost = async (comment: COMMENT, postId: string) => {
-    if (!userAuth) {
+  const handleCommentPost = async (postId: string, comment: COMMENT) => {
+    if (!userAuth?.id) {
+      toast.error("Please login to add a comment");
       return;
     }
 
     const formData = new FormData();
-    formData.append("text", comment.text as string);
-    await commentPost(postId, userAuth?.id as string, formData);
-    fetchUserPosts();
+    formData.append("text", comment?.text);
+
+    await commentPost(postId, userAuth?.id, formData);
   };
 
   const handleSharePost = async (postId: string) => {
@@ -87,7 +88,6 @@ const ProfileDetails = ({
     }
 
     await sharePost(postId, userAuth?.id as string);
-    fetchUserPosts();
   };
 
   // Render appropriate component based on activeTab

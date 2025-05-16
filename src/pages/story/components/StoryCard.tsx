@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ShowStoryPreview from "./ShowStoryPreview";
 import { STORY } from "@/utils/interface";
 import { useAuthStore } from "@/stores/useAuthStore";
@@ -10,19 +10,31 @@ import { usePostStore } from "@/stores/usePostStore";
 
 interface StoryCardProps {
   isAddStory?: boolean;
-  story?: STORY;
-  storiesList?: STORY[];
-  currentIndex?: number;
+  stories?: STORY[];
+  userIndex?: number;
+  isActive?: boolean;
+  onStoryStart?: (index: number) => void;
+  onStoryEnd?: () => void;
+  onNextUserStory?: () => boolean;
+  onPreviousUserStory?: () => boolean;
 }
 
 const StoryCard = ({
   isAddStory = false,
-  story,
-  storiesList = [],
-  currentIndex = 0,
+  stories = [],
+  userIndex = 0,
+  isActive = false,
+  onStoryStart,
+  onStoryEnd,
+  onNextUserStory,
+  onPreviousUserStory,
 }: StoryCardProps) => {
   const { userAuth } = useAuthStore();
   const { isLoading, createStory } = usePostStore();
+
+  const currentIndex = useMemo(() => {
+    return 0;
+  }, []);
 
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -36,6 +48,23 @@ const StoryCard = ({
       setStoryIndex(currentIndex);
     }
   }, [currentIndex, isNewStory]);
+
+  const handleStoryClick = useCallback(async () => {
+    if (stories[storyIndex]) {
+      setStoryIndex(currentIndex);
+      showStory(stories[storyIndex]);
+
+      if (onStoryStart) {
+        onStoryStart(userIndex);
+      }
+    }
+  }, [currentIndex, onStoryStart, stories, storyIndex, userIndex]);
+
+  useEffect(() => {
+    if (isActive && !isAddStory && stories.length > 0 && !showPreview) {
+      handleStoryClick();
+    }
+  }, [handleStoryClick, isActive, isAddStory, showPreview, stories.length]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -70,6 +99,9 @@ const StoryCard = ({
 
   const handleClosePreview = () => {
     resetStoryState();
+    if (onStoryEnd) {
+      onStoryEnd();
+    }
   };
 
   const resetStoryState = () => {
@@ -78,13 +110,6 @@ const StoryCard = ({
     setFilePreview(null);
     setFileType(null);
     setIsNewStory(false);
-  };
-
-  const handleStoryClick = () => {
-    if (story) {
-      setStoryIndex(currentIndex);
-      showStory(story);
-    }
   };
 
   const handleAddStoryClick = () => {
@@ -100,30 +125,49 @@ const StoryCard = ({
   };
 
   const handleNextStory = () => {
-    if (storiesList && storiesList.length > 0) {
+    if (stories && stories.length > 0) {
       const nextIndex = storyIndex + 1;
-      if (nextIndex < storiesList.length) {
+      if (nextIndex < stories.length) {
         setStoryIndex(nextIndex);
-        showStory(storiesList[nextIndex]);
+        showStory(stories[nextIndex]);
       } else {
-        resetStoryState();
+        // Đã xem hết story trong cụm này, chuyển sang cụm tiếp theo
+        if (onNextUserStory && onNextUserStory()) {
+          // Đã chuyển sang cụm tiếp theo thành công
+          resetStoryState();
+        } else {
+          // Không còn cụm tiếp theo, đóng preview
+          resetStoryState();
+          if (onStoryEnd) {
+            onStoryEnd();
+          }
+        }
       }
     } else {
       resetStoryState();
+      if (onStoryEnd) {
+        onStoryEnd();
+      }
     }
   };
 
   const handlePreviousStory = () => {
-    if (storiesList && storiesList.length > 0) {
+    if (stories && stories.length > 0) {
       const prevIndex = storyIndex - 1;
       if (prevIndex >= 0) {
         setStoryIndex(prevIndex);
-        showStory(storiesList[prevIndex]);
+        showStory(stories[prevIndex]);
+      } else {
+        // Đã ở story đầu tiên trong cụm, chuyển sang cụm trước đó
+        if (onPreviousUserStory && onPreviousUserStory()) {
+          // Đã chuyển sang cụm trước đó thành công
+          resetStoryState();
+        }
       }
     }
   };
 
-  const currentStory = isNewStory ? null : storiesList[storyIndex];
+  const currentStory = isNewStory ? null : stories[storyIndex];
 
   return (
     <>
@@ -160,7 +204,7 @@ const StoryCard = ({
                 >
                   <Plus className="h-5 w-5 text-white" />
                 </Button>
-                <p className="text-xs font-semibold mt-1">Tạo story</p>
+                <p className="text-xs font-semibold mt-1">Create Story</p>
               </div>
 
               <input
@@ -173,15 +217,15 @@ const StoryCard = ({
             </div>
           ) : (
             <>
-              {story?.mediaType === "IMAGE" ? (
+              {stories[storyIndex]?.mediaType === "IMAGE" ? (
                 <img
-                  src={story?.mediaUrl}
-                  alt={story?.user?.fullName}
+                  src={stories[storyIndex]?.mediaUrl}
+                  alt={stories[storyIndex]?.user?.fullName}
                   className="w-full h-full object-cover"
                 />
               ) : (
                 <video
-                  src={story?.mediaUrl || ""}
+                  src={stories[storyIndex]?.mediaUrl || ""}
                   className="w-full h-full object-cover"
                   preload="metadata"
                   muted
@@ -192,21 +236,28 @@ const StoryCard = ({
               <div className="absolute top-2 left-2 ring-2 ring-blue-500 rounded-full ">
                 <Avatar className="w-10 h-10">
                   <AvatarImage
-                    src={story?.user?.avatarPhotoUrl}
-                    alt={story?.user?.fullName}
+                    src={stories[storyIndex]?.user?.avatarPhotoUrl}
+                    alt={stories[storyIndex]?.user?.fullName}
                   />
 
                   <AvatarFallback className="bg-zinc-800 text-white">
-                    {story?.user?.fullName.substring(0, 2) || "FU"}
+                    {stories[storyIndex]?.user?.fullName.substring(0, 2) ||
+                      "FU"}
                   </AvatarFallback>
                 </Avatar>
               </div>
 
               <div className="absolute bottom-2 left-2 right-2">
                 <p className="text-white text-xs font-semibold truncate">
-                  {story?.user?.fullName || "Facebook User"}
+                  {stories[storyIndex]?.user?.fullName || "Facebook User"}
                 </p>
               </div>
+
+              {stories.length > 1 && (
+                <div className="absolute top-2 right-2 bg-blue-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                  {stories.length}
+                </div>
+              )}
             </>
           )}
         </CardContent>
@@ -223,6 +274,8 @@ const StoryCard = ({
           isLoading={isLoading}
           onNext={handleNextStory}
           onPrevious={handlePreviousStory}
+          storiesList={stories}
+          currentStoryIndex={storyIndex}
         />
       )}
     </>

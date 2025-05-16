@@ -10,12 +10,12 @@ import {
 } from "./interface";
 
 export const mockChatBot: USER = {
-    id: "1",
+    id: "37a847f194714e83d6dae894",
     email: "chatbot@example.com",
     gender: "OTHER",
     fullName: "Chat Bot",
     dateOfBirth: "2004-05-12",
-    avatarPhotoUrl: "../../public/ChatBotAvatar.png",
+    avatarPhotoUrl: "/ChatBotAvatar.png",
     coverPhotoUrl: "",
     followers: [],
     following: [],
@@ -24,7 +24,7 @@ export const mockChatBot: USER = {
     status: "ACTIVE",
     celebrity: false,
     bio: {
-        id: "1",
+        id: "37a847f194714e83d6dae894",
         user: {} as USER,
         bioText: "",
         liveIn: "",

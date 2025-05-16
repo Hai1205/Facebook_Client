@@ -16,6 +16,8 @@ interface ShowStoryPreviewProps {
   isLoading: boolean;
   onNext?: () => void;
   onPrevious?: () => void;
+  storiesList?: STORY[];
+  currentStoryIndex?: number;
 }
 
 const ShowStoryPreview = ({
@@ -28,6 +30,8 @@ const ShowStoryPreview = ({
   isLoading,
   onNext,
   onPrevious,
+  storiesList = [],
+  currentStoryIndex = 0,
 }: ShowStoryPreviewProps) => {
   const { userAuth } = useAuthStore();
 
@@ -221,13 +225,42 @@ const ShowStoryPreview = ({
     >
       <div className="relative w-full max-w-md h-[70vh] flex flex-col bg-zinc-800 rounded-lg overflow-hidden">
         {!isNewStory && (
-          <div className="absolute top-0 left-0 right-0 z-10 px-2 pt-2">
-            <div className="w-full h-1 bg-gray-500 bg-opacity-40 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-white transition-all duration-100 ease-linear"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
+          <div className="absolute top-0 left-0 right-0 z-10 px-2 pt-2 flex space-x-1">
+            {storiesList.length > 1 ? (
+              // Nhiều thanh tiến trình cho nhiều story
+              storiesList.map((_, index) => (
+                <div
+                  key={index}
+                  className="flex-1 h-1 bg-gray-500 bg-opacity-40 rounded-full overflow-hidden"
+                >
+                  <div
+                    className={`h-full transition-all duration-100 ease-linear ${
+                      index < currentStoryIndex
+                        ? "bg-white w-full"
+                        : index === currentStoryIndex
+                        ? "bg-white"
+                        : "bg-transparent"
+                    }`}
+                    style={{
+                      width:
+                        index === currentStoryIndex
+                          ? `${progress}%`
+                          : index < currentStoryIndex
+                          ? "100%"
+                          : "0%",
+                    }}
+                  />
+                </div>
+              ))
+            ) : (
+              // Một thanh tiến trình duy nhất
+              <div className="w-full h-1 bg-gray-500 bg-opacity-40 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-white transition-all duration-100 ease-linear"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+            )}
           </div>
         )}
 

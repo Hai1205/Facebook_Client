@@ -4,12 +4,28 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import StoryCard from "./components/StoryCard";
 import { usePostStore } from "@/stores/usePostStore";
+import { STORY } from "@/utils/interface";
 
 const StorySection = () => {
   const { homeStories } = usePostStore();
   const [scrollPosition, setScrollPosition] = useState(0);
   const [maxScroll, setMaxScroll] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [activeStoryIndex, setActiveStoryIndex] = useState<number | null>(null);
+
+  const groupedStories = homeStories.reduce(
+    (acc: Record<string, STORY[]>, story: STORY) => {
+      const userId = story.user?.id || "";
+      if (!acc[userId]) {
+        acc[userId] = [];
+      }
+      acc[userId].push(story);
+      return acc;
+    },
+    {}
+  );
+
+  const userStories = Object.values(groupedStories) as STORY[][];
 
   useEffect(() => {
     const container = containerRef.current;
@@ -22,7 +38,7 @@ const StorySection = () => {
       window.addEventListener("resize", updateMaxScroll);
       return () => window.removeEventListener("resize", updateMaxScroll);
     }
-  }, [homeStories.length]);
+  }, [userStories.length]);
 
   const scroll = (direction: string) => {
     const container = containerRef.current;
@@ -39,6 +55,27 @@ const StorySection = () => {
     }
   };
 
+  // Hàm để chuyển sang cụm story tiếp theo
+  const handleNextUserStory = (currentIndex: number) => {
+    const nextIndex = currentIndex + 1;
+    if (nextIndex < userStories.length) {
+      setActiveStoryIndex(nextIndex);
+      return true;
+    }
+    setActiveStoryIndex(null);
+    return false;
+  };
+
+  // Hàm để chuyển sang cụm story trước đó
+  const handlePreviousUserStory = (currentIndex: number) => {
+    const prevIndex = currentIndex - 1;
+    if (prevIndex >= 0) {
+      setActiveStoryIndex(prevIndex);
+      return true;
+    }
+    return false;
+  };
+
   return (
     <div className="relative">
       <div
@@ -53,17 +90,21 @@ const StorySection = () => {
           dragConstraints={{
             right: 0,
             left:
-              -((homeStories.length + 1) * 200) +
+              -((userStories.length + 1) * 200) +
               (containerRef.current ? containerRef.current.offsetWidth : 0),
           }}
         >
-          <StoryCard isAddStory={true} storiesList={homeStories} />
-          {homeStories?.map((story, index) => (
+          <StoryCard isAddStory={true} stories={homeStories} />
+          {userStories.map((stories: STORY[], index: number) => (
             <StoryCard
-              story={story}
-              key={story.id}
-              storiesList={homeStories}
-              currentIndex={index}
+              key={stories[0].user?.id || index}
+              stories={stories}
+              userIndex={index}
+              isActive={activeStoryIndex === index}
+              onStoryStart={(idx: number) => setActiveStoryIndex(idx)}
+              onStoryEnd={() => setActiveStoryIndex(null)}
+              onNextUserStory={() => handleNextUserStory(index)}
+              onPreviousUserStory={() => handlePreviousUserStory(index)}
             />
           ))}
         </motion.div>
@@ -81,7 +122,7 @@ const StorySection = () => {
         )}
 
         {/* Right side scroll button */}
-        {scrollPosition < maxScroll && homeStories.length > 3 && (
+        {scrollPosition < maxScroll && userStories.length > 3 && (
           <Button
             variant="outline"
             size="icon"

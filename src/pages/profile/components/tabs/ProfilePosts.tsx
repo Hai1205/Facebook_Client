@@ -1,8 +1,8 @@
 import { COMMENT, POST } from "@/utils/interface";
 import ProfileIntro from "./ProfileIntro";
-import NewPostForm from "@/pages/post/components/NewPostForm";
+import NewPostForm from "@/pages/post/components/posts/NewPostForm";
 import { useState } from "react";
-import PostCard from "@/pages/post/PostCard";
+import PostCard from "@/pages/post/components/PostCard";
 
 interface ProfilePostsProps {
   likePosts: Set<unknown>;

@@ -1,7 +1,7 @@
 import type React from "react";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import Input from "./components/Input";
+import PasswordInput from "./components/PasswordInput";
 import LoadingButton from "../../layout/components/LoadingButton";
 import { useAuthStore } from "@/stores/useAuthStore";
 
@@ -72,9 +72,8 @@ const ResetPasswordPage: React.FC = () => {
       </h1>
 
       <form onSubmit={handleSubmit}>
-        <Input
+        <PasswordInput
           label="New password"
-          type="password"
           name="newPassword"
           placeholder="Enter new password"
           value={formData.newPassword}
@@ -82,9 +81,8 @@ const ResetPasswordPage: React.FC = () => {
           error={errors.newPassword}
         />
 
-        <Input
+        <PasswordInput
           label="Confirm password"
-          type="password"
           name="rePassword"
           placeholder="Confirm new password"
           value={formData.rePassword}

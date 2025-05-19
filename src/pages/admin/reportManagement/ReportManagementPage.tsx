@@ -1,53 +1,16 @@
 import { useCallback, useState, useEffect } from "react";
-import { Search, Filter, BadgeCheck } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Checkbox } from "@/components/ui/checkbox";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { usePostStore } from "@/stores/usePostStore";
 import ReportDetailsDialog from "./components/ReportDetailsDialog";
-import { Link, useSearchParams } from "react-router-dom";
-import { REPORT } from "@/utils/interface";
-import { formatDateInDDMMYYY } from "@/lib/utils";
-import { ReportsEmptyState } from "@/layout/components/EmptyState";
-import { TableReportSkeleton } from "./components/TableReportSkeleton";
-import { Badge } from "@/components/ui/badge";
+import { useSearchParams } from "react-router-dom";
+import { FILTER, REPORT } from "@/utils/interface";
+import { ReportTable } from "./components/ReportTable";
+import { ReportFilter } from "./components/ReportFilter";
 import { REPORT_STATUS } from "@/utils/types";
+import { TableSearch } from "../userManagement/components/TableSearch";
 
-const contentTypeStyles = {
-  POST: "text-orange-500 border-orange-500",
-  STORY: "text-indigo-500 border-indigo-500",
-  COMMENT: "text-fuchsia-500 border-fuchsia-500",
-  USER: "text-violet-500 border-violet-500",
-};
-
-const statusStyles = {
-  ACCEPT: "text-green-500 border-green-500",
-  PENDING: "text-yellow-500 border-yellow-500",
-  REJECT: "text-red-500 border-red-500",
-};
-
-interface FILTER {
-  status: string[];
-  contentType: string[];
-}
 const initialFilters: FILTER = { status: [], contentType: [] };
 
 export default function ReportManagementPage() {
@@ -98,10 +61,10 @@ export default function ReportManagementPage() {
   const toggleFilter = (value: string, type: "status" | "contentType") => {
     setActiveFilters((prev) => {
       const updated = { ...prev };
-      if (updated[type].includes(value)) {
+      if (updated[type]?.includes(value)) {
         updated[type] = updated[type].filter((item) => item !== value);
       } else {
-        updated[type] = [...updated[type], value];
+        updated[type] = [...(updated[type] || []), value];
       }
       return updated;
     });
@@ -123,7 +86,7 @@ export default function ReportManagementPage() {
       params.delete("status");
     }
 
-    if (activeFilters.contentType.length > 0) {
+    if (activeFilters.contentType && activeFilters.contentType.length > 0) {
       params.set("contentType", activeFilters.contentType.join(","));
     } else {
       params.delete("contentType");
@@ -191,7 +154,6 @@ export default function ReportManagementPage() {
         <h2 className="text-3xl font-bold tracking-tight">Report Management</h2>
       </div>
 
-      {/* View Application Details Dialog */}
       <ReportDetailsDialog
         isOpen={isViewDetailsOpen}
         onOpenChange={() => setIsViewDetailsOpen(false)}
@@ -207,285 +169,41 @@ export default function ReportManagementPage() {
               <CardTitle />
 
               <div className="flex items-center gap-2">
-                <form
-                  onSubmit={handleSearch}
-                  className="flex items-center gap-2"
+                <TableSearch
+                  handleSearch={handleSearch}
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
+                  placeholder="Search reports..."
+                />
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-8 gap-1 bg-blue-600 hover:bg-[#166FE5] text-white"
+                  onClick={clearFilters}
                 >
-                  <div className="relative w-60">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <RefreshCw className="h-4 w-4" />
+                  Refresh
+                </Button>
 
-                    <Input
-                      type="search"
-                      placeholder="Search users..."
-                      className="w-full pl-8"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                  </div>
-                </form>
-
-                <DropdownMenu
-                  open={openMenuFilters}
-                  onOpenChange={closeMenuMenuFilters}
-                >
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-8 gap-1 bg-[#1877F2] hover:bg-[#166FE5] text-white"
-                      onClick={() => setOpenMenuFilters((prev) => !prev)}
-                    >
-                      <Filter className="h-4 w-4" />
-                      Filter
-                    </Button>
-                  </DropdownMenuTrigger>
-
-                  <DropdownMenuContent align="end" className="w-[250px]">
-                    <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-
-                    <DropdownMenuSeparator />
-
-                    <div className="p-2">
-                      <h4 className="mb-2 text-sm font-medium">Status</h4>
-
-                      <div className="space-y-2">
-                        <div className="flex items-center">
-                          <Checkbox
-                            id="status-accept"
-                            checked={activeFilters.status.includes("ACCEPT")}
-                            onCheckedChange={() =>
-                              toggleFilter("ACCEPT", "status")
-                            }
-                            className="mr-2"
-                          />
-
-                          <label htmlFor="status-accept">Approve</label>
-                        </div>
-
-                        <div className="flex items-center">
-                          <Checkbox
-                            id="status-pending"
-                            checked={activeFilters.status.includes("PENDING")}
-                            onCheckedChange={() =>
-                              toggleFilter("PENDING", "status")
-                            }
-                            className="mr-2"
-                          />
-
-                          <label htmlFor="status-pending">Pending</label>
-                        </div>
-
-                        <div className="flex items-center">
-                          <Checkbox
-                            id="status-reject"
-                            checked={activeFilters.status.includes("REJECT")}
-                            onCheckedChange={() =>
-                              toggleFilter("REJECT", "status")
-                            }
-                            className="mr-2"
-                          />
-
-                          <label htmlFor="status-reject">Reject</label>
-                        </div>
-                      </div>
-                    </div>
-
-                    <DropdownMenuSeparator />
-
-                    <div className="p-2">
-                      <h4 className="mb-2 text-sm font-medium">Type</h4>
-
-                      <div className="space-y-2">
-                        <div className="flex items-center">
-                          <Checkbox
-                            id="type-post"
-                            checked={activeFilters.contentType.includes("POST")}
-                            onCheckedChange={() =>
-                              toggleFilter("POST", "contentType")
-                            }
-                            className="mr-2"
-                          />
-
-                          <label htmlFor="type-post">Post</label>
-                        </div>
-
-                        <div className="flex items-center">
-                          <Checkbox
-                            id="type-story"
-                            checked={activeFilters.contentType.includes(
-                              "STORY"
-                            )}
-                            onCheckedChange={() =>
-                              toggleFilter("STORY", "contentType")
-                            }
-                            className="mr-2"
-                          />
-
-                          <label htmlFor="type-story">Story</label>
-                        </div>
-
-                        <div className="flex items-center">
-                          <Checkbox
-                            id="type-comment"
-                            checked={activeFilters.contentType.includes(
-                              "COMMENT"
-                            )}
-                            onCheckedChange={() =>
-                              toggleFilter("COMMENT", "contentType")
-                            }
-                            className="mr-2"
-                          />
-
-                          <label htmlFor="type-comment">Comment</label>
-                        </div>
-
-                        <div className="flex items-center">
-                          <Checkbox
-                            id="type-user"
-                            checked={activeFilters.contentType.includes("USER")}
-                            onCheckedChange={() =>
-                              toggleFilter("USER", "contentType")
-                            }
-                            className="mr-2"
-                          />
-
-                          <label htmlFor="type-user">User</label>
-                        </div>
-                      </div>
-                    </div>
-
-                    <DropdownMenuSeparator />
-
-                    <div className="p-2 flex justify-between">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={clearFilters}
-                      >
-                        Clear Filters
-                      </Button>
-
-                      <Button
-                        size="sm"
-                        onClick={applyFilters}
-                        className="bg-[#1877F2] hover:bg-[#166FE5] text-white"
-                      >
-                        Apply Filters
-                      </Button>
-                    </div>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <ReportFilter
+                  openMenuFilters={openMenuFilters}
+                  setOpenMenuFilters={setOpenMenuFilters}
+                  activeFilters={activeFilters}
+                  toggleFilter={toggleFilter}
+                  clearFilters={clearFilters}
+                  applyFilters={applyFilters}
+                  closeMenuMenuFilters={closeMenuMenuFilters}
+                />
               </div>
             </div>
           </CardHeader>
 
-          <ScrollArea className="h-[calc(100vh-220px)] w-full  rounded-xl">
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="text-center">Sender</TableHead>
-
-                    <TableHead className="text-center">Type</TableHead>
-
-                    <TableHead className="text-center">Status</TableHead>
-
-                    <TableHead className="text-center">Submit Date</TableHead>
-
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-
-                <TableBody>
-                  {isLoading ? (
-                    <TableRow>
-                      <TableCell colSpan={5}>
-                        <TableReportSkeleton />
-                      </TableCell>
-                    </TableRow>
-                  ) : reports.length > 0 ? (
-                    reports.map((report) => (
-                      <TableRow key={report.id}>
-                        <TableCell>
-                          <Link to={`/profile/${report?.sender?.id}`}>
-                            <div className="flex items-center gap-3">
-                              <Avatar className="h-9 w-9">
-                                <AvatarImage
-                                  src={report?.sender?.avatarPhotoUrl}
-                                  alt={report?.sender?.fullName}
-                                />
-
-                                <AvatarFallback className="text-white">
-                                  {report?.sender?.fullName?.substring(0, 2) ||
-                                    "FU"}
-                                </AvatarFallback>
-                              </Avatar>
-
-                              <div className="flex flex-col">
-                                <p className="text-s font-bold flex items-center">
-                                  <span className="font-medium hover:underline text-white">
-                                    {report?.sender?.fullName ||
-                                      "Facebook User"}
-                                  </span>
-
-                                  {report?.sender?.celebrity && (
-                                    <BadgeCheck className="ml-2 h-4 w-4 text-[#1877F2]" />
-                                  )}
-                                </p>
-
-                                <span className="text-sm text-muted-foreground hover:underline">
-                                  {report?.sender?.email}
-                                </span>
-                              </div>
-                            </div>
-                          </Link>
-                        </TableCell>
-
-                        <TableCell className="text-center">
-                          <Badge
-                            variant="outline"
-                            className={contentTypeStyles[report.contentType]}
-                          >
-                            {report.contentType}
-                          </Badge>
-                        </TableCell>
-
-                        <TableCell className="text-center">
-                          <Badge
-                            variant="outline"
-                            className={statusStyles[report.status]}
-                          >
-                            {report.status}
-                          </Badge>
-                        </TableCell>
-
-                        <TableCell className="flex items-center justify-center gap-1 text-white">
-                          {formatDateInDDMMYYY(report.createdAt as string)}
-                        </TableCell>
-
-                        <TableCell className="text-right">
-                          <Button
-                            className="bg-blue-600 hover:bg-[#166FE5] text-white"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleViewDetails(report)}
-                          >
-                            View
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={7}>
-                        <ReportsEmptyState />
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </ScrollArea>
+          <ReportTable
+            reports={reports}
+            isLoading={isLoading}
+            handleViewDetails={handleViewDetails}
+          />
         </Card>
       </div>
     </div>

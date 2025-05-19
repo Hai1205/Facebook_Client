@@ -1,47 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
-import {
-  Filter,
-  MoreHorizontal,
-  Search,
-  Trash,
-  Pencil,
-  UserPlus,
-  RefreshCw,
-  BadgeCheck,
-} from "lucide-react";
+import { useSearchParams } from "react-router-dom";
+import { UserPlus, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { Checkbox } from "@/components/ui/checkbox";
-import EditUserDialog from "./components/EditUserDialog";
 import AddUserDialog from "./components/AddUserDialog";
 import { USER } from "@/utils/interface";
 import { useUserStore } from "@/stores/useUserStore";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { UserEmptyState } from "@/layout/components/EmptyState";
-import { formatDateInDDMMYYY } from "@/lib/utils";
-import { TableUserSkeleton } from "./components/TableUserSkeleton";
-import { Badge } from "@/components/ui/badge";
+import { UserFilter } from "./components/UserFilter";
+import EditUserDialog from "./components/EditUserDialog";
+import { UserTable } from "./components/UserTable";
+import { TableSearch } from "./components/TableSearch";
 
 export default function UserManagementPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -96,27 +66,12 @@ export default function UserManagementPage() {
   const [activeFilters, setActiveFilters] = useState<{
     status: string[];
     role: string[];
+    gender: string[];
   }>({
     status: [],
     role: [],
+    gender: [],
   });
-
-  const roleStyles = {
-    USER: "text-violet-500 border-violet-500",
-    ADMIN: "text-blue-500 border-blue-500",
-  };
-
-  const statusStyles = {
-    ACTIVE: "text-green-500 border-green-500",
-    PENDING: "text-yellow-500 border-yellow-500",
-    LOCK: "text-red-500 border-red-500",
-  };
-
-  const gendersStyles = {
-    MALE: "text-blue-500 border-blue-500",
-    FEMALE: "text-pink-500 border-pink-500",
-    OTHER: "text-purple-500 border-purple-500",
-  };
 
   const handleEditUser = (user: USER) => {
     setSelectedUser(user);
@@ -160,7 +115,7 @@ export default function UserManagementPage() {
 
   // Function to clear all filters
   const clearFilters = async () => {
-    setActiveFilters({ status: [], role: [] });
+    setActiveFilters({ status: [], role: [], gender: [] });
     setSearchQuery("");
 
     const params = new URLSearchParams();
@@ -199,6 +154,32 @@ export default function UserManagementPage() {
     );
   };
 
+  useEffect(() => {
+    const status = searchParams.get("status");
+    const role = searchParams.get("role");
+    const gender = searchParams.get("gender");
+
+    const newFilters: {
+      status: string[];
+      role: string[];
+      gender: string[];
+    } = { status: [], role: [], gender: [] };
+
+    if (status) {
+      newFilters.status = status.split(",");
+    }
+
+    if (role) {
+      newFilters.role = role.split(",");
+    }
+
+    if (gender) {
+      newFilters.gender = gender.split(",");
+    }
+
+    setActiveFilters(newFilters);
+  }, [searchParams]);
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -207,7 +188,7 @@ export default function UserManagementPage() {
         <div className="flex items-center gap-2">
           <Button
             size="sm"
-            className="bg-blue-600 hover:bg-[#166FE5] text-white h-8 gap-1"
+            className="bg-[#1877F2] hover:bg-[#166FE5] text-white h-8 gap-1"
             onClick={() => setIsAddUserOpen(true)}
           >
             <UserPlus className="h-4 w-4" />
@@ -233,22 +214,12 @@ export default function UserManagementPage() {
                 <CardTitle />
 
                 <div className="flex items-center gap-2">
-                  <form
-                    onSubmit={handleSearch}
-                    className="flex items-center gap-2"
-                  >
-                    <div className="relative w-60">
-                      <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-
-                      <Input
-                        type="search"
-                        placeholder="Search users..."
-                        className="w-full pl-8"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                      />
-                    </div>
-                  </form>
+                  <TableSearch
+                    handleSearch={handleSearch}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    placeholder="Search users..."
+                  />
 
                   <Button
                     variant="outline"
@@ -260,286 +231,28 @@ export default function UserManagementPage() {
                     Refresh
                   </Button>
 
-                  <DropdownMenu
-                    open={openMenuFilters}
-                    onOpenChange={closeMenuMenuFilters}
-                  >
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="h-8 gap-1 bg-blue-600 hover:bg-[#166FE5] text-white"
-                        onClick={() => setOpenMenuFilters((prev) => !prev)}
-                      >
-                        <Filter className="h-4 w-4" />
-                        Filter
-                      </Button>
-                    </DropdownMenuTrigger>
-
-                    <DropdownMenuContent align="end" className="w-[250px]">
-                      <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-
-                      <DropdownMenuSeparator />
-
-                      <div className="p-2">
-                        <h4 className="mb-2 text-sm font-medium">Status</h4>
-
-                        <div className="space-y-2">
-                          <div className="flex items-center">
-                            <Checkbox
-                              id="status-active"
-                              checked={activeFilters.status.includes("active")}
-                              onCheckedChange={() =>
-                                toggleFilter("status", "active")
-                              }
-                              className="mr-2"
-                            />
-
-                            <label htmlFor="status-active">Active</label>
-                          </div>
-
-                          <div className="flex items-center">
-                            <Checkbox
-                              id="status-pending"
-                              checked={activeFilters.status.includes("pending")}
-                              onCheckedChange={() =>
-                                toggleFilter("status", "pending")
-                              }
-                              className="mr-2"
-                            />
-
-                            <label htmlFor="status-pending">Pending</label>
-                          </div>
-
-                          <div className="flex items-center">
-                            <Checkbox
-                              id="status-lock"
-                              checked={activeFilters.status.includes("lock")}
-                              onCheckedChange={() =>
-                                toggleFilter("status", "lock")
-                              }
-                              className="mr-2"
-                            />
-
-                            <label htmlFor="status-lock">lock</label>
-                          </div>
-                        </div>
-                      </div>
-
-                      <DropdownMenuSeparator />
-
-                      <div className="p-2">
-                        <h4 className="mb-2 text-sm font-medium">Role</h4>
-
-                        <div className="space-y-2">
-                          <div className="flex items-center">
-                            <Checkbox
-                              id="role-user"
-                              checked={activeFilters.role.includes("user")}
-                              onCheckedChange={() =>
-                                toggleFilter("role", "user")
-                              }
-                              className="mr-2"
-                            />
-
-                            <label htmlFor="role-user">User</label>
-                          </div>
-
-                          <div className="flex items-center">
-                            <Checkbox
-                              id="role-admin"
-                              checked={activeFilters.role.includes("admin")}
-                              onCheckedChange={() =>
-                                toggleFilter("role", "admin")
-                              }
-                              className="mr-2"
-                            />
-                            <label htmlFor="role-admin">Admin</label>
-                          </div>
-                        </div>
-                      </div>
-
-                      <DropdownMenuSeparator />
-
-                      <div className="p-2 flex justify-between">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={clearFilters}
-                        >
-                          Clear Filters
-                        </Button>
-
-                        <Button size="sm" onClick={applyFilters}>
-                          Apply Filters
-                        </Button>
-                      </div>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <UserFilter
+                    openMenuFilters={openMenuFilters}
+                    setOpenMenuFilters={setOpenMenuFilters}
+                    activeFilters={activeFilters}
+                    toggleFilter={(filter, value) =>
+                      toggleFilter(filter as keyof typeof activeFilters, value)
+                    }
+                    clearFilters={clearFilters}
+                    applyFilters={applyFilters}
+                    closeMenuMenuFilters={closeMenuMenuFilters}
+                  />
                 </div>
               </div>
             </CardHeader>
 
-            <ScrollArea className="h-[calc(100vh-220px)] w-full rounded-xl">
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="text-center">User</TableHead>
-
-                      <TableHead className="text-center">Gender</TableHead>
-
-                      <TableHead className="text-center">Role</TableHead>
-
-                      <TableHead className="text-center">Status</TableHead>
-
-                      <TableHead className="text-center">Join Date</TableHead>
-
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-
-                  <TableBody>
-                    {isLoading ? (
-                      <TableRow>
-                        <TableCell colSpan={7}>
-                          <TableUserSkeleton />
-                        </TableCell>
-                      </TableRow>
-                    ) : users.length > 0 ? (
-                      users.map((user) => (
-                        <TableRow key={user.id}>
-                          <TableCell>
-                            <Link to={`/profile/${user?.id}`}>
-                              <div className="flex items-center gap-3">
-                                <Avatar className="h-9 w-9">
-                                  <AvatarImage
-                                    src={user?.avatarPhotoUrl}
-                                    alt={user?.fullName || "USER"}
-                                  />
-
-                                  <AvatarFallback className="text-white">
-                                    {user?.fullName
-                                      ? user.fullName.substring(0, 2)
-                                      : "U"}
-                                  </AvatarFallback>
-                                </Avatar>
-
-                                <div className="flex flex-col">
-                                  <p className="text-s font-bold flex items-center">
-                                    <span className="font-medium hover:underline text-white">
-                                      {user?.fullName || "Facebook User"}
-                                    </span>
-
-                                    {user?.celebrity && (
-                                      <BadgeCheck className="ml-2 h-4 w-4 text-[#1877F2]" />
-                                    )}
-                                  </p>
-
-                                  <span className="text-sm text-muted-foreground hover:underline">
-                                    {user?.email}
-                                  </span>
-                                </div>
-                              </div>
-                            </Link>
-                          </TableCell>
-
-                          <TableCell className="text-center">
-                            <Badge
-                              variant="outline"
-                              className={gendersStyles[user.gender]}
-                            >
-                              {user.gender}
-                            </Badge>
-                          </TableCell>
-
-                          <TableCell className="text-center">
-                            <Badge
-                              variant="outline"
-                              className={roleStyles[user.role]}
-                            >
-                              {user.role}
-                            </Badge>
-                          </TableCell>
-
-                          <TableCell className="text-center">
-                            <Badge
-                              variant="outline"
-                              className={statusStyles[user.status]}
-                            >
-                              {user.status}
-                            </Badge>
-                          </TableCell>
-
-                          <TableCell className="text-center text-white">
-                            {formatDateInDDMMYYY(user.createdAt as string)}
-                          </TableCell>
-
-                          <TableCell className="text-right text-white">
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-8 w-8 p-0"
-                                >
-                                  <MoreHorizontal className="h-4 w-4" />
-
-                                  <span className="sr-only">Open menu</span>
-                                </Button>
-                              </DropdownMenuTrigger>
-
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-
-                                <DropdownMenuItem
-                                  onClick={() => handleEditUser(user)}
-                                  className="cursor-pointer"
-                                >
-                                  <Pencil className="mr-2 h-4 w-4 cursor-pointer" />{" "}
-                                  Edit
-                                </DropdownMenuItem>
-
-                                {/* <DropdownMenuItem
-                                  onClick={() => handleManageAlbums(user)}
-                                  className="cursor-pointer"
-                                >
-                                  <Disc3 className="mr-2 h-4 w-4" /> Manage
-                                  albums
-                                </DropdownMenuItem> */}
-
-                                <DropdownMenuSeparator />
-
-                                <DropdownMenuItem
-                                  onClick={() => handleResetPassword(user)}
-                                  className="cursor-pointer"
-                                >
-                                  Reset password
-                                </DropdownMenuItem>
-
-                                <DropdownMenuItem
-                                  onClick={() => handleDeleteUser(user)}
-                                  className="text-red-600 cursor-pointer"
-                                >
-                                  <Trash className="mr-2 h-4 w-4" />
-                                  Delete user
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={7}>
-                          <UserEmptyState />
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </ScrollArea>
+            <UserTable
+              users={users}
+              isLoading={isLoading}
+              handleEditUser={handleEditUser}
+              handleResetPassword={handleResetPassword}
+              handleDeleteUser={handleDeleteUser}
+            />
           </Card>
         </TabsContent>
       </Tabs>

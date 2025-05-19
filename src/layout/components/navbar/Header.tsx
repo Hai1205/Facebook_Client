@@ -33,7 +33,6 @@ import { MessagesDropdown } from "@/pages/chat/MessagesDropdown";
 import { useOpenStore } from "@/stores/useOpenStore";
 import { SearchResults } from "./components/SearchResults";
 import { debounce } from "lodash";
-import { useNotiStore } from "@/stores/useNotiStore";
 import { usePostStore } from "@/stores/usePostStore";
 import FacebookLoader from "./components/FacebookLoader";
 
@@ -42,9 +41,8 @@ const Header = () => {
   const { searchUsers, getSuggestedUsers } = useUserStore();
   const { activeTab, setActiveTab } = useOpenStore();
   const { startChat } = useChatStore();
-  const { getUserNotifications } = useNotiStore();
   const { getUserFeed, getUserStoryFeed } = usePostStore();
-    usePostStore();
+  usePostStore();
 
   const [isSearching, setIsSearching] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -61,35 +59,15 @@ const Header = () => {
   const fetchData = useCallback(async () => {
     setIsLoading(true);
 
-    // if (homePosts.length === 0) {
-      await getUserFeed(userAuth?.id || "");
-    // }
+    await getUserFeed(userAuth?.id || "");
     setIsLoading(false);
 
     if (userAuth?.id) {
-      // if (homeStories.length === 0) {
-        await getUserStoryFeed(userAuth?.id as string);
-      // }
+      await getUserStoryFeed(userAuth?.id as string);
 
-      // if (notifications.length === 0) {
-        await getUserNotifications(userAuth?.id as string);
-      // }
-
-      // if (suggestedUsers.length === 0) {
-        await getSuggestedUsers(userAuth?.id as string);
-      // }
+      await getSuggestedUsers(userAuth?.id as string);
     }
-  }, [
-    getUserFeed,
-    getUserNotifications,
-    getUserStoryFeed,
-    getSuggestedUsers,
-    // suggestedUsers.length,
-    // homePosts.length,
-    // homeStories.length,
-    // notifications.length,
-    userAuth?.id,
-  ]);
+  }, [getUserFeed, getUserStoryFeed, getSuggestedUsers, userAuth?.id]);
 
   useEffect(() => {
     fetchData();

@@ -22,15 +22,18 @@ import {
   getUserStoryFeed,
   getUserFeed,
   deleteComment,
+  getPost,
 } from "@/utils/api/postApi";
+import { POST, STORY } from "@/utils/interface";
 
 export interface PostStore {
   status: number;
   message: string | null;
   isLoading: boolean;
   error: string | null;
-  homePosts: any[];
-  homeStories: any[];
+  homePosts: POST[];
+  homeStories: STORY[];
+  post: POST | null;
 
   getAllPost: () => Promise<any>;
   getAllStory: () => Promise<any>;
@@ -56,6 +59,7 @@ export interface PostStore {
   deleteReport: (reportId: string) => Promise<any>;
   searchReports: (query: string) => Promise<any>;
   updatePost: (postId: string, formData: FormData) => Promise<any>;
+  getPost: (postId: string) => Promise<any>;
   addPostToHome: (post: any) => void;
   removePostFromHome: (postId: string) => void;
   updatePostInHome: (updatedPost: any) => void;
@@ -67,6 +71,7 @@ export interface PostStore {
 
 const initialState = {
   status: 0,
+  post: null,
   message: null,
   isLoading: false,
   error: null,
@@ -507,15 +512,35 @@ export const usePostStore = create<PostStore>()(
 
         try {
           const response = await updatePost(postId, formData);
-          const { message, updatedPost } = response.data;
+          const { post, message } = response.data;
 
-          if (updatedPost) {
-            const { updatePostInHome } = get();
-            updatePostInHome(updatedPost);
-          }
+          const { updatePostInHome } = get();
+          updatePostInHome(post);
 
           toast.success(message);
-          return true;
+          return post;
+        } catch (error: any) {
+          console.error(error);
+          const { message } = error.response.data;
+          set({ error: message });
+
+          toast.error(message);
+          return false;
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      getPost: async (postId: string) => {
+        set({ isLoading: true, error: null });
+
+        try {
+          const response = await getPost(postId);
+          const { post } = response.data;
+
+          set({ post });
+
+          return post;
         } catch (error: any) {
           console.error(error);
           const { message } = error.response.data;
@@ -553,7 +578,7 @@ export const usePostStore = create<PostStore>()(
           homeStories: [story, ...state.homeStories]
         }));
       },
-      
+
       removeStoryToHome: (storyId) => {
         set((state) => ({
           homeStories: state.homeStories.filter((story) => story.id !== storyId)

@@ -2,6 +2,7 @@ import type React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Input from "./components/Input";
+import PasswordInput from "./components/PasswordInput";
 import LoadingButton from "../../layout/components/LoadingButton";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { Label } from "@/components/ui/label";
@@ -120,9 +121,8 @@ const RegisterPage: React.FC = () => {
           error={errors.email}
         />
 
-        <Input
+        <PasswordInput
           label="Password"
-          type="password"
           name="password"
           placeholder="Create a password"
           value={formData.password}

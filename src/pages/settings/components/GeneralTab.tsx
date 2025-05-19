@@ -12,9 +12,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Save, User as UserIcon } from "lucide-react";
+import { Save, User as User } from "lucide-react";
 import LoadingSpinner from "@/components/ui/loading";
 import { USER } from "@/utils/interface";
+import { useState } from "react";
+import { formatDateInYYYYMMDD } from "@/lib/utils";
 
 interface GeneralTabProps {
   userData: USER;
@@ -35,6 +37,10 @@ const GeneralTab = ({
   userAuth,
   handleAvatarChange,
 }: GeneralTabProps) => {
+  const [formattedDate, setFormattedDate] = useState<string>(
+    formatDateInYYYYMMDD(userData?.dateOfBirth)
+  );
+
   return (
     <TabsContent value="general">
       <Card className="bg-zinc-900">
@@ -52,11 +58,15 @@ const GeneralTab = ({
                   <div className="relative w-40 h-40 border border-gray-700 rounded-full overflow-hidden flex items-center justify-center bg-[#282828]">
                     <Avatar className="rounded-full object-cover w-full h-full">
                       <AvatarImage
-                        src={previewAvatar ? previewAvatar : "/placeholder.svg"}
+                        src={
+                          previewAvatar
+                            ? previewAvatar
+                            : userData?.avatarPhotoUrl
+                        }
                         alt={userData.fullName}
                       />
                       <AvatarFallback>
-                        <UserIcon />
+                        <User className="mr-2 h-4 w-4" />
                       </AvatarFallback>
                     </Avatar>
 
@@ -98,6 +108,7 @@ const GeneralTab = ({
                   <Label htmlFor="edit-fullName" className="text-white">
                     Full Name
                   </Label>
+
                   <Input
                     id="edit-fullName"
                     value={userData?.fullName || ""}
@@ -106,6 +117,25 @@ const GeneralTab = ({
                     }
                     placeholder="Enter full name"
                     className="text-white"
+                  />
+                </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="edit-date-of-birth" className="text-white">
+                    Date of birth
+                  </Label>
+
+                  <Input
+                    id="edit-date-of-birth"
+                    type="date"
+                    name="date-of-birth"
+                    className="cursor-pointer text-white"
+                    value={formattedDate}
+                    onChange={(e) => {
+                      const newDate = e.target.value;
+                      setFormattedDate(newDate);
+                      handleInfoChange("dateOfBirth", newDate);
+                    }}
                   />
                 </div>
 

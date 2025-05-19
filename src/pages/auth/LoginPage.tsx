@@ -2,6 +2,7 @@ import type React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Input from "./components/Input";
+import PasswordInput from "./components/PasswordInput";
 import LoadingButton from "../../layout/components/LoadingButton";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { GoogleLoginButton } from "@/pages/auth/components/Oauth";
@@ -86,9 +87,8 @@ const LoginPage: React.FC = () => {
           error={errors.email}
         />
 
-        <Input
+        <PasswordInput
           label="Password"
-          type="password"
           name="password"
           placeholder="Password"
           value={formData.password}

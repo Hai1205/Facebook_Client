@@ -6,7 +6,7 @@ import { POST } from "@/utils/interface";
 import { PostSkeletonLoading } from "./skeletons/PostSkeletonLoading";
 import { formatNumberStyle } from "@/lib/utils";
 import { BadgeCheck } from "lucide-react";
-import { ViewPostModal } from "@/pages/post/components/ViewPostModal";
+import { ViewPostModal } from "@/pages/post/components/posts/ViewPostModal";
 
 export function PopularPosts() {
   const { isLoading, popularPosts, getPopularPostStat } = useStatStore();
@@ -81,6 +81,7 @@ export function PopularPosts() {
           ))}
         </div>
       </ScrollArea>
+      
       <ViewPostModal
         isOpen={isViewOpen}
         onOpenChange={setViewOpen}

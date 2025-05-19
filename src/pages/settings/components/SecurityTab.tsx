@@ -7,11 +7,10 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import LoadingSpinner from "@/components/ui/loading";
 import { Save } from "lucide-react";
+import PasswordInput from "@/pages/auth/components/PasswordInput";
 
 interface ChangePasswordData {
   currentPassword: string;
@@ -46,47 +45,35 @@ const SecurityTab = ({
         </CardHeader>
 
         <CardContent className="h-[366px] space-y-4">
-          <div className="space-y-1">
-            <Label htmlFor="current-password" className="text-white">Current Password</Label>
-            <Input
-              id="current-password"
-              type="password"
-              value={changePasswordData?.currentPassword || ""}
-              onChange={(e) =>
-                handleSecurityChange("currentPassword", e.target.value)
-              }
-              placeholder="Enter current password"
-              className="text-white"
-            />
-          </div>
+          <PasswordInput
+            label="Current Password"
+            name="currentPassword"
+            placeholder="Current Password"
+            value={changePasswordData?.currentPassword || ""}
+            onChange={(e) =>
+              handleSecurityChange("currentPassword", e.target.value)
+            }
+          />
 
-          <div className="space-y-1">
-            <Label htmlFor="new-password" className="text-white">New Password</Label>
-            <Input
-              id="new-password"
-              type="password"
-              value={changePasswordData?.newPassword || ""}
-              onChange={(e) =>
-                handleSecurityChange("newPassword", e.target.value)
-              }
-              placeholder="Enter new password"
-              className="text-white"
-            />
-          </div>
+          <PasswordInput
+            label="New Password"
+            name="newPassword"
+            placeholder="New Password"
+            value={changePasswordData?.newPassword || ""}
+            onChange={(e) =>
+              handleSecurityChange("newPassword", e.target.value)
+            }
+          />
 
-          <div className="space-y-1">
-            <Label htmlFor="confirm-password" className="text-white">Confirm New Password</Label>
-            <Input
-              id="confirm-password"
-              type="password"
-              value={changePasswordData?.rePassword || ""}
-              onChange={(e) =>
-                handleSecurityChange("rePassword", e.target.value)
-              }
-              placeholder="Enter confirm password"
-              className="text-white"
-            />
-          </div>
+          <PasswordInput
+            label="Confirm New Password"
+            name="rePassword"
+            placeholder="Confirm New Password"
+            value={changePasswordData?.rePassword || ""}
+            onChange={(e) =>
+              handleSecurityChange("rePassword", e.target.value)
+            }
+          />
         </CardContent>
 
         <CardFooter>

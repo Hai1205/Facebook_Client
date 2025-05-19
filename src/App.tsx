@@ -23,6 +23,7 @@ import UserManagementPage from "./pages/admin/userManagement/UserManagementPage"
 import ReportManagementPage from "./pages/admin/reportManagement/ReportManagementPage";
 import PostManagementPage from "./pages/admin/postManagement/PostManagementPage";
 import Layout from "./layout/Layout";
+import PostDetails from "./pages/post/PostDetails";
 
 function App() {
   return (
@@ -48,6 +49,8 @@ function App() {
           {/* <Route path="/search" element={<SearchResult />} /> */}
 
           <Route path="/profile/:userId" element={<ProfilePage />} />
+
+          <Route path="/post/:postId" element={<PostDetails />} />
 
           <Route
             path="/friends"

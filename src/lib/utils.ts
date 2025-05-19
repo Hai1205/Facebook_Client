@@ -94,9 +94,17 @@ export const capitalizeEachWord = (input: string): string => {
     .join(' ');
 }
 
-export const logTestFormData = (formData: FormData) => {
+export const testFormData = (formData: FormData) => {
   formData.forEach((value, key) => {
     console.log(`${key}: ${value}`);
   });
+}
+
+export const formatDateInYYYYMMDD = (date: string) => {
+  const dateObj = new Date(date);
+  const year = dateObj.getFullYear();
+  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const day = String(dateObj.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }
 

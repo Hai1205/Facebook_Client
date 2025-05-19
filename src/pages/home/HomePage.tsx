@@ -3,11 +3,10 @@ import { usePostStore } from "@/stores/usePostStore";
 import { useUserStore } from "@/stores/useUserStore";
 import { useCallback, useEffect, useState } from "react";
 import StorySection from "../story/StorySection";
-import NewPostForm from "../post/components/NewPostForm";
-import PostCard from "../post/PostCard";
+import NewPostForm from "../post/components/posts/NewPostForm";
+import PostCard from "../post/components/PostCard";
 import { COMMENT, USER } from "@/utils/interface";
 import { toast } from "react-toastify";
-import VideoCard from "../video/components/VideoCard";
 import FriendSuggestSection from "../friend/components/FriendSuggestSection";
 
 const HomePage = () => {
@@ -103,23 +102,13 @@ const HomePage = () => {
           <div className="mt-1 space-y-6 mb-4">
             {homePosts.map((post) => (
               <div key={post.id}>
-                {post.mediaType === "VIDEO" ? (
-                  <VideoCard
-                    post={post}
-                    isLiked={likePosts.has(post?.id || "")}
-                    onLike={() => handleLike(post?.id || "")}
-                    onComment={handleComment}
-                    onShare={() => handleShare(post?.id || "")}
-                  />
-                ) : (
-                  <PostCard
-                    post={post}
-                    isLiked={likePosts.has(post?.id)}
-                    onLike={() => handleLike(post?.id as string)}
-                    onComment={handleComment}
-                    onShare={() => handleShare(post?.id || "")}
-                  />
-                )}
+                <PostCard
+                  post={post}
+                  isLiked={likePosts.has(post?.id)}
+                  onLike={() => handleLike(post?.id as string)}
+                  onComment={handleComment}
+                  onShare={() => handleShare(post?.id || "")}
+                />
               </div>
             ))}
           </div>

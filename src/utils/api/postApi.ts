@@ -82,4 +82,6 @@ export const searchReports = async (query: string): Promise<any> => {
     return await axiosInstance.get(`${endpoint}/search-reports${query}`);
 }
 
-
+export const getPost = async (postId: string): Promise<any> => {
+    return await axiosInstance.get(`${endpoint}/get-post/${postId}`);
+}

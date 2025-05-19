@@ -18,7 +18,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import LoadingSpinner from "@/components/ui/loading";
 import { Save } from "lucide-react";
 import { GENDER_CHOICE, ROLE_CHOICE, STATUS_CHOICE } from "@/utils/choices";
-import { logTestFormData } from "@/lib/utils";
+import { formatDateInYYYYMMDD } from "@/lib/utils";
 
 interface EditUserDialogProps {
   isOpen: boolean;
@@ -54,11 +54,7 @@ const EditUserDialog = ({
       setPreviewAvatar(user?.avatarPhotoUrl || "");
 
       if (user?.dateOfBirth) {
-        const date = new Date(user.dateOfBirth);
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const day = String(date.getDate()).padStart(2, "0");
-        setFormattedDate(`${year}-${month}-${day}`);
+          setFormattedDate(formatDateInYYYYMMDD(user.dateOfBirth));
       }
     }
   }, [isOpen, user]);
@@ -101,7 +97,6 @@ const EditUserDialog = ({
         formData.append("avatarPhoto", avatarFile);
       }
 
-      logTestFormData(formData);
       setIsLoading(true);
       const res = await updateUser(user.id as string, formData);
       setIsLoading(false);

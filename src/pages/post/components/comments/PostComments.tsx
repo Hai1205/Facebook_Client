@@ -6,9 +6,9 @@ import { Input } from "@/components/ui/input";
 import { COMMENT, POST, USER } from "@/utils/interface";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import ExtendOption from "./ExtendOption";
 import { formateDateAgo } from "@/lib/utils";
 import { Link } from "react-router-dom";
+import ExtendOption from "../ExtendOption";
 
 interface PostCommentsProps {
   post: POST;

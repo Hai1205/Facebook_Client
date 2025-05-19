@@ -283,7 +283,7 @@ const AddUserDialog = ({
 
           <Button
             onClick={handleCreateUser}
-            className="bg-[#1DB954] hover:bg-[#1ed760] text-white"
+            className="bg-[#1877F2] hover:bg-[#166FE5] text-white"
             disabled={isLoading}
           >
             {isLoading ? (

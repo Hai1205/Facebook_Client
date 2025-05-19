@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { usePostStore } from "@/stores/usePostStore";
-import { COMMENT } from "@/utils/interface";
+import { COMMENT, POST } from "@/utils/interface";
 import { useAuthStore } from "@/stores/useAuthStore";
-import VideoCard from "./components/VideoCard";
+import PostCard from "../post/components/PostCard";
 
 const VideoPage = () => {
   const { homePosts, likePost, sharePost, commentPost } = usePostStore();
@@ -42,7 +42,21 @@ const VideoPage = () => {
     await likePost(userAuth?.id, postId);
   };
 
-  const videoPosts = homePosts?.filter((post) => post.mediaType === "VIDEO");
+  const videoPosts = useMemo(() => {
+    return homePosts
+      ?.filter((post) => post.mediaTypes.includes("VIDEO"))
+      .map((post) => {
+        const firstVideoIndex = post.mediaTypes.findIndex((type: string) => type === "VIDEO");
+  
+        if (firstVideoIndex === -1) return post;
+  
+        return {
+          ...post,
+          mediaUrls: [post.mediaUrls[firstVideoIndex]],
+          mediaTypes: ["VIDEO"],
+        };
+      });
+  }, [homePosts]);
 
   const handleComment = async (postId: string, comment: COMMENT) => {
     if (!userAuth?.id) {
@@ -69,14 +83,15 @@ const VideoPage = () => {
     <div className="min-h-screen w-full flex justify-center">
       <main className="ml-0 md:ml-0 p-6 max-w-3xl">
         <div className="mx-auto">
-          {videoPosts.map((post) => (
-            <VideoCard
-              key={post?.id}
-              post={post}
-              isLiked={likePosts.has(post?.id || "")}
-              onLike={() => handleLike(post?.id || "")}
+          {videoPosts.map((video) => (
+            <PostCard
+              key={video?.id}
+              post={video as POST}
+              isLiked={likePosts.has(video?.id || "")}
+              onLike={() => handleLike(video?.id || "")}
               onComment={handleComment}
-              onShare={() => handleShare(post?.id || "")}
+              onShare={() => handleShare(video?.id || "")}
+              isVideoCard={true}
             />
           ))}
         </div>

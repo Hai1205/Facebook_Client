@@ -55,12 +55,13 @@ export interface POST {
 	id?: string;
 	user: USER;
 	content: string;
-	mediaUrl: string;
-	mediaType: MEDIA_TYPE;
+	mediaUrls: string[];
+	mediaTypes: MEDIA_TYPE[];
 	likes: USER[];
 	comments: COMMENT[];
 	share: USER[];
 	privacy: PRIVACY;
+	status: USER_STATUS;
 	createdAt?: string;
 	updatedAt?: string;
 }
@@ -117,6 +118,7 @@ export interface NOTIFICATION {
 	id?: string;
 	from: USER;
 	to: USER;
+	post?: POST;
 	type: NOTI_TYPE;
 	read: boolean;
 	createdAt?: string;
@@ -166,4 +168,12 @@ export interface CHAT {
 	time: string;
 	unread: boolean;
 	online: boolean;
+}
+
+export interface FILTER {
+	status: string[];
+	contentType?: string[];
+	privacy?: string[];
+	role?: string[];
+	gender?: string[];
 }

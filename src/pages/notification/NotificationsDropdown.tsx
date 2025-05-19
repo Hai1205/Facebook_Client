@@ -1,9 +1,23 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNotiStore } from "@/stores/useNotiStore";
-import NotificationItem from "./NotificationItem";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { NotiSkeletonLoading } from "./components/NotiSkeletonLoading";
+import NotificationItem from "./components/NotificationItem";
+
 export function NotificationsDropdown() {
-  const { notifications } = useNotiStore();
+  const { notifications, getUserNotifications } = useNotiStore();
+  const { userAuth } = useAuthStore();
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (userAuth?.id) {
+      setIsLoading(true);
+      getUserNotifications(userAuth?.id as string);
+      setIsLoading(false);
+    }
+  }, [getUserNotifications, userAuth?.id]);
 
   const hasNotifications = useMemo(
     () => notifications.length > 0,
@@ -19,14 +33,18 @@ export function NotificationsDropdown() {
       </div>
 
       <ScrollArea className="h-[300px]">
-        {hasNotifications ? (
+        {isLoading && <NotiSkeletonLoading />}
+
+        {!isLoading &&
+          hasNotifications &&
           notifications.map((notification) => (
             <NotificationItem
               key={notification.id}
               notification={notification}
             />
-          ))
-        ) : (
+          ))}
+
+        {!isLoading && !hasNotifications && (
           <div className="p-3 text-center text-gray-400">
             No notifications yet
           </div>

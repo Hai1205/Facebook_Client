@@ -1,48 +1,19 @@
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
-import {
-  BadgeCheck,
-  Eye,
-  MoreHorizontal,
-  Pencil,
-  Plus,
-  Search,
-  Trash,
-} from "lucide-react";
+import { Plus, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { PostsEmptyState } from "@/layout/components/EmptyState";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { POST } from "@/utils/interface";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { FILTER, POST } from "@/utils/interface";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import EditPostDialog from "./components/EditPostDialog";
 import { usePostStore } from "@/stores/usePostStore";
-import { formatDateInDDMMYYY, formatNumberStyle } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
-import { TablePostSkeleton } from "./components/TablePostSkeleton";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import NewPostDialog from "@/pages/post/components/NewPostDialog";
-import { ViewPostModal } from "@/pages/post/components/ViewPostModal";
+import { PostFilter } from "./components/PostFilter";
+import { PostTable } from "./components/PostTable";
+import NewPostDialog from "@/pages/post/components/posts/NewPostDialog";
+import { ViewPostModal } from "@/pages/post/components/posts/ViewPostModal";
+import { TableSearch } from "../userManagement/components/TableSearch";
 
 export default function PostManagementPage() {
-  const { isLoading, getAllPost, searchPosts } = usePostStore();
+  const { isLoading, getAllPost, searchPosts, deletePost } = usePostStore();
 
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get("query") || "";
@@ -53,8 +24,12 @@ export default function PostManagementPage() {
   const [posts, setPosts] = useState<POST[] | []>([]);
 
   const [selectedPost, setSelectedPost] = useState<POST | null>(null);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isViewOpen, setViewOpen] = useState(false);
+
+  const initialFilters: FILTER = { status: [], contentType: [] };
+  const [activeFilters, setActiveFilters] = useState<FILTER>(initialFilters);
+  const [openMenuFilters, setOpenMenuFilters] = useState(false);
+  const closeMenuMenuFilters = () => setOpenMenuFilters(false);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -85,30 +60,56 @@ export default function PostManagementPage() {
     setPosts([...posts, newPost]);
   };
 
-  const handleEditPost = (post: POST) => {
-    setSelectedPost(post);
-    setIsEditDialogOpen(true);
-  };
-
   const handleViewPost = (post: POST) => {
     setSelectedPost(post);
     setViewOpen(true);
   };
 
-  const handlePostUpdated = (updatedPost: POST) => {
-    setPosts((prevPosts) =>
-      prevPosts.map((post) => (post.id === updatedPost.id ? updatedPost : post))
-    );
+  const clearFilters = () => {
+    setActiveFilters(initialFilters);
+    setSearchQuery("");
+    setSearchParams({});
+    closeMenuMenuFilters();
   };
 
-  const mediaTypeStyles = {
-    IMAGE: "text-blue-500 border-blue-500",
-    VIDEO: "text-purple-500 border-purple-500",
+  const toggleFilter = (value: string, type: "status" | "privacy") => {
+    setActiveFilters((prev) => {
+      const updated = { ...prev };
+      if (updated[type]?.includes(value)) {
+        updated[type] = updated[type].filter((item) => item !== value);
+      } else {
+        updated[type] = [...(updated[type] || []), value];
+      }
+      return updated;
+    });
   };
 
-  const privacyStyles = {
-    PUBLIC: "text-green-500 border-green-500",
-    PRIVATE: "text-orange-500 border-orange-500",
+  const applyFilters = () => {
+    const params = new URLSearchParams(searchParams);
+
+    if (activeFilters.status.length > 0) {
+      params.set("status", activeFilters.status.join(","));
+    } else {
+      params.delete("status");
+    }
+
+    if (activeFilters.privacy && activeFilters.privacy.length > 0) {
+      params.set("privacy", activeFilters.privacy.join(","));
+    } else {
+      params.delete("privacy");
+    }
+
+    setSearchParams(params);
+    closeMenuMenuFilters();
+  };
+
+  const handleDeletePost = async (post: POST) => {
+    if (!post) {
+      return;
+    }
+
+    await deletePost(post.id as string);
+    setPosts(posts.filter((p) => p.id !== post.id));
   };
 
   return (
@@ -144,182 +145,44 @@ export default function PostManagementPage() {
             <CardTitle />
 
             <div className="flex items-center gap-2">
-              <form onSubmit={handleSearch} className="flex items-center gap-2">
-                <div className="relative w-60">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              
+            <TableSearch
+                  handleSearch={handleSearch}
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
+                  placeholder="Search posts..."
+                />
 
-                  <Input
-                    type="search"
-                    placeholder="Search posts..."
-                    className="w-full pl-8"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                </div>
-              </form>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 gap-1 bg-blue-600 hover:bg-[#166FE5] text-white"
+                onClick={clearFilters}
+              >
+                <RefreshCw className="h-4 w-4" />
+                Refresh
+              </Button>
+
+              <PostFilter
+                openMenuFilters={openMenuFilters}
+                setOpenMenuFilters={setOpenMenuFilters}
+                activeFilters={activeFilters}
+                toggleFilter={toggleFilter}
+                clearFilters={clearFilters}
+                applyFilters={applyFilters}
+                closeMenuMenuFilters={closeMenuMenuFilters}
+              />
             </div>
           </div>
         </CardHeader>
 
-        <ScrollArea className="h-[calc(100vh-220px)] w-full rounded-xl">
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="text-center">User</TableHead>
-
-                  <TableHead className="text-center">Media Type</TableHead>
-
-                  <TableHead className="text-center">Privacy</TableHead>
-
-                  <TableHead className="text-center">Engagement</TableHead>
-
-                  <TableHead className="text-center">Upload Date</TableHead>
-
-                  <TableHead className="text-center">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-
-              <TableBody>
-                {isLoading ? (
-                  <TableRow>
-                    <TableCell colSpan={6}>
-                      <TablePostSkeleton />
-                    </TableCell>
-                  </TableRow>
-                ) : posts.length > 0 ? (
-                  posts.map((post) => (
-                    <TableRow key={post.id}>
-                      <TableCell>
-                        <Link to={`/profile/${post?.user?.id}`}>
-                          <div className="flex items-center gap-3">
-                            <Avatar className="h-9 w-9">
-                              <AvatarImage
-                                src={post?.user?.avatarPhotoUrl}
-                                alt={post?.user?.fullName}
-                              />
-
-                              <AvatarFallback className="text-white">
-                                {post?.user?.fullName?.substring(0, 2) || "FU"}
-                              </AvatarFallback>
-                            </Avatar>
-
-                            <div className="flex flex-col">
-                              <p className="text-s font-bold flex items-center">
-                                <span className="font-medium hover:underline text-white">
-                                  {post?.user?.fullName || "Facebook User"}
-                                </span>
-
-                                {post?.user?.celebrity && (
-                                  <BadgeCheck className="ml-2 h-4 w-4 text-[#1877F2]" />
-                                )}
-                              </p>
-
-                              <span className="text-sm text-muted-foreground hover:underline">
-                                {post?.user?.email}
-                              </span>
-                            </div>
-                          </div>
-                        </Link>
-                      </TableCell>
-
-                      <TableCell className="text-center">
-                        <Badge
-                          variant="outline"
-                          className={mediaTypeStyles[post.mediaType]}
-                        >
-                          {post.mediaType}
-                        </Badge>
-                      </TableCell>
-
-                      <TableCell className="text-center">
-                        <Badge
-                          variant="outline"
-                          className={privacyStyles[post.privacy]}
-                        >
-                          {post.privacy}
-                        </Badge>
-                      </TableCell>
-
-                      <TableCell className="text-center">
-                        <div className="flex justify-center">
-                          <span className="mr-2 text-white">
-                            👍 {formatNumberStyle(post.likes.length)}
-                          </span>
-                          <span className="text-white">
-                            💬 {formatNumberStyle(post.comments.length)}
-                          </span>
-                        </div>
-                      </TableCell>
-
-                      <TableCell className="text-center text-white">
-                        {formatDateInDDMMYYY(post.createdAt as string)}
-                      </TableCell>
-
-                      <TableCell className="text-center text-white">
-                        <div className="flex justify-center">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-8 w-8 p-0"
-                              >
-                                <MoreHorizontal className="h-4 w-4" />
-                                <span className="sr-only">Open menu</span>
-                              </Button>
-                            </DropdownMenuTrigger>
-
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-
-                              <DropdownMenuItem
-                                onClick={() => handleViewPost(post)}
-                                className="cursor-pointer"
-                              >
-                                <Eye className="mr-2 h-4 w-4 cursor-pointer" />
-                                {" View"}
-                              </DropdownMenuItem>
-
-                              <DropdownMenuItem
-                                onClick={() => handleEditPost(post)}
-                                className="cursor-pointer"
-                              >
-                                <Pencil className="mr-2 h-4 w-4 cursor-pointer" />
-                                {" Edit"}
-                              </DropdownMenuItem>
-
-                              <DropdownMenuSeparator />
-
-                              <DropdownMenuItem className="text-red-600">
-                                <Trash className="mr-2 h-4 w-4" />
-                                {" Delete"}
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={6}>
-                      <PostsEmptyState message="No posts have been added yet. Create an post to get started." />
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </ScrollArea>
+        <PostTable
+          posts={posts}
+          isLoading={isLoading}
+          handleViewPost={handleViewPost}
+          handleDeletePost={handleDeletePost}
+        />
       </Card>
-
-      <EditPostDialog
-        isOpen={isEditDialogOpen}
-        onOpenChange={setIsEditDialogOpen}
-        post={selectedPost}
-        onPostUpdated={handlePostUpdated}
-      />
 
       <ViewPostModal
         isOpen={isViewOpen}

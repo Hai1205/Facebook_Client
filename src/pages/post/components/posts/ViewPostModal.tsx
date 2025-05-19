@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import { Button } from "@/components/ui/button";
-import PostCard from "../PostCard";
 import { POST, USER } from "@/utils/interface";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { X } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import PostCard from "../PostCard";
 
 interface ViewPostModalProps {
   isOpen: boolean;

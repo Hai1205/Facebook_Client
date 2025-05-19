@@ -53,6 +53,7 @@ const SettingPage = () => {
     if (userData && userAuth) {
       const formData = new FormData();
       formData.append("fullName", userData.fullName || "");
+      formData.append("dateOfBirth", userData.dateOfBirth || "");
       // formData.append("country", userData.country || "");
       // formData.append("biography", userData.biography || "");
       // formData.append("website", userData.website || "");

@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DialogContent,
@@ -24,11 +24,18 @@ import {
 import { PRIVACY_CHOICE } from "@/utils/choices";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { POST } from "@/utils/interface";
+import { testFormData } from "@/lib/utils";
 
 interface NewPostDialogProps {
   isPostFormOpen?: boolean;
   setIsPostFormOpen: (value: boolean) => void;
   onPostUploaded?: (updatedPost: POST) => void;
+}
+
+interface MediaFile {
+  file: File;
+  preview: string;
+  type: string;
 }
 
 const NewPostDialog = ({
@@ -43,18 +50,24 @@ const NewPostDialog = ({
   const emojiPickerRef = useRef<HTMLDivElement>(null);
   const [postContent, setPostContent] = useState("");
   const [postPrivacy, setPostPrivacy] = useState("PUBLIC");
-  const [filePreview, setFilePreview] = useState<string | null>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [fileType, setFileType] = useState("");
-  const [showImageUpload, setShowImageUpload] = useState(false);
+  const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([]);
+  const [showMediaUpload, setShowMediaUpload] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const resetMedia = useCallback(() => {
+    setShowMediaUpload(false);
+    setMediaFiles((prevMediaFiles) => {
+      prevMediaFiles.forEach((media) => URL.revokeObjectURL(media.preview));
+      return [];
+    });
+  }, []);
 
   useEffect(() => {
     if (!isPostFormOpen) {
       setPostContent("");
-      resetShowFile();
+      resetMedia();
     }
-  }, [isPostFormOpen]);
+  }, [isPostFormOpen, resetMedia]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -80,11 +93,19 @@ const NewPostDialog = ({
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e?.target?.files?.[0];
-    if (file) {
-      setSelectedFile(file);
-      setFileType(file.type);
-      setFilePreview(URL.createObjectURL(file));
+    const files = e?.target?.files;
+    if (files && files.length > 0) {
+      const newMediaFiles: MediaFile[] = Array.from(files).map((file) => ({
+        file,
+        preview: URL.createObjectURL(file),
+        type: file.type,
+      }));
+
+      setMediaFiles((prev) => [...prev, ...newMediaFiles]);
+    }
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
   };
 
@@ -94,6 +115,15 @@ const NewPostDialog = ({
     }
   };
 
+  const removeMedia = (index: number) => {
+    setMediaFiles((prev) => {
+      const newFiles = [...prev];
+      URL.revokeObjectURL(newFiles[index].preview);
+      newFiles.splice(index, 1);
+      return newFiles;
+    });
+  };
+
   const handlePost = async () => {
     if (!userAuth) {
       return;
@@ -101,28 +131,25 @@ const NewPostDialog = ({
 
     const formData = new FormData();
     formData.append("content", postContent);
-    if (selectedFile) {
-      formData.append("file", selectedFile);
-    }
+
+    mediaFiles.forEach((mediaFile) => {
+      formData.append("files", mediaFile.file);
+    });
+
     formData.append("privacy", postPrivacy);
 
+    testFormData(formData);
     const result = await createPost(userAuth?.id as string, formData);
 
     if (result) {
       setPostContent("");
-      resetShowFile();
+      resetMedia();
       setIsPostFormOpen(false);
     }
 
-    if(onPostUploaded){
+    if (onPostUploaded) {
       onPostUploaded(result);
     }
-  };
-
-  const resetShowFile = () => {
-    setShowImageUpload(false);
-    setSelectedFile(null);
-    setFilePreview(null);
   };
 
   return (
@@ -180,52 +207,91 @@ const NewPostDialog = ({
         />
 
         <AnimatePresence>
-          {(showImageUpload || filePreview) && (
+          {(showMediaUpload || mediaFiles.length > 0) && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className="relative mt-4 border-2 border-dashed border-gray-300 rounded-lg p-8 flex flex-col items-center justify-center"
+              className="relative mt-4 border-2 border-dashed border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center"
             >
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute top-2 right-2"
-                onClick={() => resetShowFile()}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-
-              {filePreview ? (
-                fileType.startsWith("image") ? (
-                  <img
-                    src={filePreview}
-                    alt="preview_img"
-                    className="w-full h-auto max-h-[300px] object-cover"
-                  />
-                ) : (
-                  <video
-                    controls
-                    src={filePreview}
-                    className="w-full h-auto max-h-[300px] object-cover"
-                  />
-                )
-              ) : (
+              {mediaFiles.length === 0 ? (
                 <>
                   <Plus
                     className="h-12 w-12 text-gray-400 mb-2 cursor-pointer"
                     onClick={handleFileClick}
                   />
-
                   <p className="text-center text-gray-500">Add Photos/Videos</p>
                 </>
+              ) : (
+                <>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute top-2 right-2"
+                    onClick={() => resetMedia()}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 w-full">
+                    {mediaFiles.map((media, index) => (
+                      <div key={index} className="relative aspect-square">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="absolute top-1 right-1 bg-black bg-opacity-50 z-10 p-1"
+                          onClick={() => removeMedia(index)}
+                        >
+                          <X className="h-3 w-3 text-white" />
+                        </Button>
+
+                        {media.type.startsWith("image") ? (
+                          <img
+                            src={media.preview}
+                            alt={`preview_${index}`}
+                            className="w-full h-full object-cover rounded-md"
+                          />
+                        ) : (
+                          <div className="relative w-full h-full">
+                            <video
+                              src={media.preview}
+                              className="w-full h-full object-cover rounded-md"
+                            />
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <div className="bg-black bg-opacity-50 rounded-full p-2">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="20"
+                                  height="20"
+                                  viewBox="0 0 24 24"
+                                  fill="white"
+                                >
+                                  <path d="M8 5v14l11-7z" />
+                                </svg>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+
+                    <div
+                      className="flex items-center justify-center border-2 border-dashed border-gray-300 rounded-md aspect-square cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
+                      onClick={handleFileClick}
+                    >
+                      <Plus className="h-8 w-8 text-gray-400" />
+                    </div>
+                  </div>
+                </>
               )}
+
               <input
                 type="file"
                 accept="image/*,video/*"
                 className="hidden"
                 onChange={handleFileChange}
                 ref={fileInputRef}
+                multiple
               />
             </motion.div>
           )}
@@ -238,7 +304,7 @@ const NewPostDialog = ({
             <Button
               variant="outline"
               size="icon"
-              onClick={() => setShowImageUpload(!showImageUpload)}
+              onClick={() => setShowMediaUpload(!showMediaUpload)}
             >
               <ImageIcon className="h-4 w-4 text-green-500" />
             </Button>
@@ -246,7 +312,7 @@ const NewPostDialog = ({
             <Button
               variant="outline"
               size="icon"
-              onClick={() => setShowImageUpload(!showImageUpload)}
+              onClick={() => setShowMediaUpload(!showMediaUpload)}
             >
               <Video className="h-4 w-4 text-red-500" />
             </Button>
@@ -264,7 +330,9 @@ const NewPostDialog = ({
             <Button
               className="bg-[#1877F2] hover:bg-[#166FE5] text-white"
               onClick={handlePost}
-              disabled={isLoading || (!postContent.trim() && !selectedFile)}
+              disabled={
+                isLoading || (!postContent.trim() && mediaFiles.length === 0)
+              }
             >
               {isLoading ? "Posting..." : "Post"}
             </Button>

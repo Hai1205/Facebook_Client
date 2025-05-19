@@ -17,3 +17,11 @@ export const deleteUserNotifications = async(userId: string): Promise<any> => {
 export const getUserNotifications = async(userId: string): Promise<any> => {
     return await axiosInstance.get(`${endpoint}/get-user-notifications/${userId}`);
 }
+
+export const markRead = async(notiId: string): Promise<any> => {
+    return await axiosInstance.put(`${endpoint}/mark-read/${notiId}`);
+}
+
+export const markAllRead = async(userId: string): Promise<any> => {
+    return await axiosInstance.put(`${endpoint}/mark-all-read/${userId}`);
+}

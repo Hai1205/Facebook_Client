@@ -23,19 +23,12 @@ import {
 } from "@/components/ui/select";
 import { PRIVACY_CHOICE } from "@/utils/choices";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { POST } from "@/utils/interface";
-import { testFormData } from "@/lib/utils";
+import { MEDIA_FILE, POST } from "@/utils/interface";
 
 interface NewPostDialogProps {
   isPostFormOpen?: boolean;
   setIsPostFormOpen: (value: boolean) => void;
   onPostUploaded?: (updatedPost: POST) => void;
-}
-
-interface MediaFile {
-  file: File;
-  preview: string;
-  type: string;
 }
 
 const NewPostDialog = ({
@@ -50,7 +43,7 @@ const NewPostDialog = ({
   const emojiPickerRef = useRef<HTMLDivElement>(null);
   const [postContent, setPostContent] = useState("");
   const [postPrivacy, setPostPrivacy] = useState("PUBLIC");
-  const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([]);
+  const [mediaFiles, setMediaFiles] = useState<MEDIA_FILE[]>([]);
   const [showMediaUpload, setShowMediaUpload] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -95,7 +88,7 @@ const NewPostDialog = ({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e?.target?.files;
     if (files && files.length > 0) {
-      const newMediaFiles: MediaFile[] = Array.from(files).map((file) => ({
+      const newMediaFiles: MEDIA_FILE[] = Array.from(files).map((file) => ({
         file,
         preview: URL.createObjectURL(file),
         type: file.type,
@@ -138,7 +131,6 @@ const NewPostDialog = ({
 
     formData.append("privacy", postPrivacy);
 
-    testFormData(formData);
     const result = await createPost(userAuth?.id as string, formData);
 
     if (result) {
@@ -156,7 +148,7 @@ const NewPostDialog = ({
     <DialogContent className="max-h-[80vh]">
       <ScrollArea className="h-full max-h-[70vh]">
         <DialogHeader>
-          <DialogTitle className="text-center">Create Post</DialogTitle>
+          <DialogTitle className="text-center mb-5">Create Post</DialogTitle>
         </DialogHeader>
 
         <Separator />

@@ -11,6 +11,7 @@ import { PostTable } from "./components/PostTable";
 import NewPostDialog from "@/pages/post/components/posts/NewPostDialog";
 import { ViewPostModal } from "@/pages/post/components/posts/ViewPostModal";
 import { TableSearch } from "../userManagement/components/TableSearch";
+import EditPostDialog from "@/pages/post/components/posts/EditPostDialog";
 
 export default function PostManagementPage() {
   const { isLoading, getAllPost, searchPosts, deletePost } = usePostStore();
@@ -25,6 +26,7 @@ export default function PostManagementPage() {
 
   const [selectedPost, setSelectedPost] = useState<POST | null>(null);
   const [isViewOpen, setViewOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
 
   const initialFilters: FILTER = { status: [], contentType: [] };
   const [activeFilters, setActiveFilters] = useState<FILTER>(initialFilters);
@@ -60,9 +62,20 @@ export default function PostManagementPage() {
     setPosts([...posts, newPost]);
   };
 
+  const handlePostUpdated = (updatedPost: POST) => {
+    setPosts(
+      posts.map((post) => (post.id === updatedPost.id ? updatedPost : post))
+    );
+  };
+
   const handleViewPost = (post: POST) => {
     setSelectedPost(post);
     setViewOpen(true);
+  };
+
+  const handleUpdatePost = (post: POST) => {
+    setSelectedPost(post);
+    setIsEditOpen(true);
   };
 
   const clearFilters = () => {
@@ -145,13 +158,12 @@ export default function PostManagementPage() {
             <CardTitle />
 
             <div className="flex items-center gap-2">
-              
-            <TableSearch
-                  handleSearch={handleSearch}
-                  searchQuery={searchQuery}
-                  setSearchQuery={setSearchQuery}
-                  placeholder="Search posts..."
-                />
+              <TableSearch
+                handleSearch={handleSearch}
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                placeholder="Search posts..."
+              />
 
               <Button
                 variant="outline"
@@ -180,6 +192,7 @@ export default function PostManagementPage() {
           posts={posts}
           isLoading={isLoading}
           handleViewPost={handleViewPost}
+          handleUpdatePost={handleUpdatePost}
           handleDeletePost={handleDeletePost}
         />
       </Card>
@@ -189,6 +202,15 @@ export default function PostManagementPage() {
         onOpenChange={setViewOpen}
         post={selectedPost as POST}
       />
+
+      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+        <EditPostDialog
+          isPostFormOpen={isEditOpen}
+          setIsPostFormOpen={setIsEditOpen}
+          post={selectedPost as POST}
+          onPostUpdated={handlePostUpdated}
+        />
+      </Dialog>
     </div>
   );
 }

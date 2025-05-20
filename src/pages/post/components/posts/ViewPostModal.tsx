@@ -14,7 +14,11 @@ interface ViewPostModalProps {
   post: POST;
 }
 
-export function ViewPostModal({ isOpen, onOpenChange, post }: ViewPostModalProps) {
+export function ViewPostModal({
+  isOpen,
+  onOpenChange,
+  post,
+}: ViewPostModalProps) {
   const { userAuth } = useAuthStore();
 
   const [isLiked, setIsLiked] = useState<boolean>(false);
@@ -24,10 +28,9 @@ export function ViewPostModal({ isOpen, onOpenChange, post }: ViewPostModalProps
       return;
     }
 
-    setIsLiked(post.likes.includes(userAuth as USER))
-
+    setIsLiked(post.likes.includes(userAuth as USER));
   }, [post, userAuth]);
-  
+
   const handleLike = () => {
     setIsLiked(!isLiked);
   };

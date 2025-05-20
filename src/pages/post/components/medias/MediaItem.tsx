@@ -1,6 +1,8 @@
+import { MEDIA_TYPE } from "@/utils/types";
+
 interface MediaItemProps {
     url: string;
-    type: "IMAGE" | "VIDEO";
+    type: MEDIA_TYPE;
     index: number;
     onClick: () => void;
     className?: string;

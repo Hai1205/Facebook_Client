@@ -11,7 +11,7 @@ import {
 import { POST } from "@/utils/interface";
 import { TablePostSkeleton } from "./TablePostSkeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { BadgeCheck, Eye, MoreHorizontal, Trash } from "lucide-react";
+import { BadgeCheck, Eye, MoreHorizontal, Pencil, Trash } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { formatDateInDDMMYYY, formatNumberStyle } from "@/lib/utils";
@@ -30,6 +30,7 @@ interface PostTableProps {
   posts: POST[];
   isLoading: boolean;
   handleViewPost: (post: POST) => void;
+  handleUpdatePost: (post: POST) => void;
   handleDeletePost: (post: POST) => void;
 }
 
@@ -37,6 +38,7 @@ export const PostTable = ({
   posts,
   isLoading,
   handleViewPost,
+  handleUpdatePost,
   handleDeletePost,
 }: PostTableProps) => {
   const privacyStyles = {
@@ -169,6 +171,14 @@ export const PostTable = ({
                           >
                             <Eye className="mr-2 h-4 w-4 cursor-pointer" />
                             {" View"}
+                          </DropdownMenuItem>
+
+                          <DropdownMenuItem
+                            onClick={() => handleUpdatePost(post)}
+                            className="cursor-pointer"
+                          >
+                            <Pencil className="mr-2 h-4 w-4 cursor-pointer" />
+                            {" Update"}
                           </DropdownMenuItem>
 
                           <DropdownMenuSeparator />

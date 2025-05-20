@@ -177,3 +177,9 @@ export interface FILTER {
 	role?: string[];
 	gender?: string[];
 }
+
+export interface MEDIA_FILE {
+	file: File;
+	preview: string;
+	type: string;
+}

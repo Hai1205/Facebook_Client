@@ -60,13 +60,13 @@ export interface PostStore {
   searchReports: (query: string) => Promise<any>;
   updatePost: (postId: string, formData: FormData) => Promise<any>;
   getPost: (postId: string) => Promise<any>;
-  addPostToHome: (post: any) => void;
+  addPostToHome: (post: POST) => void;
   removePostFromHome: (postId: string) => void;
-  updatePostInHome: (updatedPost: any) => void;
-  addStoryToHome: (story: any) => void;
+  updatePostInHome: (updatedPost: POST) => void;
+  addStoryToHome: (story: STORY) => void;
   removeStoryToHome: (storyId: string) => void;
-  updateStoryInHome: (updatedStory: any) => void;
-  reset: () => any;
+  updateStoryInHome: (updatedStory: STORY) => void;
+  reset: () => void;
 }
 
 const initialState = {
@@ -553,19 +553,19 @@ export const usePostStore = create<PostStore>()(
         }
       },
 
-      addPostToHome: (post) => {
+      addPostToHome: (post: POST) => {
         set((state) => ({
           homePosts: [post, ...state.homePosts]
         }));
       },
 
-      removePostFromHome: (postId) => {
+      removePostFromHome: (postId: string) => {
         set((state) => ({
           homePosts: state.homePosts.filter((post) => post.id !== postId)
         }));
       },
 
-      updatePostInHome: (updatedPost) => {
+      updatePostInHome: (updatedPost: POST) => {
         set((state) => ({
           homePosts: state.homePosts.map((post) =>
             post.id === updatedPost.id ? updatedPost : post
@@ -573,19 +573,19 @@ export const usePostStore = create<PostStore>()(
         }));
       },
 
-      addStoryToHome: (story) => {
+      addStoryToHome: (story: STORY) => {
         set((state) => ({
           homeStories: [story, ...state.homeStories]
         }));
       },
 
-      removeStoryToHome: (storyId) => {
+      removeStoryToHome: (storyId: string) => {
         set((state) => ({
           homeStories: state.homeStories.filter((story) => story.id !== storyId)
         }));
       },
 
-      updateStoryInHome: (updatedStory) => {
+      updateStoryInHome: (updatedStory: STORY) => {
         set((state) => ({
           homeStories: state.homeStories.map((story) =>
             story.id === updatedStory.id ? updatedStory : story

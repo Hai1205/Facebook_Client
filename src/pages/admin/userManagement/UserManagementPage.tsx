@@ -14,21 +14,29 @@ import { UserTable } from "./components/UserTable";
 import { TableSearch } from "./components/TableSearch";
 
 export default function UserManagementPage() {
+  const {
+    searchUsers,
+    deleteUser,
+    getAllUser,
+    removeUserFromTable,
+    addUserToTable,
+    updateUserInTable,
+    usersTable,
+  } = useUserStore();
+  const { isAdmin, resetPassword } = useAuthStore();
+
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get("query") || "";
-  const [searchQuery, setSearchQuery] = useState(query);
   const queryString = location.search;
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState(query);
   const [isAddUserOpen, setIsAddUserOpen] = useState(false);
   const [isEditUserOpen, setIsEditUserOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<USER | null>(null);
 
-  const [users, setUsers] = useState<USER[] | []>([]);
   const [openMenuFilters, setOpenMenuFilters] = useState(false);
   const closeMenuMenuFilters = () => setOpenMenuFilters(false);
-
-  const { isLoading, searchUsers, deleteUser, getAllUser } = useUserStore();
-  const { isAdmin, resetPassword } = useAuthStore();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -36,11 +44,15 @@ export default function UserManagementPage() {
       params.set("admin", `${isAdmin}`);
       const updatedQueryString = `?${params.toString()}`;
 
+      setIsLoading(true);
+
       if (queryString) {
-        await searchUsers(updatedQueryString).then(setUsers);
+        await searchUsers(updatedQueryString);
       } else {
-        await getAllUser().then(setUsers);
+        await getAllUser();
       }
+
+      setIsLoading(false);
     };
 
     fetchUsers();
@@ -90,9 +102,9 @@ export default function UserManagementPage() {
     if (!user) {
       return;
     }
+    await removeUserFromTable(user.id as string);
 
     await deleteUser(user.id as string);
-    setUsers(users.filter((u) => u.id !== user.id));
   };
 
   // Function to toggle a filter value
@@ -144,14 +156,12 @@ export default function UserManagementPage() {
     closeMenuMenuFilters();
   };
 
-  const handleUserAdded = (newUser: USER) => {
-    setUsers([...users, newUser]);
+  const handleUserAdded = async (newUser: USER) => {
+    await addUserToTable(newUser);
   };
 
-  const handleUserUpdated = (updatedUser: USER) => {
-    setUsers((prevUsers) =>
-      prevUsers.map((user) => (user.id === updatedUser.id ? updatedUser : user))
-    );
+  const handleUserUpdated = async (updatedUser: USER) => {
+    await updateUserInTable(updatedUser);
   };
 
   useEffect(() => {
@@ -247,7 +257,7 @@ export default function UserManagementPage() {
             </CardHeader>
 
             <UserTable
-              users={users}
+              users={usersTable}
               isLoading={isLoading}
               handleEditUser={handleEditUser}
               handleResetPassword={handleResetPassword}

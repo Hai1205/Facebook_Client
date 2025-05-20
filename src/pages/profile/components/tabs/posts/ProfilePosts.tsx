@@ -36,10 +36,12 @@ const ProfilePosts = ({
       </div>
 
       <div className="w-full lg:w-[70%] space-y-6 mb-4">
-        <NewPostForm
-          isPostFormOpen={isPostFormOpen}
-          setIsPostFormOpen={setIsPostFormOpen}
-        />
+        {isOwner && (
+          <NewPostForm
+            isPostFormOpen={isPostFormOpen}
+            setIsPostFormOpen={setIsPostFormOpen}
+          />
+        )}
 
         {profileData.posts?.map((post: POST) => (
           <PostCard

@@ -42,8 +42,8 @@ export interface AuthStore {
 	forgotPassword: (email: string, formData: FormData) => Promise<any>;
 	changePassword: (userId: string, formData: FormData) => Promise<any>;
 	resetPassword: (userId: string) => Promise<any>;
-	setUserAuth: (user: USER | null) => any;
-	reset: () => any;
+	setUserAuth: (user: USER | null) => void;
+	reset: () => void;
 }
 
 const initialState = {

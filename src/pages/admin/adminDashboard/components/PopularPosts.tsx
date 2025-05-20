@@ -9,25 +9,23 @@ import { BadgeCheck } from "lucide-react";
 import { ViewPostModal } from "@/pages/post/components/posts/ViewPostModal";
 
 export function PopularPosts() {
-  const { isLoading, popularPosts, getPopularPostStat } = useStatStore();
+  const { popularPosts, getPopularPostStat } = useStatStore();
 
-  const [posts, setPosts] = useState<POST[]>(popularPosts);
+  const [isLoading, setIsLoading] = useState(false);
   const [isViewOpen, setViewOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<POST | null>(null);
 
   useEffect(() => {
     const fetchPosts = async () => {
-      const result = await getPopularPostStat();
-
-      if (result) {
-        setPosts(result);
-      }
+      setIsLoading(true);
+      await getPopularPostStat();
+      setIsLoading(false);
     };
 
     fetchPosts();
   }, [getPopularPostStat]);
 
-  if (isLoading) {
+  if (isLoading && !popularPosts) {
     return <PostSkeletonLoading />;
   }
 
@@ -35,7 +33,7 @@ export function PopularPosts() {
     <>
       <ScrollArea className="h-[310px] pr-4">
         <div className="space-y-4">
-          {posts.map((post) => (
+          {popularPosts.map((post) => (
             <div
               key={post?.id}
               className="relative flex items-center justify-between gap-4 rounded-lg border p-3 pr-12 hover:bg-muted/50 group cursor-pointer"

@@ -7,11 +7,11 @@ import { useAuthStore } from "@/stores/useAuthStore";
 import { useChatStore } from "@/stores/useChatStore";
 import EditUserDialog from "@/pages/admin/userManagement/components/EditUserDialog";
 import { formatNumberStyle } from "@/lib/utils";
-import { FriendButton } from "@/pages/profile/components/buttons/FriendButton";
-import { FollowButton } from "@/pages/profile/components/buttons/FollowButton";
+import { FriendButton } from "@/pages/profile/components/header/buttons/FriendButton";
+import { FollowButton } from "@/pages/profile/components/header/buttons/FollowButton";
 import { FRIEND_STATUS } from "@/utils/types";
-import EditCoverPhotoDialog from "./dialogs/EditCoverPhotoDialog";
 import ExtendOption from "@/pages/post/components/ExtendOption";
+import EditCoverPhotoDialog from "./dialogs/EditCoverPhotoDialog";
 
 interface ProfileHeaderProps {
   userId: string | undefined;
@@ -114,11 +114,9 @@ const ProfileHeader = ({
         )}
 
         <div className="absolute top-4 right-4 z-20">
-          {
-            !isOwner && (
-              <ExtendOption content={profileData} contentType="USER" />
-            )
-          }
+          {!isOwner && (
+            <ExtendOption content={profileData} contentType="USER" />
+          )}
         </div>
 
         {isOwner && (

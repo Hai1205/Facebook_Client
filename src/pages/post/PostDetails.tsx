@@ -24,7 +24,6 @@ const PostDetails = () => {
   }, []);
 
   useEffect(() => {
-
     if (postId) {
       setIsLoading(true);
       getPost(postId);

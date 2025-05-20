@@ -106,13 +106,13 @@ export const unFriend = async (
   );
 };
 
-export const responseFriendRequest = async (
+export const respondFriendRequest = async (
   currentUserId: string,
   opponentId: string,
   formData: FormData
 ): Promise<any> => {
   return await axiosInstance.post(
-    `${endpoint}/response-friend-request/${currentUserId}/${opponentId}`,
+    `${endpoint}/respond-friend-request/${currentUserId}/${opponentId}`,
     formData
   );
 };

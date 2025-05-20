@@ -20,8 +20,8 @@ import {
 import { useUserStore } from "@/stores/useUserStore";
 import { USER } from "@/utils/interface";
 import LoadingSpinner from "@/components/ui/loading";
-import { Save, UserIcon } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Save } from "lucide-react";
+import { GENDER_CHOICE, ROLE_CHOICE } from "@/utils/choices";
 
 interface AddUserDialogProps {
   isOpen: boolean;
@@ -36,13 +36,15 @@ const AddUserDialog = ({
 }: AddUserDialogProps) => {
   const { isLoading, createUser } = useUserStore();
 
-  const [avatar, setAvatar] = useState<File | null>(null);
+  const [formattedDate, setFormattedDate] = useState<string>("");
 
   const [userData, setUserData] = useState({
     fullName: "",
     password: "",
     email: "",
     role: "",
+    gender: "",
+    dateOfBirth: "",
   });
 
   const [errors, setErrors] = useState({
@@ -50,10 +52,15 @@ const AddUserDialog = ({
     fullName: "",
     password: "",
     role: "",
-    avatar: "",
+    gender: "",
+    dateOfBirth: "",
   });
 
   const createUserData = (field: keyof typeof userData, value: any) => {
+    setUserData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleChange = (field: keyof typeof userData, value: any) => {
     setUserData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -63,7 +70,8 @@ const AddUserDialog = ({
       fullName: "",
       password: "",
       role: "",
-      avatar: "",
+      gender: "",
+      dateOfBirth: "",
     });
 
     let hasError = false;
@@ -72,13 +80,10 @@ const AddUserDialog = ({
       fullName: "",
       password: "",
       role: "",
-      avatar: "",
+      gender: "",
+      dateOfBirth: "",
     };
 
-    if (!avatar) {
-      newErrors.avatar = "Avatar is required";
-      hasError = true;
-    }
     if (!userData.email.trim()) {
       newErrors.email = "Email is required";
       hasError = true;
@@ -95,6 +100,14 @@ const AddUserDialog = ({
       newErrors.role = "Role is required";
       hasError = true;
     }
+    if (!userData.gender) {
+      newErrors.gender = "Gender is required";
+      hasError = true;
+    }
+    if (!userData.dateOfBirth) {
+      newErrors.dateOfBirth = "Date of birth is required";
+      hasError = true;
+    }
 
     if (hasError) {
       setErrors(newErrors);
@@ -102,13 +115,12 @@ const AddUserDialog = ({
     }
 
     const formData = new FormData();
+    formData.append("email", userData.email);
     formData.append("fullName", userData.fullName);
     formData.append("password", userData.password);
-    formData.append("email", userData.email);
+    formData.append("gender", userData.gender);
+    formData.append("dateOfBirth", userData.dateOfBirth);
     formData.append("role", userData.role);
-    if (avatar) {
-      formData.append("avatar", avatar);
-    }
 
     const user = await createUser(formData);
 
@@ -120,18 +132,13 @@ const AddUserDialog = ({
         password: "",
         email: "",
         role: "",
+        gender: "",
+        dateOfBirth: "",
       });
 
-      setAvatar(null);
+      setFormattedDate("");
 
       onOpenChange(false);
-    }
-  };
-
-  const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setAvatar(file);
     }
   };
 
@@ -147,46 +154,6 @@ const AddUserDialog = ({
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
-          <div className="flex items-center justify-center col-span-1 row-span-3">
-            <div className="relative w-40 h-40 border border-gray-700 rounded-full overflow-hidden flex items-center justify-center bg-[#282828]">
-              <Avatar className="rounded-full object-cover w-full h-full">
-                <AvatarImage
-                  src={
-                    avatar ? URL.createObjectURL(avatar) : "/placeholder.svg"
-                  }
-                  alt={userData.fullName}
-                />
-                <AvatarFallback>
-                  <UserIcon />
-                </AvatarFallback>
-              </Avatar>
-
-              <div className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 flex items-center justify-center transition-opacity">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="bg-[#1DB954] text-white hover:bg-[#1ed760]"
-                  onClick={() =>
-                    document.getElementById("avatar-input")?.click()
-                  }
-                >
-                  Change
-                </Button>
-
-                <input
-                  id="avatar-input"
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleAvatarChange}
-                />
-              </div>
-            </div>
-            {errors.avatar && (
-              <span className="text-sm text-red-500">{errors.avatar}</span>
-            )}
-          </div>
-
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -228,39 +195,70 @@ const AddUserDialog = ({
               )}
             </div>
 
-            <Label htmlFor="role">Role</Label>
-            <Select
-              value={userData?.role}
-              onValueChange={(value) => createUserData("role", value)}
-            >
-              <SelectTrigger id="role" className="cursor-pointer">
-                <SelectValue placeholder="Select role" />
-              </SelectTrigger>
+            {/* Date of birth */}
+            <div className="grid gap-2 mt-3">
+              <Label htmlFor="edit-date-of-birth">Date of birth</Label>
 
-              <SelectContent>
-                <SelectItem
-                  value="user"
-                  className="cursor-pointer hover:bg-accent hover:text-accent-foreground"
-                >
-                  USER
-                </SelectItem>
-                <SelectItem
-                  value="artist"
-                  className="cursor-pointer hover:bg-accent hover:text-accent-foreground"
-                >
-                  Artist
-                </SelectItem>
-                <SelectItem
-                  value="admin"
-                  className="cursor-pointer hover:bg-accent hover:text-accent-foreground"
-                >
-                  Admin
-                </SelectItem>
-              </SelectContent>
-            </Select>
-            {errors.role && (
-              <span className="text-sm text-red-500">{errors.role}</span>
-            )}
+              <Input
+                id="edit-date-of-birth"
+                type="date"
+                name="date-of-birth"
+                className="cursor-pointer"
+                value={formattedDate}
+                onChange={(e) => {
+                  const newDate = e.target.value;
+                  setFormattedDate(newDate);
+                  handleChange("dateOfBirth", newDate);
+                }}
+              />
+            </div>
+
+            {/* Gender */}
+            <div className="grid gap-2 mt-3">
+              <Label htmlFor="edit-gender">Gender</Label>
+
+              <Select
+                value={userData?.gender}
+                onValueChange={(value) => handleChange("gender", value)}
+              >
+                <SelectTrigger id="edit-gender">
+                  <SelectValue placeholder="Select gender" />
+                </SelectTrigger>
+
+                <SelectContent>
+                  {GENDER_CHOICE.map((item) => (
+                    <SelectItem
+                      key={item.value}
+                      value={item.value}
+                      className="text-white cursor-pointer"
+                    >
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Role */}
+            <div className="grid gap-2 mt-3">
+              <Label htmlFor="edit-role">Role</Label>
+              <Select
+                value={userData?.role}
+                onValueChange={(value) => handleChange("role", value)}
+              >
+                <SelectTrigger id="edit-role">
+                  <SelectValue placeholder="Select role" />
+                </SelectTrigger>
+
+                <SelectContent>
+                  {ROLE_CHOICE.map((item) => (
+                    <SelectItem key={item.value} value={item.value} className="text-white cursor-pointer">
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
 
@@ -273,6 +271,8 @@ const AddUserDialog = ({
                 password: "",
                 email: "",
                 role: "",
+                gender: "",
+                dateOfBirth: "",
               });
 
               onOpenChange(false);

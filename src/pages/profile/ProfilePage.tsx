@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import ProfileHeader from "./components/ProfileHeader";
-import ProfileTabs from "./components/ProfileTabs";
+import ProfileHeader from "./components/header/ProfileHeader";
+import ProfileTabs from "./components/tabs/ProfileTabs";
 import { USER } from "@/utils/interface";
 import { useUserStore } from "@/stores/useUserStore";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { ProfileHeaderSkeleton } from "./components/ProfileHeaderSkeleton";
+import { ProfileHeaderSkeleton } from "./components/header/ProfileHeaderSkeleton";
 import { FRIEND_STATUS } from "@/utils/types";
 
 const ProfilePage = () => {
@@ -22,7 +22,10 @@ const ProfilePage = () => {
 
   const fetchProfile = useCallback(async () => {
     if (userId) {
-      const { user: targetUser, friendStatus } = await getUserProfile(userAuth?.id as string, userId);
+      const { user: targetUser, friendStatus } = await getUserProfile(
+        userAuth?.id as string,
+        userId
+      );
 
       if (targetUser) {
         setProfileData(targetUser);

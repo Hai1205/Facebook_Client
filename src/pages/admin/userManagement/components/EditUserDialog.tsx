@@ -221,6 +221,7 @@ const EditUserDialog = ({
                     )}
                   </div>
 
+                  {/* Date of birth */}
                   <div className="grid gap-2 mt-3">
                     <Label htmlFor="edit-date-of-birth">Date of birth</Label>
 

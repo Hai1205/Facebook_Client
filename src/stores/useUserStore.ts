@@ -11,7 +11,7 @@ import {
     getSuggestedUsers,
     getUser,
     getUserFriendsRequests,
-    responseFriendRequest,
+    respondFriendRequest,
     searchUsers,
     sendFriendRequest,
     unFriend,
@@ -22,10 +22,12 @@ import {
     getFriendRequestStatus,
     getUserProfile
 } from "@/utils/api/usersApi";
-import { USER } from "@/utils/interface";
+import { FRIEND_REQUEST, USER } from "@/utils/interface";
 
 interface UserStore {
     suggestedUsers: USER[];
+    usersTable: USER[];
+    friendRequests: FRIEND_REQUEST[];
     isLoading: boolean;
     error: string | null;
     status: number;
@@ -43,17 +45,24 @@ interface UserStore {
     deleteUser: (userId: string) => Promise<any>;
     followUser: (currentUserId: string, opponentId: string) => Promise<any>;
     sendFriendRequest: (currentUserId: string, opponentId: string) => Promise<any>;
-    responseFriendRequest: (currentUserId: string, opponentId: string, formData: FormData) => Promise<any>;
+    respondFriendRequest: (currentUserId: string, opponentId: string, formData: FormData) => Promise<any>;
     unFriend: (currentUserId: string, opponentId: string) => Promise<any>;
     getSuggestedUsers: (userId: string) => Promise<any>;
     getUserFriendsRequests: (userId: string) => Promise<any>;
     searchUsers: (queryString: string) => Promise<any>;
     getFriendRequestStatus: (currentUserId: string, targetUserId: string) => Promise<any>;
-    reset: () => any;
+    removeFriendRequest: (friendRequestId: string) => Promise<any>;
+    removeSuggestedUser: (userId: string) => Promise<any>;
+    removeUserFromTable: (userId: string) => Promise<any>;
+    addUserToTable: (user: USER) => Promise<any>;
+    updateUserInTable: (updatedUser: USER) => Promise<any>;
+    reset: () => void;
 }
 
 const initialState = {
     suggestedUsers: [],
+    usersTable: [],
+    friendRequests: [],
     isLoading: false,
     error: null,
     status: 0,
@@ -72,6 +81,7 @@ export const useUserStore = create<UserStore>()(
                     const response = await getAllUser();
                     const { users } = response.data;
 
+                    set({ usersTable: users });
                     return users;
                 } catch (error: any) {
                     console.error(error)
@@ -150,6 +160,7 @@ export const useUserStore = create<UserStore>()(
                     const response = await getUserFriendsRequests(userId);
                     const { friendRequests } = response.data;
 
+                    set({ friendRequests });
                     return friendRequests;
                 } catch (error: any) {
                     console.error(error)
@@ -200,11 +211,11 @@ export const useUserStore = create<UserStore>()(
                 }
             },
 
-            responseFriendRequest: async (currentUserId, opponentId, formData: FormData) => {
+            respondFriendRequest: async (currentUserId, opponentId, formData: FormData) => {
                 set({ error: null });
 
                 try {
-                    await responseFriendRequest(currentUserId, opponentId, formData);
+                    await respondFriendRequest(currentUserId, opponentId, formData);
 
                 } catch (error: any) {
                     console.error(error)
@@ -401,6 +412,8 @@ export const useUserStore = create<UserStore>()(
                         return [];
                     }
 
+                    set({ usersTable: users });
+
                     return users;
                 } catch (error: any) {
                     console.error(error)
@@ -432,6 +445,38 @@ export const useUserStore = create<UserStore>()(
                 } finally {
                     set({ isLoading: false });
                 }
+            },
+
+            removeFriendRequest: async (friendRequestId: string) => {
+                set((state) => ({
+                    friendRequests: state.friendRequests.filter((request) => request.id !== friendRequestId)
+                }));
+            },
+
+            removeSuggestedUser: async (userId: string) => {
+                set((state) => ({
+                    suggestedUsers: state.suggestedUsers.filter((user) => user.id !== userId)
+                }));
+            },
+
+            removeUserFromTable: async (userId: string) => {
+                set((state) => ({
+                    usersTable: state.usersTable.filter((user) => user.id !== userId)
+                }));
+            },
+
+            addUserToTable: async (user: USER) => {
+                set((state) => ({
+                    usersTable: [user, ...state.usersTable]
+                }));
+            },
+
+            updateUserInTable: async (updatedUser: USER) => {
+                set((state) => ({
+                    usersTable: state.usersTable.map((user) =>
+                        user.id === updatedUser.id ? updatedUser : user
+                    )
+                }));
             },
 
             reset: () => {

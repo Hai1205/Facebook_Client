@@ -4,50 +4,48 @@ import FriendRequestCard from "../cards/FriendRequestCard";
 import { useUserStore } from "@/stores/useUserStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { UserPlus } from "lucide-react";
+import { RESPOND_STATUS } from "@/utils/types";
 
 export default function FriendRequestTab() {
-  const { getUserFriendsRequests, responseFriendRequest } = useUserStore();
+  const {
+    getUserFriendsRequests,
+    respondFriendRequest,
+    friendRequests,
+    removeFriendRequest,
+  } = useUserStore();
   const { userAuth } = useAuthStore();
 
-  const [friendRequests, setFriendRequests] =
-    useState<FRIEND_REQUEST[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchFriendRequests = async () => {
       setLoading(true);
-      try {
-        const result = await getUserFriendsRequests(userAuth?.id as string);
-        if (result) {
-          setFriendRequests(result);
-        }
-      } catch (error) {
-        console.error("Error fetching friend requests:", error);
-      } finally {
-        setLoading(false);
-      }
+
+      await getUserFriendsRequests(userAuth?.id as string);
+
+      setLoading(false);
     };
 
     fetchFriendRequests();
   }, [getUserFriendsRequests, userAuth]);
 
-  const handleAccept = async (FR: FRIEND_REQUEST) => {
-    setFriendRequests(friendRequests.filter((request) => request.id !== FR.id));
-  
-    const formData = new FormData();
-    formData.append("status", "ACCEPT");
-    await responseFriendRequest(userAuth?.id as string, FR.from.id as string, formData);
-  };
-
-  const handleDelete = async (FR: FRIEND_REQUEST) => {
-    setFriendRequests(friendRequests.filter((request) => request.id !== FR.id));
+  const handleRespondFriendRequest = async (
+    FR: FRIEND_REQUEST,
+    status: RESPOND_STATUS
+  ) => {
+    removeFriendRequest(FR.id as string);
 
     const formData = new FormData();
-    formData.append("status", "REJECT");
-    await responseFriendRequest(userAuth?.id as string, FR.from.id as string, formData);
+    formData.append("status", status);
+
+    await respondFriendRequest(
+      userAuth?.id as string,
+      FR.from.id as string,
+      formData
+    );
   };
 
-  if (loading) {
+  if (loading && !friendRequests) {
     return (
       <div className="flex justify-center items-center py-12">
         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500" />
@@ -78,8 +76,7 @@ export default function FriendRequestTab() {
             <FriendRequestCard
               key={request.id}
               request={request}
-              onAccept={handleAccept}
-              onDelete={handleDelete}
+              onRespond={handleRespondFriendRequest}
             />
           ))}
         </div>

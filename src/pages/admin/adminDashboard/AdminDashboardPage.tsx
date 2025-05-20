@@ -12,23 +12,19 @@ import { TopUsers } from "./components/TopUsers";
 import { PopularPosts } from "./components/PopularPosts";
 
 import { useStatStore } from "@/stores/useStatStore";
-import { STATS } from "@/utils/interface";
 import { formatNumberStyle } from "@/lib/utils";
 
 export default function AdminDashboardPage() {
-  const { isLoading, generalStat, getGeneralStat } = useStatStore();
+  const { generalStat, getGeneralStat } = useStatStore();
 
-  const [stats, setStats] = useState<STATS | null>(generalStat);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchStats = async () => {
-      const result = await getGeneralStat();
-
-      if (result) {
-        setStats(result);
-      }
+      setIsLoading(true);
+      await getGeneralStat();
+      setIsLoading(false);
     };
-
     fetchStats();
   }, [getGeneralStat]);
 
@@ -49,10 +45,10 @@ export default function AdminDashboardPage() {
           </CardHeader>
 
           <CardContent>
-            {isLoading ? (
+            {isLoading && !generalStat ? (
               <div className="h-8 w-20 rounded-md bg-zinc-800 animate-pulse" />
             ) : (
-              <div className="text-2xl font-bold">{formatNumberStyle(stats?.totalUsers || 0 )}</div>
+              <div className="text-2xl font-bold">{formatNumberStyle(generalStat?.totalUsers || 0 )}</div>
             )}
           </CardContent>
         </Card>
@@ -65,10 +61,10 @@ export default function AdminDashboardPage() {
           </CardHeader>
 
           <CardContent>
-            {isLoading ? (
+            {isLoading && !generalStat ? (
               <div className="h-8 w-20 rounded-md bg-zinc-800 animate-pulse" />
             ) : (
-              <div className="text-2xl font-bold">{formatNumberStyle(stats?.totalPosts || 0)}</div>
+              <div className="text-2xl font-bold">{formatNumberStyle(generalStat?.totalPosts || 0)}</div>
             )}
           </CardContent>
         </Card>
@@ -83,10 +79,10 @@ export default function AdminDashboardPage() {
           </CardHeader>
 
           <CardContent>
-            {isLoading ? (
+            {isLoading && !generalStat ? (
               <div className="h-8 w-20 rounded-md bg-zinc-800 animate-pulse" />
             ) : (
-              <div className="text-2xl font-bold">{formatNumberStyle(stats?.totalComments || 0)}</div>
+              <div className="text-2xl font-bold">{formatNumberStyle(generalStat?.totalComments || 0)}</div>
             )}
           </CardContent>
         </Card>
@@ -101,10 +97,10 @@ export default function AdminDashboardPage() {
           </CardHeader>
 
           <CardContent>
-            {isLoading ? (
+            {isLoading && !generalStat ? (
               <div className="h-8 w-20 rounded-md bg-zinc-800 animate-pulse" />
             ) : (
-              <div className="text-2xl font-bold">{formatNumberStyle(stats?.totalReports || 0)}</div>
+              <div className="text-2xl font-bold">{formatNumberStyle(generalStat?.totalReports || 0)}</div>
             )}
           </CardContent>
         </Card>

@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { COMMENT, POST, USER } from "@/utils/interface";
 import { usePostStore } from "@/stores/usePostStore";
-import MutualFriends from "./MutualFriends";
-import EditBioDialog from "./dialogs/EditBioDialog";
-import ProfilePosts from "./tabs/ProfilePosts";
-import ProfileAbout from "./tabs/ProfileAbout";
-import ProfilePhotos from "./tabs/ProfilePhotos";
+import EditBioDialog from "../header/dialogs/EditBioDialog";
+import ProfilePosts from "./posts/ProfilePosts";
+import ProfileAbout from "./about/ProfileAbout";
+import ProfilePhotos from "./photos/ProfilePhotos";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { toast } from "react-toastify";
+import Friends from "./friends/Friends";
 
 interface ProfileDetailsProps {
   activeTab: "posts" | "about" | "friends" | "photos";
@@ -20,9 +20,8 @@ const ProfileDetails = ({
   profileData,
   isOwner,
 }: ProfileDetailsProps) => {
-  const { likePost, commentPost, sharePost } =
-    usePostStore();
-    const {userAuth} = useAuthStore();
+  const { likePost, commentPost, sharePost } = usePostStore();
+  const { userAuth } = useAuthStore();
 
   const [isEditBioModel, setIsEditBioModel] = useState(false);
   const [likePosts, setLikePosts] = useState(new Set());
@@ -108,7 +107,7 @@ const ProfileDetails = ({
       case "about":
         return <ProfileAbout profileData={profileData} />;
       case "friends":
-        return <MutualFriends user={profileData} isOwner={isOwner} />;
+        return <Friends user={profileData} />;
       case "photos":
         return <ProfilePhotos posts={userPosts} />;
       default:

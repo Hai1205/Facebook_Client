@@ -1,7 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useStatStore } from "@/stores/useStatStore";
-import { USER } from "@/utils/interface";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { UserSkeletonLoading } from "./skeletons/UserSkeletonLoading";
@@ -9,30 +8,28 @@ import { formatNumberStyle } from "@/lib/utils";
 import { BadgeCheck } from "lucide-react";
 
 export function TopUsers() {
-  const { isLoading, getTopUsersStat } = useStatStore();
+  const { topUsers, getTopUsersStat } = useStatStore();
 
-  const [users, setUsers] = useState<USER[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const result = await getTopUsersStat();
-
-      if (result) {
-        setUsers(result);
-      }
+      setIsLoading(true);
+      await getTopUsersStat();
+      setIsLoading(false);
     };
 
     fetchUsers();
   }, [getTopUsersStat]);
 
-  if (isLoading) {
+  if (isLoading && !topUsers) {
     return <UserSkeletonLoading />;
   }
 
   return (
     <ScrollArea className="h-[310px] pr-4">
       <div className="space-y-4">
-        {users.map((user) => (
+        {topUsers.map((user) => (
           <div
             key={user.id}
             className="flex items-center justify-between gap-4 rounded-lg border p-3 hover:bg-muted/50"

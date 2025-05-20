@@ -17,7 +17,7 @@ export interface NotiStore {
     getUserNotifications: (userId: string) => Promise<any>;
     markRead: (notiId: string) => Promise<any>;
     markAllRead: (userId: string) => Promise<any>;
-    reset: () => any;
+    reset: () => void;
 }
 
 const initialState = {

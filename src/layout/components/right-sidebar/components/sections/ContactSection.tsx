@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Search, X } from "lucide-react";
+import { BadgeCheck, Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { USER } from "@/utils/interface";
 import { useNavigate } from "react-router-dom";
@@ -100,7 +100,7 @@ export const ContactSection = ({ contacts }: ContactSectionProps) => {
                 )} */}
               </div>
 
-              <div className="flex justify-between items-center flex-1">
+              <div className="flex items-center flex-1">
                 <span
                   className="text-sm font-medium"
                   onClick={() =>
@@ -109,6 +109,10 @@ export const ContactSection = ({ contacts }: ContactSectionProps) => {
                 >
                   {contact.fullName}
                 </span>
+
+                {contact?.celebrity && (
+                  <BadgeCheck className="ml-2 h-4 w-4 text-[#1877F2]" />
+                )}
 
                 {/* {contact.active === 0 ? (
                   <span className="h-2 w-2 rounded-full bg-green-500" />

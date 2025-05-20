@@ -1,8 +1,8 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
-import ProfileDetails from "./ProfileDetails";
 import { USER } from "@/utils/interface";
 import { CHOICE, TAB_LIST_CHOICE } from "@/utils/choices";
+import ProfileDetails from "./ProfileDetails";
 
 type PROFILE_TAB = "posts" | "about" | "friends" | "photos";
 

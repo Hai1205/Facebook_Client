@@ -5,7 +5,7 @@ import { CONVERSATION, USER } from "@/utils/interface";
 import { mockChatBot } from "@/utils/fakeData";
 import { useChatStore } from "@/stores/useChatStore";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { ChatMessageItem } from "./components/ChatMessageItem";
+import { ChatMessageItem } from "./chats/ChatMessageItem";
 import { Input } from "@/components/ui/input";
 
 interface MessagesDropdownProps {

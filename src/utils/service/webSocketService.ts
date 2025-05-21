@@ -114,7 +114,6 @@ export const disconnectWebSocket = (userId: string): Promise<boolean> => {
             return;
         }
 
-        // Dừng heartbeat và các timer tái kết nối
         if (connectionHeartbeatInterval) {
             clearInterval(connectionHeartbeatInterval);
             connectionHeartbeatInterval = null;

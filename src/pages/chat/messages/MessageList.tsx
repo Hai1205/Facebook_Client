@@ -1,9 +1,10 @@
 import { RefObject } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MessageItem } from "./MessageItem";
-import { TypingIndicator } from "./TypingIndicator";
+import { TypingIndicator } from "../components/TypingIndicator";
 import { USER } from "@/utils/interface";
 import { MESSAGE_STATUS, MESSAGE_TYPE } from "@/utils/types";
+import { SkeletonMessage } from "../SkeletonMessage";
 
 type SENDER = "other" | "me";
 
@@ -26,9 +27,10 @@ interface MessageListProps {
   isLoading: boolean;
   isTyping: boolean;
   messagesEndRef: RefObject<HTMLDivElement>;
-  handleDeleteMessage: (messageId: string) => void;
+  // handleDeleteMessage: (messageId: string) => void;
   handleDownloadFile: (fileUrl: string, fileName: string) => void;
   user: USER;
+  isChatBot?: boolean;
 }
 
 export function MessageList({
@@ -36,28 +38,39 @@ export function MessageList({
   isLoading,
   isTyping,
   messagesEndRef,
-  handleDeleteMessage,
+  // handleDeleteMessage,
   handleDownloadFile,
+  user,
+  isChatBot,
 }: MessageListProps) {
   return (
     <ScrollArea className="flex-1 p-2 h-full w-full">
-      {messages.map((message) => (
-        <MessageItem
-          key={message.id}
-          id={message.id}
-          content={message.content}
-          sender={message.sender}
-          timestamp={message.timestamp}
-          type={message.type}
-          imageUrls={message.imageUrls}
-          fileUrl={message.fileUrl}
-          fileName={message.fileName}
-          fileSize={message.fileSize}
-          status={message.status}
-          handleDeleteMessage={handleDeleteMessage}
-          handleDownloadFile={handleDownloadFile}
-        />
-      ))}
+      {isLoading && messages.length === 0 ? (
+        <>
+          <SkeletonMessage />
+          <SkeletonMessage />
+        </>
+      ) : (
+        messages.map((message) => (
+          <MessageItem
+            key={message.id}
+            // id={message.id}
+            content={message.content}
+            sender={message.sender}
+            timestamp={message.timestamp}
+            type={message.type}
+            imageUrls={message.imageUrls}
+            fileUrl={message.fileUrl}
+            fileName={message.fileName}
+            fileSize={message.fileSize}
+            status={message.status}
+            // handleDeleteMessage={handleDeleteMessage}
+            handleDownloadFile={handleDownloadFile}
+            isChatBot={isChatBot}
+            user={user}
+          />
+        ))
+      )}
 
       {/* Typing indicator */}
       {isTyping && !isLoading && <TypingIndicator />}

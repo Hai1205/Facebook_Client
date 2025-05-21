@@ -13,14 +13,13 @@ export function CallManager() {
     groupCall,
     participants,
     endCall,
-    resetCallState,
+    // resetCallState,
     incrementCallDuration,
     toggleMinimize,
   } = useCallStore();
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Xử lý bộ đếm thời gian cuộc gọi
   useEffect(() => {
     if (callStatus === "connected") {
       timerRef.current = setInterval(() => {
@@ -36,16 +35,15 @@ export function CallManager() {
     };
   }, [callStatus, incrementCallDuration]);
 
-  // Xử lý khi cuộc gọi kết thúc
   useEffect(() => {
     if (callStatus === "ended") {
       const timer = setTimeout(() => {
-        resetCallState();
+        // resetCallState();
       }, 1000);
 
       return () => clearTimeout(timer);
     }
-  }, [callStatus, resetCallState]);
+  }, [callStatus]);
 
   if (!isCallActive || !remoteUser) {
     return null;
@@ -55,7 +53,6 @@ export function CallManager() {
     endCall();
   };
 
-  // Hiển thị cửa sổ cuộc gọi tương ứng
   if (callType === "video") {
     return (
       <VideoCallWindow

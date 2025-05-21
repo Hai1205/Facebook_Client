@@ -7,7 +7,7 @@ import MobileLayout from "./MobileLayout";
 import RightSidebarPanel from "./components/right-sidebar/RightSidebarPanel";
 import LeftSidebarPanel from "./components/left-sidebar/LeftSidebarPanel";
 import notificationSocket from "@/utils/socket/NotificationSocketService";
-import { ChatContainer } from "@/pages/chat/components/ChatContainer";
+import { ChatContainer } from "@/pages/chat/chats/ChatContainer";
 
 const Layout = () => {
   const { isAuth, userAuth } = useAuthStore();

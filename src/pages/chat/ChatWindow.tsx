@@ -11,11 +11,11 @@ import * as webSocketService from "@/utils/service/webSocketService";
 import {
   sendMessageWithFiles,
   sendMessageWithImages,
-  markMessageAsDeleted,
+  // markMessageAsDeleted,
 } from "@/utils/api/chatApi";
 import { serverUrl } from "@/lib/utils";
-import { ChatHeader } from "./components/ChatHeader";
-import { MessageList } from "./components/MessageList";
+import { ChatHeader } from "./chats/ChatHeader";
+import { MessageList } from "./messages/MessageList";
 import { FilePreview } from "./components/FilePreview";
 import { InputBar } from "./components/InputBar";
 
@@ -114,6 +114,7 @@ export function ChatWindow({
     const fetchConversation = async () => {
       if (!isChatBot && userAuth?.id && user?.id) {
         try {
+          setIsLoading(true);
           // console.log(
           //   "Finding or creating conversation between",
           //   userAuth?.id,
@@ -215,20 +216,28 @@ export function ChatWindow({
               );
 
               webSocketService.sendReadReceipt(conversation.id, userAuth.id);
+
+              setIsLoading(false);
             }
           }
         } catch (error) {
           console.error("Error finding/creating conversation:", error);
+          setIsLoading(false);
         }
       } else if (isChatBot) {
-        setMessages([
-          {
-            id: Date.now().toString(),
-            content: "Hello! I am Chat Bot. How can I help you today?",
-            sender: "other",
-            timestamp: new Date(),
-          },
-        ]);
+        setIsLoading(true);
+        // Giả lập thời gian tải để hiển thị skeleton đối với chatbot
+        setTimeout(() => {
+          setMessages([
+            {
+              id: Date.now().toString(),
+              content: "Hello! I am Chat Bot. How can I help you today?",
+              sender: "other",
+              timestamp: new Date(),
+            },
+          ]);
+          setIsLoading(false);
+        }, 1000);
       }
     };
 
@@ -243,6 +252,8 @@ export function ChatWindow({
   useEffect(() => {
     const fetchMessages = async () => {
       if (conversation?.id && userAuth?.id) {
+        setIsLoading(true);
+
         const response: MESSAGE[] = await getMessages(
           conversation.id,
           userAuth.id
@@ -264,7 +275,9 @@ export function ChatWindow({
           status:
             msg.status as (typeof MESSAGE_STATUS_ENUM)[keyof typeof MESSAGE_STATUS_ENUM],
         }));
+
         setMessages(result);
+        setIsLoading(false);
       }
     };
 
@@ -524,15 +537,15 @@ export function ChatWindow({
     if (imageInputRef.current) imageInputRef.current.value = "";
   };
 
-  const handleDeleteMessage = async (messageId: string) => {
-    try {
-      if (conversation?.id) {
-        await markMessageAsDeleted(conversation.id, messageId);
-      }
-    } catch (error) {
-      console.error("Error deleting message:", error);
-    }
-  };
+  // const handleDeleteMessage = async (messageId: string) => {
+  //   try {
+  //     if (conversation?.id) {
+  //       await markMessageAsDeleted(conversation.id, messageId);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error deleting message:", error);
+  //   }
+  // };
 
   const handleDownloadFile = (fileUrl: string, fileName: string) => {
     const link = document.createElement("a");
@@ -637,9 +650,10 @@ export function ChatWindow({
                 isLoading={isLoading}
                 isTyping={isTyping}
                 messagesEndRef={messagesEndRef}
-                handleDeleteMessage={handleDeleteMessage}
+                // handleDeleteMessage={handleDeleteMessage}
                 handleDownloadFile={handleDownloadFile}
                 user={user}
+                isChatBot={isChatBot}
               />
             </div>
 

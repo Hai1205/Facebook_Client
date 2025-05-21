@@ -40,9 +40,8 @@ const Header = () => {
   const { userAuth, isAuth, isAdmin, logout, checkAdmin } = useAuthStore();
   const { searchUsers, getSuggestedUsers } = useUserStore();
   const { activeTab, setActiveTab } = useOpenStore();
-  const { startChat } = useChatStore();
+  const { startChat, getUserConversations } = useChatStore();
   const { getUserFeed, getUserStoryFeed } = usePostStore();
-  usePostStore();
 
   const [isSearching, setIsSearching] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -60,14 +59,23 @@ const Header = () => {
     setIsLoading(true);
 
     await getUserFeed(userAuth?.id || "");
+
     setIsLoading(false);
 
     if (userAuth?.id) {
       await getUserStoryFeed(userAuth?.id as string);
 
       await getSuggestedUsers(userAuth?.id as string);
+
+      // await getUserConversations(userAuth?.id as string);
     }
-  }, [getUserFeed, getUserStoryFeed, getSuggestedUsers, userAuth?.id]);
+  }, [
+    getUserFeed,
+    userAuth?.id,
+    getUserStoryFeed,
+    getSuggestedUsers,
+    getUserConversations,
+  ]);
 
   useEffect(() => {
     fetchData();

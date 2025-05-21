@@ -21,7 +21,7 @@ export const testWebSocketConnection = (
     });
 
     stompClient.onConnect = (frame) => {
-        console.log('WebSocket connection successful:', frame);
+        // console.log('WebSocket connection successful:', frame);
 
         const subscription = stompClient.subscribe('/topic/pong', (message) => {
             console.log('Receive message pong:', message.body);

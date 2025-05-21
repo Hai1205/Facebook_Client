@@ -89,7 +89,7 @@ export function ChatWindow({
           serverUrl || "http://localhost:4040"
         )
         .then(() => {
-          console.log("WebSocket connection successful in ChatWindow");
+          // console.log("WebSocket connection successful in ChatWindow");
           webSocketService.checkConnection();
         })
         .catch((err) => {
@@ -114,19 +114,19 @@ export function ChatWindow({
     const fetchConversation = async () => {
       if (!isChatBot && userAuth?.id && user?.id) {
         try {
-          console.log(
-            "Finding or creating conversation between",
-            userAuth?.id,
-            "and",
-            user?.id
-          );
+          // console.log(
+          //   "Finding or creating conversation between",
+          //   userAuth?.id,
+          //   "and",
+          //   user?.id
+          // );
 
           const conversation = await getOrCreateConversation(
             userAuth?.id,
             user?.id
           );
 
-          console.log("Conversation returned:", conversation);
+          // console.log("Conversation returned:", conversation);
 
           if (conversation) {
             setConversation(conversation);
@@ -134,14 +134,14 @@ export function ChatWindow({
             if (conversation?.id) {
               webSocketService.unsubscribeFromAllTopics();
 
-              console.log("Subscribing to conversation:", conversation.id);
+              // console.log("Subscribing to conversation:", conversation.id);
 
               webSocketService.subscribeToConversation(
                 conversation.id,
                 (message) => {
-                  console.log("New message received from WebSocket:", message);
-                  console.log("Sender ID:", message.sender.id);
-                  console.log("Current user ID:", userAuth?.id);
+                  // console.log("New message received from WebSocket:", message);
+                  // console.log("Sender ID:", message.sender.id);
+                  // console.log("Current user ID:", userAuth?.id);
 
                   const newMessage: DisplayMessage = {
                     id: message.id || Date.now().toString(),
@@ -160,7 +160,7 @@ export function ChatWindow({
                       message.status as (typeof MESSAGE_STATUS_ENUM)[keyof typeof MESSAGE_STATUS_ENUM],
                   };
 
-                  console.log("Adding new message to UI:", newMessage);
+                  // console.log("Adding new message to UI:", newMessage);
 
                   setMessages((prev) => [
                     ...prev.filter((msg) => msg.id !== newMessage.id),
@@ -208,7 +208,7 @@ export function ChatWindow({
 
     return () => {
       webSocketService.unsubscribeFromAllTopics();
-      console.log("Unsubscribed from all topics when ChatWindow unmounts");
+      // console.log("Unsubscribed from all topics when ChatWindow unmounts");
     };
   }, [getOrCreateConversation, userAuth?.id, user?.id, isChatBot]);
 
@@ -257,10 +257,10 @@ export function ChatWindow({
           String(userAuth.id),
           serverUrl || "http://localhost:4040"
         );
-        console.log("WebSocket connection reestablished");
+        // console.log("WebSocket connection reestablished");
 
         if (conversation?.id) {
-          console.log("Re-subscribing to the conversation");
+          // console.log("Re-subscribing to the conversation");
           webSocketService.subscribeToConversation(
             conversation.id,
             (message) => {
@@ -345,12 +345,12 @@ export function ChatWindow({
           };
         }
       } else if (conversation?.id && !isChatBot) {
-        console.log("Sending message:", {
-          id: newMessage.id,
-          conversationId: conversation.id,
-          senderId: userAuth?.id,
-          content: input.trim(),
-        });
+        // console.log("Sending message:", {
+        //   id: newMessage.id,
+        //   conversationId: conversation.id,
+        //   senderId: userAuth?.id,
+        //   content: input.trim(),
+        // });
 
         try {
           if (!webSocketService.isConnected() && userAuth?.id) {
@@ -370,9 +370,9 @@ export function ChatWindow({
           const sent = await webSocketService.sendMessage(messagePayload);
 
           if (!sent) {
-            console.log(
-              "Failed to send message via WebSocket, trying to send via REST API"
-            );
+            // console.log(
+            //   "Failed to send message via WebSocket, trying to send via REST API"
+            // );
 
             try {
               const response = await fetch(
@@ -398,14 +398,14 @@ export function ChatWindow({
                 throw new Error(`Error sending message: ${response.status}`);
               }
 
-              console.log("Message sent via REST successfully");
+              // console.log("Message sent via REST successfully");
             } catch (restError) {
               console.error("Error sending message via REST:", restError);
               alert("Failed to send message. Please try again later.");
             }
           }
 
-          console.log("Message sent successfully");
+          // console.log("Message sent successfully");
         } catch (error) {
           console.error("Error sending message:", error);
           alert("Failed to send message. Please try again later.");

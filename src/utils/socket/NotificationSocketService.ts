@@ -25,7 +25,7 @@ class NotificationSocketService {
 
     init(userId: string): void {
         if (!userId) {
-            console.error("WebSocketService init requires userId");
+            // console.error("WebSocketService init requires userId");
             return;
         }
         this.userId = userId;
@@ -34,11 +34,11 @@ class NotificationSocketService {
 
     connect(): Promise<void> {
         if (this.connected && this.stompClient?.connected) {
-            console.log("WebSocket is connected");
+            // console.log("WebSocket is connected");
             return Promise.resolve();
         }
 
-        console.log(`Connect to WebSocket (STOMP) at ${this.apiUrl} with userId=${this.userId}`);
+        // console.log(`Connect to WebSocket (STOMP) at ${this.apiUrl} with userId=${this.userId}`);
 
         if (this.stompClient) {
             this.stompClient.deactivate();
@@ -60,8 +60,8 @@ class NotificationSocketService {
                 return;
             }
 
-            this.stompClient.onConnect = (frame) => {
-                console.log("✅ WebSocket connection successfully:", frame);
+            this.stompClient.onConnect = () => {
+                // console.log("✅ WebSocket connection successfully:", frame);
                 this.connected = true;
                 this.retryCount = 0;
 
@@ -74,14 +74,14 @@ class NotificationSocketService {
             };
 
             this.stompClient.onStompError = (frame) => {
-                console.error("Lỗi STOMP:", frame);
+                // console.error("Lỗi STOMP:", frame);
                 this.connected = false;
                 this.reconnect();
                 reject(frame);
             };
 
-            this.stompClient.onWebSocketClose = (event) => {
-                console.log("WebSocket stopped:", event);
+            this.stompClient.onWebSocketClose = () => {
+                // console.log("WebSocket stopped:", event);
                 this.connected = false;
                 this.reconnect();
             };
@@ -90,7 +90,7 @@ class NotificationSocketService {
         });
     }
 
-    private setupHeartbeat() {
+    private setupHeartbeat() {  
         if (this.heartbeatInterval) {
             clearInterval(this.heartbeatInterval);
         }
@@ -119,8 +119,8 @@ class NotificationSocketService {
 
         this.subscriptions['user-status'] = this.stompClient.subscribe('/topic/user.status', (message) => {
             try {
-                const statusData = JSON.parse(message.body);
-                console.log("Get notification user status:", statusData);
+                JSON.parse(message.body);
+                // console.log("Get notification user status:", statusData);
                 // Handle update user status here
             } catch (error) {
                 console.error('Error handling user status:', error);

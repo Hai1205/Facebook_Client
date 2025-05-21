@@ -45,6 +45,7 @@ const ProfilePosts = ({
 
         {profileData.posts?.map((post: POST) => (
           <PostCard
+            key={post?.id}
             post={post}
             isLiked={likePosts.has(post?.id)}
             onLike={() => onLike(post?.id || "")}

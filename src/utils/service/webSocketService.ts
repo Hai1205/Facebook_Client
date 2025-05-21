@@ -23,20 +23,20 @@ const eventCallbacks: {
 export const connectToWebSocket = (userId: string, serverUrl: string): Promise<boolean> => {
     return new Promise((resolve) => {
         if (connected && stompClient) {
-            console.log('WebSocket is already connected');
+            // console.log('WebSocket is already connected');
             resolve(true);
             return;
         }
 
         const effectiveUrl = serverUrl || 'http://localhost:4040';
-        console.log(`Connect to WebSocket at ${effectiveUrl}/ws`);
+        // console.log(`Connect to WebSocket at ${effectiveUrl}/ws`);
 
         const socket = new SockJS(`${effectiveUrl}/ws`);
         stompClient = new Client({
             webSocketFactory: () => socket,
-            debug: (str) => {
-                console.log(str);
-            },
+            // debug: (str) => {
+            //     console.log(str);
+            // },
             reconnectDelay: 5000,
             heartbeatIncoming: 4000,
             heartbeatOutgoing: 4000,
@@ -48,12 +48,12 @@ export const connectToWebSocket = (userId: string, serverUrl: string): Promise<b
             }
         });
 
-        stompClient.debug = function (str) {
-            console.log(`STOMP: ${str}`);
-        };
+        // stompClient.debug = function (str) {
+        //     console.log(`STOMP: ${str}`);
+        // };
 
-        stompClient.onConnect = (frame) => {
-            console.log('WebSocket connection successful:', frame);
+        stompClient.onConnect = () => {
+            // console.log('WebSocket connection successful:', frame);
             connected = true;
 
             sendUserConnectMessage(userId);
@@ -149,7 +149,7 @@ const subscribeToUserErrors = (userId: string) => {
 
 export const subscribeToConversation = (conversationId: string, callback: (message: MESSAGE) => void) => {
     if (!connected || !stompClient) {
-        console.error('Chưa kết nối WebSocket');
+        // console.error('Chưa kết nối WebSocket');
         return false;
     }
 
@@ -157,12 +157,12 @@ export const subscribeToConversation = (conversationId: string, callback: (messa
         subscriptions[`conversation-${conversationId}`].unsubscribe();
     }
 
-    console.log(`Subscribe to receive messages for conversation ${conversationId}`);
+    // console.log(`Subscribe to receive messages for conversation ${conversationId}`);
 
     try {
         const subscription = stompClient.subscribe(`/topic/conversation.${conversationId}`, (message: IMessage) => {
             try {
-                console.log(`Receive message from conversation ${conversationId}:`, message.body);
+                // console.log(`Receive message from conversation ${conversationId}:`, message.body);
                 const messageData = JSON.parse(message.body) as MESSAGE;
                 triggerCallbacks('message', messageData);
 
@@ -175,7 +175,7 @@ export const subscribeToConversation = (conversationId: string, callback: (messa
         });
 
         subscriptions[`conversation-${conversationId}`] = subscription;
-        console.log(`Successfully subscribed to conversation ${conversationId}`);
+        // console.log(`Successfully subscribed to conversation ${conversationId}`);
         return true;
     } catch (e) {
         console.error(`Error subscribing to conversation ${conversationId}:`, e);
@@ -185,7 +185,7 @@ export const subscribeToConversation = (conversationId: string, callback: (messa
 
 export const subscribeToMessageReadStatus = (conversationId: string, callback: (userId: string) => void) => {
     if (!connected || !stompClient) {
-        console.error('No WebSocket connection');
+        // console.error('No WebSocket connection');
         return false;
     }
 
@@ -212,7 +212,7 @@ export const subscribeToMessageReadStatus = (conversationId: string, callback: (
 
 export const subscribeToMessageDeletion = (conversationId: string, callback: (message: MESSAGE) => void) => {
     if (!connected || !stompClient) {
-        console.error('No WebSocket connection');
+        // console.error('No WebSocket connection');
         return false;
     }
 
@@ -239,7 +239,7 @@ export const subscribeToMessageDeletion = (conversationId: string, callback: (me
 
 export const subscribeToTypingStatus = (conversationId: string, callback: (typingData: any) => void) => {
     if (!connected || !stompClient) {
-        console.error('No WebSocket connection');
+        // console.error('No WebSocket connection');
         return false;
     }
 
@@ -266,12 +266,12 @@ export const subscribeToTypingStatus = (conversationId: string, callback: (typin
 
 export const sendMessage = (messageData: any) => {
     if (!connected || !stompClient) {
-        console.error('No WebSocket connection');
+        // console.error('No WebSocket connection');
         return false;
     }
 
     try {
-        console.log('Send message:', messageData);
+        // console.log('Send message:', messageData);
 
         const enhancedMessage = {
             id: messageData.id,
@@ -289,7 +289,7 @@ export const sendMessage = (messageData: any) => {
         const endpoint = `/app/chat/${messageData.conversationId}`;
 
         if (!stompClient.connected) {
-            console.error('STOMP client is not connected, trying to reconnect...');
+            // console.error('STOMP client is not connected, trying to reconnect...');
             return false;
         }
 
@@ -303,13 +303,13 @@ export const sendMessage = (messageData: any) => {
             }
         });
 
-        console.log(`Sent message to ${endpoint}:`, enhancedMessage);
-        console.log('Connection status when sending message:', {
-            connected: connected,
-            stompClientConnected: stompClient.connected,
-            stompClientActive: stompClient.active,
-            subscriptionKeys: Object.keys(subscriptions)
-        });
+        // console.log(`Sent message to ${endpoint}:`, enhancedMessage);
+        // console.log('Connection status when sending message:', {
+        //     connected: connected,
+        //     stompClientConnected: stompClient.connected,
+        //     stompClientActive: stompClient.active,
+        //     subscriptionKeys: Object.keys(subscriptions)
+        // });
 
         return true;
     } catch (error) {
@@ -320,15 +320,15 @@ export const sendMessage = (messageData: any) => {
 
 export const sendTypingStatus = (conversationId: string, userId: string, isTyping: boolean) => {
     if (!connected || !stompClient) {
-        console.error('No WebSocket connection');
-        console.log('Trying to send typing status when not connected:', {
-            conversationId, userId, isTyping
-        });
+        // console.error('No WebSocket connection');
+        // console.log('Trying to send typing status when not connected:', {
+        //     conversationId, userId, isTyping
+        // });
         return true;
     }
 
     try {
-        console.log('Sending typing status:', { conversationId, userId, isTyping });
+        // console.log('Sending typing status:', { conversationId, userId, isTyping });
 
         stompClient.publish({
             destination: '/app/chat.typing',
@@ -347,15 +347,15 @@ export const sendTypingStatus = (conversationId: string, userId: string, isTypin
 
 export const sendReadReceipt = (conversationId: string, userId: string) => {
     if (!connected || !stompClient) {
-        console.error('No WebSocket connection');
-        console.log('Trying to send read receipt when not connected:', {
-            conversationId, userId
-        });
+        // console.error('No WebSocket connection');
+        // console.log('Trying to send read receipt when not connected:', {
+        //     conversationId, userId
+        // });
         return true;
     }
 
     try {
-        console.log('Sending read receipt:', { conversationId, userId });
+        // console.log('Sending read receipt:', { conversationId, userId });
 
         stompClient.publish({
             destination: '/app/chat.read',
@@ -401,7 +401,7 @@ export const isConnected = () => {
 
 export const sendChatMessageWithREST = async (messageData: any): Promise<boolean> => {
     try {
-        console.log('Sending message via REST API:', messageData);
+        // console.log('Sending message via REST API:', messageData);
 
         // const url = 'http://localhost:4040/api/messages/send';
         const url = `${serverUrl}/api/messages/send`;
@@ -419,8 +419,8 @@ export const sendChatMessageWithREST = async (messageData: any): Promise<boolean
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const result = await response.json();
-        console.log('Result of sending message via REST API:', result);
+        await response.json();
+        // console.log('Result of sending message via REST API:', result);
 
         return true;
     } catch (error) {
@@ -438,13 +438,13 @@ export const checkConnection = () => {
         subscriptions: Object.keys(subscriptions)
     };
 
-    console.log('WebSocket connection status:', status);
+    // console.log('WebSocket connection status:', status);
     return status;
 };
 
 export const testSubscribe = (conversationId: string) => {
     if (!connected || !stompClient) {
-        console.error('WebSocket is not connected, cannot test subscribe');
+        // console.error('WebSocket is not connected, cannot test subscribe');
         return false;
     }
 
@@ -462,7 +462,7 @@ export const testSubscribe = (conversationId: string) => {
             const sub = stompClient!.subscribe(topic, (message) => {
                 console.log(`Receive message from ${topic}:`, message.body);
             });
-            console.log(`Successfully subscribed to ${topic}`);
+            // console.log(`Successfully subscribed to ${topic}`);
 
             subscriptions[`test-${topic}`] = sub;
         } catch (error) {
@@ -474,13 +474,13 @@ export const testSubscribe = (conversationId: string) => {
 };
 
 export const unsubscribeFromAllTopics = () => {
-    console.log('Unsubscribe from all subscriptions');
+    // console.log('Unsubscribe from all subscriptions');
 
     Object.keys(subscriptions).forEach(subId => {
         if (subscriptions[subId]) {
             try {
                 subscriptions[subId].unsubscribe();
-                console.log(`Successfully unsubscribed from subscription: ${subId}`);
+                // console.log(`Successfully unsubscribed from subscription: ${subId}`);
             } catch (error) {
                 console.error(`Error unsubscribing from subscription ${subId}:`, error);
             }

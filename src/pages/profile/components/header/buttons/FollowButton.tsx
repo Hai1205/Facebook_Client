@@ -45,7 +45,6 @@ export function FollowButton({
     if (!userAuth?.id || !targetUserId || isLoading) return;
 
     try {
-      console.log("1");
       setIsLoading(true);
 
       const newFollowState = !isFollowing;

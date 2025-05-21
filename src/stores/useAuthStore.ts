@@ -156,16 +156,14 @@ export const useAuthStore = create<AuthStore>()(
 
 						await get().checkAdmin();
 
-						// Lấy danh sách người dùng đang online sau khi đăng nhập thành công
 						try {
 							const onlineResponse = await getOnlineUsers();
 							if (onlineResponse.data && onlineResponse.data.data && onlineResponse.data.data.onlineUsers) {
 								const onlineUsers = onlineResponse.data.data.onlineUsers;
 								useOnlineUsersStore.getState().setOnlineUsers(onlineUsers);
-								console.log("📋 Đã cập nhật danh sách người dùng online:", onlineUsers);
 							}
 						} catch (error) {
-							console.error("Lỗi khi lấy danh sách người dùng online:", error);
+							console.error("Error fetching online users:", error);
 						}
 					}
 
@@ -192,16 +190,14 @@ export const useAuthStore = create<AuthStore>()(
 					set({ userAuth: user, isAuth: true })
 					await get().checkAdmin();
 
-					// Lấy danh sách người dùng đang online sau khi đăng nhập thành công
 					try {
 						const onlineResponse = await getOnlineUsers();
 						if (onlineResponse.data && onlineResponse.data.data && onlineResponse.data.data.onlineUsers) {
 							const onlineUsers = onlineResponse.data.data.onlineUsers;
 							useOnlineUsersStore.getState().setOnlineUsers(onlineUsers);
-							console.log("📋 Đã cập nhật danh sách người dùng online:", onlineUsers);
 						}
 					} catch (error) {
-						console.error("Lỗi khi lấy danh sách người dùng online:", error);
+						console.error("Error fetching online users:", error);
 					}
 
 					return user;

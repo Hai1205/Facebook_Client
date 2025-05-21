@@ -29,18 +29,18 @@ class WebSocketService {
     if (typeof window !== "undefined") {
       document.addEventListener("visibilitychange", () => {
         if (document.visibilityState === "visible") {
-          console.log("Tab became visible, checking WebSocket connection...");
+          // console.log("Tab became visible, checking WebSocket connection...");
           if (!this.isReallyConnected()) {
-            console.log(
-              "WebSocket disconnected while inactive, reconnecting..."
-            );
+            // console.log(
+            //   "WebSocket disconnected while inactive, reconnecting..."
+            // );
             this.reconnect();
           }
         }
       });
 
       window.addEventListener("online", () => {
-        console.log("Network connection restored, reconnecting WebSocket...");
+        //  console.log("Network connection restored, reconnecting WebSocket...");
         this.reconnect();
       });
     }
@@ -93,7 +93,7 @@ class WebSocketService {
 
   init(dispatch: any): void {
     if (!dispatch) {
-      console.error("WebSocketService init requires a dispatch function");
+      // console.error("WebSocketService init requires a dispatch function");
       return;
     }
 
@@ -103,7 +103,7 @@ class WebSocketService {
       this.dispatch._getState = dispatch.getState;
     }
 
-    console.log("WebSocketService initialized with dispatch");
+    // console.log("WebSocketService initialized with dispatch");
   }
 
   getUserId(): any {
@@ -160,7 +160,7 @@ class WebSocketService {
 
     this.connecting = true;
     this.retryCount = 0;
-    console.log("Connecting to WebSocket...");
+    // console.log("Connecting to WebSocket...");
 
     return new Promise((resolve, reject) => {
       try {
@@ -174,7 +174,7 @@ class WebSocketService {
 
         const wsBaseUrl = this.apiUrl;
 
-        console.log(`Connecting to WebSocket at ${wsBaseUrl}/ws`);
+        // console.log(`Connecting to WebSocket at ${wsBaseUrl}/ws`);
         const socket = new SockJS(`${wsBaseUrl}/ws`);
         this.stompClient = Stomp.over(socket);
 
@@ -189,7 +189,7 @@ class WebSocketService {
         this.stompClient.connect(
           headers,
           (frame: any) => {
-            console.log("WebSocket connected successfully!");
+            // console.log("WebSocket connected successfully!");
             this.connected = true;
             this.connecting = false;
             this.retryCount = 0;
@@ -245,10 +245,10 @@ class WebSocketService {
     const delay = Math.min(1000 * Math.pow(2, this.retryCount), 30000);
     this.retryCount++;
 
-    console.log(
-      `Attempting to reconnect WebSocket in ${delay / 1000} seconds (attempt ${this.retryCount
-      }/${this.maxRetries})...`
-    );
+    //  console.log(
+    //   `Attempting to reconnect WebSocket in ${delay / 1000} seconds (attempt ${this.retryCount
+    //   }/${this.maxRetries})...`
+    // );
 
     this.reconnectTimeout = setTimeout(() => {
       this.connect().catch((err: any) => {
@@ -272,10 +272,10 @@ class WebSocketService {
       const potentialUserId =
         state?.login?.userInfo?.id || state?.chat?.currentUserId;
       if (potentialUserId) {
-        console.log(`Found userId ${potentialUserId} from Redux store`);
+        // console.log(`Found userId ${potentialUserId} from Redux store`);
         this._doSubscribeToUserMessages(potentialUserId);
       } else {
-        console.error("No user ID found in Redux store either");
+        console.error("No user ID found in store either");
       }
       return;
     }
@@ -288,12 +288,12 @@ class WebSocketService {
       (sub) => sub.id === `user-${userId}`
     );
     if (existingSub) {
-      console.log(`Already subscribed to user ${userId} messages`);
+      // console.log(`Already subscribed to user ${userId} messages`);
       return;
     }
 
     try {
-      console.log(`Subscribing to user ${userId} messages queue`);
+      // console.log(`Subscribing to user ${userId} messages queue`);
 
       const subscription1 = this.stompClient.subscribe(
         `/user/${userId}/queue/messages`,
@@ -311,7 +311,7 @@ class WebSocketService {
       subscription2.id = `user-${userId}-notifications`;
       this.subscriptions.push(subscription2);
 
-      console.log(`Successfully subscribed to both queues for user ${userId}`);
+      // console.log(`Successfully subscribed to both queues for user ${userId}`);
     } catch (error) {
       console.error(`Error subscribing to user ${userId} messages:`, error);
     }
@@ -320,10 +320,10 @@ class WebSocketService {
   _handleIncomingMessage(message: any, source: string): void {
     try {
       const receivedMessage = JSON.parse(message.body);
-      console.log(`Received message from ${source}:`, receivedMessage);
+      // console.log(`Received message from ${source}:`, receivedMessage);
 
       if (!this.dispatch) {
-        console.error("No dispatch function available to process message");
+        // console.error("No dispatch function available to process message");
         return;
       }
 
@@ -347,9 +347,9 @@ class WebSocketService {
           zustandState.currentConversation?.id;
 
         if (currentConversationId === enhancedMessage.conversationId) {
-          console.log(
-            `Message belongs to current conversation, marking as read`
-          );
+          // console.log(
+          //   `Message belongs to current conversation, marking as read`
+          // );
 
           const currentUserId =
             currentState?.chat?.currentUserId ||
@@ -381,7 +381,7 @@ class WebSocketService {
     );
 
     if (existingSubscription) {
-      console.log(`Already subscribed to conversation ${conversationId}`);
+      // console.log(`Already subscribed to conversation ${conversationId}`);
       return Promise.resolve();
     }
 
@@ -398,13 +398,13 @@ class WebSocketService {
 
   _doSubscribeToConversation(conversationId: string): void {
     try {
-      console.log(`Subscribing to conversation ${conversationId}`);
+      // console.log(`Subscribing to conversation ${conversationId}`);
       const subscription = this.stompClient.subscribe(
         `/topic/conversation.${conversationId}`,
         (message: any) => {
           try {
             const receivedMessage = JSON.parse(message.body);
-            console.log("Received message via WebSocket:", receivedMessage);
+            // console.log("Received message via WebSocket:", receivedMessage);
 
             if (this.dispatch) {
               useChatStore.getState().addMessage({
@@ -435,7 +435,7 @@ class WebSocketService {
     }
 
     if (!this.connected || !this.stompClient) {
-      console.log("Connecting before sending message");
+      // console.log("Connecting before sending message");
       return this.connect()
         .then(() => this._doSendMessage(message))
         .catch((err: any) => {
@@ -455,10 +455,10 @@ class WebSocketService {
       }
 
       try {
-        console.log(
-          `Sending message to conversation ${message.conversationId}:`,
-          message
-        );
+        // console.log(
+        //   `Sending message to conversation ${message.conversationId}:`,
+        //   message
+        // );
 
         const messageToSend = {
           id: message.id,
@@ -475,7 +475,7 @@ class WebSocketService {
           JSON.stringify(messageToSend)
         );
 
-        console.log("Message sent successfully via WebSocket");
+        // console.log("Message sent successfully via WebSocket");
         resolve(true);
       } catch (error) {
         console.error("Error sending message via WebSocket:", error);
@@ -492,7 +492,7 @@ class WebSocketService {
     }
 
     if (!this.connected || !this.stompClient) {
-      console.log("Connecting before marking as read");
+      // console.log("Connecting before marking as read");
       return this.connect()
         .then(() => this._doMarkAsRead(conversationId, userId))
         .catch((err: any) => {
@@ -507,9 +507,9 @@ class WebSocketService {
   _doMarkAsRead(conversationId: string, userId: string): Promise<any> {
     return new Promise((resolve, reject) => {
       try {
-        console.log(
-          `Marking conversation ${conversationId} as read by user ${userId}`
-        );
+        // console.log(
+        //   `Marking conversation ${conversationId} as read by user ${userId}`
+        // );
 
         this.stompClient.send(
           `/app/chat/${conversationId}/read`,
@@ -528,7 +528,7 @@ class WebSocketService {
   }
 
   handleConnectionError(): void {
-    console.log("Connection error detected, attempting to reconnect...");
+    // console.log("Connection error detected, attempting to reconnect...");
     this.connected = false;
     if (this.dispatch) {
       useChatStore.getState().setWebSocketConnected(false);
@@ -562,7 +562,7 @@ class WebSocketService {
       try {
         if (this.connected && this.stompClient.connected) {
           this.stompClient.disconnect();
-          console.log("WebSocket disconnected");
+          // console.log("WebSocket disconnected");
         }
       } catch (e) {
         console.error("Error disconnecting WebSocket:", e);
@@ -587,7 +587,7 @@ class WebSocketService {
       return Promise.resolve();
     }
 
-    console.log("WebSocket not connected, establishing connection...");
+    // console.log("WebSocket not connected, establishing connection...");
     return this.connect();
   }
 
@@ -595,7 +595,6 @@ class WebSocketService {
     if (!conversationId || !userId)
       return Promise.reject(new Error("Missing parameters"));
 
-    // Lưu userId vào Zustand store
     useChatStore.getState().setCurrentUserId(userId);
 
     return this.connect()
@@ -603,7 +602,7 @@ class WebSocketService {
         return this._doSubscribeToConversation(conversationId);
       })
       .then(() => {
-        console.log(`Successfully set up conversation ${conversationId}`);
+        // console.log(`Successfully set up conversation ${conversationId}`);
         return true;
       })
       .catch((err: any) => {
@@ -621,7 +620,7 @@ class WebSocketService {
       zustandState.currentConversation?.id;
 
     if (conversationId) {
-      console.log(`Re-subscribing to active conversation: ${conversationId}`);
+      // console.log(`Re-subscribing to active conversation: ${conversationId}`);
       this._doSubscribeToConversation(conversationId);
     }
   }

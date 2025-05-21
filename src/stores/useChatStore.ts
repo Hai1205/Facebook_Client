@@ -14,7 +14,7 @@ import {
 import { toast } from "react-toastify";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { USER } from "@/utils/interface";
+import { CONVERSATION, USER } from "@/utils/interface";
 
 interface ChatStore {
   isLoading: boolean;
@@ -40,7 +40,7 @@ interface ChatStore {
   setCurrentConversation: (conversation: any) => void;
   setCurrentUserId: (userId: string) => void;
   setMessages: (messages: any[]) => void;
-  setConversations: (conversations: any[]) => void;
+  setConversations: (conversations: CONVERSATION[]) => void;
 
   getOrCreateConversation: (
     userId: string,
@@ -148,7 +148,6 @@ export const useChatStore = create<ChatStore>()(
 
         try {
           const response = await getOrCreateConversation(userId, otherUserId);
-          console.log(response)
           const { conversation } = response.data;
 
           if (conversation) {
@@ -193,13 +192,14 @@ export const useChatStore = create<ChatStore>()(
 
         try {
           const response = await getUserConversations(userId);
-          const { users } = response.data;
+          const { conversations } = response.data;
+          console.log(conversations)
 
-          if (users) {
-            set({ conversations: users });
+          if (conversations) {
+            set({ conversations: conversations });
           }
 
-          return users;
+          return conversations;
         } catch (error: any) {
           console.error(error);
           const { message } = error.response.data;
@@ -218,7 +218,6 @@ export const useChatStore = create<ChatStore>()(
         try {
           const response = await getMessages(conversationId, userId);
           const { messageResponses } = response.data;
-          console.log(messageResponses)
 
           if (messageResponses) {
             set({ messages: messageResponses });

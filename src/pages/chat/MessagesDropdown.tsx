@@ -1,31 +1,25 @@
 import { Search } from "lucide-react";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { CHAT, USER } from "@/utils/interface";
+import { USER } from "@/utils/interface";
 import { ChatMessageItem } from "@/pages/chat/components/ChatMessageItem";
 import { mockChatBot } from "@/utils/fakeData";
+import { useChatStore } from "@/stores/useChatStore";
 
 interface MessagesDropdownProps {
   onChatStart: (user: USER) => void;
 }
 
 export function MessagesDropdown({ onChatStart }: MessagesDropdownProps) {
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [chats, setChats] = useState<CHAT[]>([]);
-  useEffect(() => {
-    const fetchChatBot = async () => {
-      // getContacts(userAuth?.id as string).then(_setChats);
-      setChats([])
-    };
+  const { conversations } = useChatStore();
 
-    fetchChatBot();
-  }, []);
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   const filteredChats = useMemo(() => {
-    return chats.filter((contact) =>
-      contact.user.fullName.toLowerCase().includes(searchTerm.toLowerCase())
+    return conversations.filter((contact) =>
+    contact?.participants[0]?.user?.fullName?.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }, [chats, searchTerm]);
+  }, [conversations, searchTerm]);
 
   return (
     <div className="absolute right-0 mt-2 w-80 bg-gray-800 rounded-lg shadow-lg border border-gray-700 overflow-hidden z-50">

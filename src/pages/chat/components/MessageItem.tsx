@@ -95,6 +95,7 @@ export function MessageItem({
                 {formatFileSize(fileSize)}
               </div>
             </div>
+            
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>

@@ -1,6 +1,5 @@
-import React, { ChangeEvent, KeyboardEvent, RefObject } from "react";
+import { ChangeEvent, KeyboardEvent, RefObject } from "react";
 import { Paperclip, ImageIcon, Smile, Send } from "lucide-react";
-import * as webSocketService from "@/utils/service/webSocketService";
 
 interface InputBarProps {
   input: string;
@@ -9,7 +8,6 @@ interface InputBarProps {
   handleSendMessage: () => void;
   fileInputRef: RefObject<HTMLInputElement>;
   imageInputRef: RefObject<HTMLInputElement>;
-  conversationId?: string;
   handleFileSelect: (e: ChangeEvent<HTMLInputElement>) => void;
   handleImageSelect: (e: ChangeEvent<HTMLInputElement>) => void;
 }
@@ -21,7 +19,6 @@ export function InputBar({
   handleSendMessage,
   fileInputRef,
   imageInputRef,
-  conversationId,
   handleFileSelect,
   handleImageSelect,
 }: InputBarProps) {
@@ -34,6 +31,7 @@ export function InputBar({
           className="hidden"
           onChange={handleFileSelect}
         />
+
         <input
           type="file"
           accept="image/*"
@@ -41,37 +39,25 @@ export function InputBar({
           className="hidden"
           onChange={handleImageSelect}
         />
+
         <button
           onClick={() => fileInputRef.current?.click()}
           className="text-gray-400 hover:text-white p-1"
         >
           <Paperclip size={16} />
         </button>
+
         <button
           onClick={() => imageInputRef.current?.click()}
           className="text-gray-400 hover:text-white p-1"
         >
           <ImageIcon size={16} />
         </button>
+
         <button className="text-gray-400 hover:text-white p-1">
           <Smile size={16} />
         </button>
-        <button
-          onClick={() => webSocketService.checkConnection()}
-          className="text-blue-400 hover:text-blue-300 mr-1 text-xs"
-          title="Check connection"
-        >
-          {webSocketService.isConnected() ? "●" : "○"}
-        </button>
-        {conversationId && (
-          <button
-            onClick={() => webSocketService.testSubscribe(conversationId)}
-            className="text-green-400 hover:text-green-300 mr-1 text-xs"
-            title="Test topics"
-          >
-            ⚡
-          </button>
-        )}
+
         <input
           type="text"
           placeholder="Message..."
@@ -80,6 +66,7 @@ export function InputBar({
           onChange={handleInputChange}
           onKeyDown={handleKeyPress}
         />
+
         <button
           onClick={handleSendMessage}
           className="text-blue-500 hover:text-blue-400 p-1"

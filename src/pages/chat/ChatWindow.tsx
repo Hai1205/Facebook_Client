@@ -186,7 +186,7 @@ export function ChatWindow({
                       msg.id === message.id
                         ? {
                             ...msg,
-                            content: "[Tin nhắn đã bị xóa]",
+                            content: "[Message deleted]",
                             status: MESSAGE_STATUS_ENUM.DELETED,
                           }
                         : msg
@@ -199,7 +199,7 @@ export function ChatWindow({
             }
           }
         } catch (error) {
-          console.error("Lỗi khi tìm/tạo conversation:", error);
+          console.error("Error finding/creating conversation:", error);
         }
       }
     };
@@ -253,7 +253,6 @@ export function ChatWindow({
   const ensureWebSocketConnected = async () => {
     if (!webSocketService.isConnected() && userAuth?.id) {
       try {
-        console.log("Kết nối lại WebSocket...");
         await webSocketService.connectToWebSocket(
           String(userAuth.id),
           serverUrl || "http://localhost:4040"
@@ -569,40 +568,45 @@ export function ChatWindow({
         />
 
         {!isMinimized && (
-          <>
+          <div className="flex flex-col h-[calc(100%-48px)]">
             {/* Messages */}
-            <MessageList
-              messages={messages}
-              isLoading={isLoading}
-              isTyping={isTyping}
-              messagesEndRef={messagesEndRef}
-              handleDeleteMessage={handleDeleteMessage}
-              handleDownloadFile={handleDownloadFile}
-              user={user}
-            />
-
-            {/* Preview file to send */}
-            {filePreview && (
-              <FilePreview
-                filePreview={filePreview}
-                imageFile={imageFile}
-                handleCancelFile={handleCancelFile}
+            <div className="flex-grow overflow-y-auto">
+              <MessageList
+                messages={messages}
+                isLoading={isLoading}
+                isTyping={isTyping}
+                messagesEndRef={messagesEndRef}
+                handleDeleteMessage={handleDeleteMessage}
+                handleDownloadFile={handleDownloadFile}
+                user={user}
               />
-            )}
+            </div>
 
-            {/* Message Input */}
-            <InputBar
-              input={input}
-              handleInputChange={handleInputChange}
-              handleKeyPress={handleKeyPress}
-              handleSendMessage={handleSendMessage}
-              fileInputRef={fileInputRef}
-              imageInputRef={imageInputRef}
-              conversationId={conversation?.id}
-              handleFileSelect={handleFileSelect}
-              handleImageSelect={handleImageSelect}
-            />
-          </>
+            <div className="mt-auto">
+              {/* Preview file to send */}
+              {filePreview && (
+                <div className="max-h-16 overflow-hidden">
+                  <FilePreview
+                    filePreview={filePreview}
+                    imageFile={imageFile}
+                    handleCancelFile={handleCancelFile}
+                  />
+                </div>
+              )}
+
+              {/* Message Input */}
+              <InputBar
+                input={input}
+                handleInputChange={handleInputChange}
+                handleKeyPress={handleKeyPress}
+                handleSendMessage={handleSendMessage}
+                fileInputRef={fileInputRef}
+                imageInputRef={imageInputRef}
+                handleFileSelect={handleFileSelect}
+                handleImageSelect={handleImageSelect}
+              />
+            </div>
+          </div>
         )}
       </div>
 

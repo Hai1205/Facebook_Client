@@ -2,7 +2,6 @@ import { RefObject } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MessageItem } from "./MessageItem";
 import { TypingIndicator } from "./TypingIndicator";
-import { MessageLoader } from "./MessageLoader";
 import { USER } from "@/utils/interface";
 import { MESSAGE_STATUS, MESSAGE_TYPE } from "@/utils/types";
 
@@ -39,10 +38,9 @@ export function MessageList({
   messagesEndRef,
   handleDeleteMessage,
   handleDownloadFile,
-  user,
 }: MessageListProps) {
   return (
-    <ScrollArea className="flex-1 p-2 h-72 overflow-y-auto">
+    <ScrollArea className="flex-1 p-2 h-full w-full">
       {messages.map((message) => (
         <MessageItem
           key={message.id}
@@ -60,15 +58,6 @@ export function MessageList({
           handleDownloadFile={handleDownloadFile}
         />
       ))}
-
-      {/* Loading indicator */}
-      {isLoading && (
-        <div className="flex items-start mb-2">
-          <div className="bg-gray-700 rounded-lg px-3 py-2 text-white">
-            <MessageLoader user={user} />
-          </div>
-        </div>
-      )}
 
       {/* Typing indicator */}
       {isTyping && !isLoading && <TypingIndicator />}

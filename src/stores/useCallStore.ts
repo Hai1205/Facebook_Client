@@ -6,7 +6,7 @@ export type CallType = 'voice' | 'video';
 export type CallStatus = 'idle' | 'ringing' | 'connected' | 'ended';
 
 interface useCallStoreProps {
-  // Trạng thái cuộc gọi
+  // Call status
   isCallActive: boolean;
   callType: CallType | null;
   callStatus: CallStatus;
@@ -17,7 +17,7 @@ interface useCallStoreProps {
   groupCall: boolean;
   participants: USER[];
 
-  // Cài đặt cuộc gọi
+  // Call settings
   isMuted: boolean;
   isVideoOn: boolean;
   isSpeakerOn: boolean;
@@ -59,7 +59,7 @@ export const useCallStore = create<useCallStoreProps>()(
       startCall: (user, type, group = false, participants = []) =>
         set((state) => {
           if (state.isCallActive) {
-            console.warn('Không thể bắt đầu cuộc gọi mới khi đang có cuộc gọi');
+            console.warn('Cannot start new call when there is an ongoing call');
             return state;
           }
 
@@ -78,7 +78,7 @@ export const useCallStore = create<useCallStoreProps>()(
       receiveCall: (user, type, group = false, participants = []) =>
         set((state) => {
           if (state.isCallActive) {
-            console.warn('Không thể nhận cuộc gọi mới khi đang có cuộc gọi');
+              console.warn('Cannot receive new call when there is an ongoing call');
             return state;
           }
 

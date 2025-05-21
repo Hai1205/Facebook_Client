@@ -129,9 +129,9 @@ export const useNotiStore = create<NotiStore>()(
                 } finally {
                     set({ isLoading: false });
                 }
-            },  
+            },
 
-            markAllRead: async (userId: string)=>{
+            markAllRead: async (userId: string) => {
                 set({ isLoading: true, error: null });
 
                 try {

@@ -1,4 +1,3 @@
-// Các enum tương ứng với types.ts
 export enum MESSAGE_TYPE_ENUM {
     TEXT = "TEXT",
     IMAGE = "IMAGE",

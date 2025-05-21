@@ -1,9 +1,8 @@
-import { countUnreadMessages, generateBotResponse as generateBotResponseApi, getContacts, getConversation, getLatestMessages } from "@/utils/api/messageApi";
+import { countUnreadMessages, generateBotResponse, getContacts, getConversation, getLatestMessages } from "@/utils/api/messageApi";
 import { USER } from "@/utils/interface";
 import { toast } from "react-toastify";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { chatAI } from '@/utils/api/chatApi';
 
 interface MessageStore {
     contacts: USER[],
@@ -124,12 +123,12 @@ export const useMessageStore = create<MessageStore>()(
                 set({ isLoading: true, loading: true, error: null });
 
                 try {
-                    const response = await chatAI(text);
+                    const response = await generateBotResponse(text);
                     return response.data;
                 } catch (error: any) {
                     console.error(error);
-                    set({ error: 'Không thể tạo phản hồi từ AI' });
-                    return 'Xin lỗi, tôi không thể trả lời câu hỏi của bạn lúc này. Vui lòng thử lại sau.';
+                    set({ error: 'Cannot create AI response' });
+                    return 'Sorry, I cannot answer your question at the moment. Please try again later.';
                 } finally {
                     set({ isLoading: false, loading: false });
                 }

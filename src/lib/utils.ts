@@ -5,9 +5,6 @@ import { USER } from "@/utils/interface";
 
 export const serverUrl = import.meta.env.VITE_SERVER_URL as string;
 
-// Đảm bảo socketUrl trỏ đến Spring Boot server (cổng 8080), không phải Socket.IO (cổng 4041)
-export const socketUrl = serverUrl;
-
 export const clientUrl = import.meta.env.VITE_CLIENT_URL as string;
 
 export const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY as string;

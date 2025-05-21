@@ -1,5 +1,6 @@
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
+import { serverUrl } from '@/lib/utils';
 
 class NotificationSocketService {
     private stompClient: Client | null;
@@ -15,7 +16,7 @@ class NotificationSocketService {
     constructor() {
         this.stompClient = null;
         this.connected = false;
-        this.apiUrl = "http://localhost:4040"; // Luôn sử dụng cổng 4040 của Spring Boot
+        this.apiUrl = serverUrl || "http://localhost:4040";
         this.reconnectTimeout = null;
         this.retryCount = 0;
         this.maxRetries = 10;
@@ -33,11 +34,11 @@ class NotificationSocketService {
 
     connect(): Promise<void> {
         if (this.connected && this.stompClient?.connected) {
-            console.log("WebSocket đã kết nối");
+            console.log("WebSocket is connected");
             return Promise.resolve();
         }
 
-        console.log(`Kết nối đến WebSocket (STOMP) tại ${this.apiUrl} với userId=${this.userId}`);
+        console.log(`Connect to WebSocket (STOMP) at ${this.apiUrl} with userId=${this.userId}`);
 
         if (this.stompClient) {
             this.stompClient.deactivate();
@@ -60,14 +61,12 @@ class NotificationSocketService {
             }
 
             this.stompClient.onConnect = (frame) => {
-                console.log("✅ WebSocket kết nối thành công:", frame);
+                console.log("✅ WebSocket connection successfully:", frame);
                 this.connected = true;
                 this.retryCount = 0;
 
-                // Thông báo server rằng người dùng này đã kết nối
                 this.sendUserConnectMessage();
 
-                // Đăng ký nhận thông báo
                 this.subscribeToServerTopics();
 
                 this.setupHeartbeat();
@@ -82,7 +81,7 @@ class NotificationSocketService {
             };
 
             this.stompClient.onWebSocketClose = (event) => {
-                console.log("WebSocket đã đóng:", event);
+                console.log("WebSocket stopped:", event);
                 this.connected = false;
                 this.reconnect();
             };
@@ -118,43 +117,38 @@ class NotificationSocketService {
     private subscribeToServerTopics() {
         if (!this.stompClient || !this.connected) return;
 
-        // Đăng ký nhận thông báo trạng thái người dùng
         this.subscriptions['user-status'] = this.stompClient.subscribe('/topic/user.status', (message) => {
             try {
                 const statusData = JSON.parse(message.body);
-                console.log("Nhận thông báo trạng thái người dùng:", statusData);
-                // Xử lý cập nhật trạng thái người dùng ở đây
+                console.log("Get notification user status:", statusData);
+                // Handle update user status here
             } catch (error) {
-                console.error('Lỗi xử lý thông tin trạng thái:', error);
+                console.error('Error handling user status:', error);
             }
         });
 
-        // Đăng ký nhận thông báo lỗi
         this.subscriptions['user-errors'] = this.stompClient.subscribe(`/topic/errors.${this.userId}`, (message) => {
             try {
                 const errorData = message.body;
-                console.error('Lỗi từ server:', errorData);
+                console.error('Error from server:', errorData);
             } catch (error) {
-                console.error('Lỗi xử lý thông báo lỗi:', error);
+                console.error('Error handling error notification:', error);
             }
         });
 
-        // Đăng ký nhận thông báo chung
         this.subscriptions['notifications'] = this.stompClient.subscribe(`/topic/notifications.${this.userId}`, (message) => {
             try {
                 const notification = JSON.parse(message.body);
-                console.log("Nhận thông báo:", notification);
-                this.notifySubscribers('notification', notification);
+                console.log("Get notification:", notification);
+                // this.notifySubscribers('notification', notification);
             } catch (error) {
-                console.error('Lỗi xử lý thông báo:', error);
+                console.error('Error handling notification:', error);
             }
         });
     }
 
-    private notifySubscribers(topic: string, data: any) {
-        // Triển khai theo cách gọi các callback đã đăng ký
-        // (code sẽ được thêm khi cần thiết)
-    }
+    // private notifySubscribers(topic: string, data: any) {
+    // }
 
     reconnect() {
         if (this.reconnectTimeout) {
@@ -162,7 +156,7 @@ class NotificationSocketService {
         }
 
         if (this.retryCount >= this.maxRetries) {
-            console.error(`Quá số lần kết nối lại tối đa (${this.maxRetries})`);
+            console.error(`Max reconnection attempts reached (${this.maxRetries})`);
             return;
         }
 
@@ -172,37 +166,37 @@ class NotificationSocketService {
         delay = delay * (0.5 + Math.random() * 0.5);
 
         this.retryCount++;
-        console.log(`Đang kết nối lại sau ${(delay / 1000).toFixed(1)} giây (lần thứ ${this.retryCount}/${this.maxRetries})...`);
+        console.log(`Reconnecting in ${(delay / 1000).toFixed(1)} seconds (attempt ${this.retryCount}/${this.maxRetries})...`);
 
         this.reconnectTimeout = setTimeout(() => {
             this.connect().catch((err) => {
-                console.error("Kết nối lại thất bại:", err);
+                console.error("Reconnection failed:", err);
             });
         }, delay);
     }
 
-    subscribeToNotifications(callback: Function) {
-        console.log("Đăng ký nhận thông báo - chức năng này sử dụng STOMP/SockJS");
-        // Triển khai một mô hình đăng ký callback hiệu quả hơn
-    }
+    // subscribeToNotifications(callback: Function) {
+    //     console.log("Subscribe to notifications - this feature uses STOMP/SockJS");
+    //     // Implement a more efficient callback registration model
+    // }
 
-    subscribeToLikeUpdates(callback: Function) {
-        console.log("Đăng ký nhận cập nhật like - chức năng này sử dụng STOMP/SockJS");
-        // Triển khai tương tự
-    }
+    // subscribeToLikeUpdates(callback: Function) {
+    //     console.log("Subscribe to like updates - this feature uses STOMP/SockJS");
+    //     // Implement similar logic
+    // }
 
-    subscribeToCommentUpdates(callback: Function) {
-        console.log("Đăng ký nhận cập nhật comment - chức năng này sử dụng STOMP/SockJS");
-        // Triển khai tương tự
-    }
+    // subscribeToCommentUpdates(callback: Function) {
+    //     console.log("Subscribe to comment updates - this feature uses STOMP/SockJS");
+    //     // Implement similar logic
+    // }
 
-    subscribeToFollow(callback: Function) {
-        console.log("Đăng ký nhận thông báo follow - chức năng này sử dụng STOMP/SockJS");
-        // Triển khai tương tự
-    }
+    // subscribeToFollow(callback: Function) {
+    //     console.log("Subscribe to follow notification - this feature uses STOMP/SockJS");
+    //     // Implement similar logic
+    // }
 
     disconnect() {
-        console.log("WebSocket đang ngắt kết nối");
+        console.log("WebSocket is disconnecting");
 
         if (this.heartbeatInterval) {
             clearInterval(this.heartbeatInterval);
@@ -216,14 +210,13 @@ class NotificationSocketService {
 
         if (this.stompClient) {
             if (this.connected) {
-                // Thông báo cho server biết người dùng đã ngắt kết nối
                 this.stompClient.publish({
                     destination: '/app/user.disconnect',
                     body: JSON.stringify({ userId: this.userId })
                 });
             }
 
-            // Hủy các đăng ký
+            // Unsubscribe from all subscriptions
             Object.keys(this.subscriptions).forEach(key => {
                 if (this.subscriptions[key]) {
                     this.subscriptions[key].unsubscribe();
@@ -236,7 +229,7 @@ class NotificationSocketService {
         }
 
         this.connected = false;
-        console.log("WebSocket đã ngắt kết nối");
+        console.log("WebSocket is disconnected");
     }
 
     isConnected() {

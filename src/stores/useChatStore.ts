@@ -1,6 +1,5 @@
 import {
   addUserToGroup,
-  chatAI,
   createConversation,
   createGroupConversation,
   deleteUserFromGroup,
@@ -16,7 +15,6 @@ import { toast } from "react-toastify";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { USER } from "@/utils/interface";
-import { CONVERSATION, MESSAGE } from '@/utils/interface';
 
 interface ChatStore {
   isLoading: boolean;
@@ -56,7 +54,6 @@ interface ChatStore {
   createGroupConversation: (formData: FormData) => Promise<any>;
   addUserToGroup: (conversationId: string, userId: string) => Promise<any>;
   deleteUserFromGroup: (conversationId: string, userId: string) => Promise<any>;
-  chatAI: (prompt: string) => Promise<any>;
   reset: () => void;
 
   activeChats: USER[];
@@ -221,6 +218,7 @@ export const useChatStore = create<ChatStore>()(
         try {
           const response = await getMessages(conversationId, userId);
           const { messageResponses } = response.data;
+          console.log(messageResponses)
 
           if (messageResponses) {
             set({ messages: messageResponses });
@@ -268,26 +266,6 @@ export const useChatStore = create<ChatStore>()(
 
         try {
           const response = await getUsersWithConversation(userId);
-          const { users } = response.data;
-
-          return users;
-        } catch (error: any) {
-          console.error(error);
-          const { message } = error.response.data;
-          set({ error: message });
-
-          toast.error(message);
-          return false;
-        } finally {
-          set({ isLoading: false });
-        }
-      },
-
-      chatAI: async (prompt: string) => {
-        set({ isLoading: true, error: null });
-
-        try {
-          const response = await chatAI(prompt);
           const { users } = response.data;
 
           return users;
@@ -416,7 +394,8 @@ export const useChatStore = create<ChatStore>()(
           set({ onlineUsers });
           return onlineUsers;
         } catch (error) {
-          set({ error: 'Không thể lấy danh sách người dùng online' });
+          set({ error: 'Cannot get online users' });
+          console.error(error);
           throw error;
         }
       },
@@ -426,7 +405,8 @@ export const useChatStore = create<ChatStore>()(
           const response = await isUserOnline(userId);
           return response.data;
         } catch (error) {
-          set({ error: 'Không thể kiểm tra trạng thái online' });
+          set({ error: 'Cannot check online status' });
+          console.error(error);
           return false;
         }
       },

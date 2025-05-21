@@ -2,14 +2,13 @@ import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import './polyfill';
 
-// Fix lỗi global is not defined
 if (typeof window !== 'undefined') {
     (window as any).global = window;
 }
 
 export const createStompClient = (userId: string, onMessage: (message: any) => void, onTyping: (status: any) => void) => {
     const client = new Client({
-        webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
+        webSocketFactory: () => new SockJS('http://localhost:4040/ws'),
         connectHeaders: {
             userId: userId
         },

@@ -201,6 +201,16 @@ export function ChatWindow({
         } catch (error) {
           console.error("Error finding/creating conversation:", error);
         }
+      } else if (isChatBot) {
+        setMessages([
+          {
+            id: Date.now().toString(),
+            content:
+              "Hello! I am Chat Bot. How can I help you today?",
+            sender: "other",
+            timestamp: new Date(),
+          },
+        ]);
       }
     };
 
@@ -307,7 +317,26 @@ export function ChatWindow({
         timestamp: new Date(),
       };
 
-      if (!isChatBot && conversation?.id && userAuth?.id) {
+      if (isChatBot) {
+        // Nếu là chat với bot thì xử lý khác
+        // 1. Thêm tin nhắn người dùng vào danh sách hiển thị
+        setMessages((prevMessages) => [...prevMessages, newMessage]);
+
+        // 2. Reset form
+        setInput("");
+        setImageFile(null);
+        setFilePreview(null);
+        setSelectedFile(null);
+
+        // 3. Gọi API lấy phản hồi từ bot
+        fetchChatBotResponse(input.trim());
+
+        // Kết thúc sớm, không cần xử lý tiếp
+        return;
+      }
+
+      // Các xử lý khác chỉ áp dụng cho chat giữa người với người
+      if (conversation?.id && userAuth?.id) {
         await ensureWebSocketConnected();
       }
 
@@ -344,14 +373,8 @@ export function ChatWindow({
             mimeType: response.mimeType,
           };
         }
-      } else if (conversation?.id && !isChatBot) {
-        // console.log("Sending message:", {
-        //   id: newMessage.id,
-        //   conversationId: conversation.id,
-        //   senderId: userAuth?.id,
-        //   content: input.trim(),
-        // });
-
+      } else if (conversation?.id) {
+        // Xử lý gửi tin nhắn thông thường
         try {
           if (!webSocketService.isConnected() && userAuth?.id) {
             await webSocketService.connectToWebSocket(
@@ -370,10 +393,6 @@ export function ChatWindow({
           const sent = await webSocketService.sendMessage(messagePayload);
 
           if (!sent) {
-            // console.log(
-            //   "Failed to send message via WebSocket, trying to send via REST API"
-            // );
-
             try {
               const response = await fetch(
                 `${serverUrl || "http://localhost:4040"}/api/messages`,
@@ -397,15 +416,11 @@ export function ChatWindow({
               if (!response.ok) {
                 throw new Error(`Error sending message: ${response.status}`);
               }
-
-              // console.log("Message sent via REST successfully");
             } catch (restError) {
               console.error("Error sending message via REST:", restError);
               alert("Failed to send message. Please try again later.");
             }
           }
-
-          // console.log("Message sent successfully");
         } catch (error) {
           console.error("Error sending message:", error);
           alert("Failed to send message. Please try again later.");
@@ -416,10 +431,6 @@ export function ChatWindow({
       setImageFile(null);
       setFilePreview(null);
       setSelectedFile(null);
-
-      if (isChatBot) {
-        fetchChatBotResponse(input.trim());
-      }
     } catch (error) {
       console.error("Error sending message:", error);
     }
@@ -525,24 +536,32 @@ export function ChatWindow({
       setIsLoading(true);
       setIsTyping(true);
 
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
       const apiResponseText = await generateBotResponse(userInput);
+
+      const botResponseMessage = {
+        id: Date.now().toString(),
+        content: apiResponseText,
+        sender: "other" as SENDER,
+        timestamp: new Date(),
+      };
+
+      setMessages((prevMessages) => [...prevMessages, botResponseMessage]);
+
+      setIsTyping(false);
+    } catch (error) {
+      console.error("Error in chatbot response flow:", error);
+      setIsTyping(false);
 
       setMessages((prevMessages) => [
         ...prevMessages,
         {
           id: Date.now().toString(),
-          content: apiResponseText,
-          sender: "other",
+          content:
+            "Error when generating response from bot. Please try again later.",
+          sender: "other" as SENDER,
           timestamp: new Date(),
         },
       ]);
-
-      setIsTyping(false);
-    } catch (error) {
-      console.error("Error fetching chatbot response:", error);
-      setIsTyping(false);
     } finally {
       setIsLoading(false);
     }

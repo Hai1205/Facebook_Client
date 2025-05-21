@@ -26,6 +26,7 @@ export function ChatMessageItem({
     );
   }, [conversation?.participants, userAuth?.id]);
 
+  console.log(conversation)
   return (
     <div
       className={`p-3 hover:bg-gray-800 cursor-pointer flex items-center ${

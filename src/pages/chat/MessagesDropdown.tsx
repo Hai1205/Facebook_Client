@@ -6,6 +6,7 @@ import { mockChatBot } from "@/utils/fakeData";
 import { useChatStore } from "@/stores/useChatStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { ChatMessageItem } from "./components/ChatMessageItem";
+import { Input } from "@/components/ui/input";
 
 interface MessagesDropdownProps {
   onChatStart: (user: USER) => void;
@@ -38,7 +39,7 @@ export function MessagesDropdown({ onChatStart }: MessagesDropdownProps) {
   };
 
   return (
-    <div className="absolute right-0 mt-2 w-80 bg-gray-800 rounded-lg shadow-lg border border-gray-700 overflow-hidden z-50">
+    <div className="absolute right-0 mt-2 w-80 bg-zinc-800 rounded-lg shadow-lg border border-zinc-700 overflow-hidden z-50">
       <div className="p-4 border-b border-gray-700">
         <h3 className="text-lg font-semibold">Messages</h3>
       </div>
@@ -47,10 +48,10 @@ export function MessagesDropdown({ onChatStart }: MessagesDropdownProps) {
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
 
-          <input
+          <Input
             type="text"
             placeholder="Search chats"
-            className="bg-gray-800 rounded-full pl-10 pr-4 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="bg-[rgb(58,59,60)] rounded-full pl-10 pr-4 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />

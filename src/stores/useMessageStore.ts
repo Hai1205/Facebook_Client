@@ -124,7 +124,7 @@ export const useMessageStore = create<MessageStore>()(
 
                 try {
                     const response = await generateBotResponse(text);
-                    return response.data;
+                    return response;
                 } catch (error: any) {
                     console.error(error);
                     set({ error: 'Cannot create AI response' });

@@ -17,3 +17,7 @@ export type REPORT_TYPE = "POST" | "STORY" | "COMMENT" | "USER";
 export type REPORT_STATUS = "ACCEPT" | "PENDING" | "REJECT";
 
 export type NOTI_TYPE = "LIKE" | "FOLLOW" | "COMMENT" | "FRIEND_REQUEST";
+
+export type MESSAGE_TYPE = "TEXT" | "IMAGE" | "FILE" | "AUDIO" | "VIDEO" | "LOCATION" | "STICKER";
+
+export type MESSAGE_STATUS = "SENDING" | "SENT" | "DELIVERED" | "READ" | "FAILED" | "DELETED";

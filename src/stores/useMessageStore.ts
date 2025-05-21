@@ -1,8 +1,9 @@
-import { countUnreadMessages, generateBotResponse, getContacts, getConversation, getLatestMessages } from "@/utils/api/messageApi";
+import { countUnreadMessages, generateBotResponse as generateBotResponseApi, getContacts, getConversation, getLatestMessages } from "@/utils/api/messageApi";
 import { USER } from "@/utils/interface";
 import { toast } from "react-toastify";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { chatAI } from '@/utils/api/chatApi';
 
 interface MessageStore {
     contacts: USER[],
@@ -10,6 +11,8 @@ interface MessageStore {
     error: string | null;
     status: number;
     message: string | null;
+
+    loading: boolean;
 
     getConversation: (user1Id: string,
         user2Id: string) => Promise<any>;
@@ -23,6 +26,7 @@ interface MessageStore {
 const initialState = {
     contacts: [],
     isLoading: false,
+    loading: false,
     error: null,
     status: 0,
     message: null,
@@ -115,17 +119,19 @@ export const useMessageStore = create<MessageStore>()(
                     set({ isLoading: false });
                 }
             },
-            
+
             generateBotResponse: async (text: string) => {
-                set({ isLoading: true, error: null });
+                set({ isLoading: true, loading: true, error: null });
 
                 try {
-                  return await generateBotResponse(text);
+                    const response = await chatAI(text);
+                    return response.data;
                 } catch (error: any) {
-                    console.error(error)
-                    return false;
+                    console.error(error);
+                    set({ error: 'Không thể tạo phản hồi từ AI' });
+                    return 'Xin lỗi, tôi không thể trả lời câu hỏi của bạn lúc này. Vui lòng thử lại sau.';
                 } finally {
-                    set({ isLoading: false });
+                    set({ isLoading: false, loading: false });
                 }
             },
 

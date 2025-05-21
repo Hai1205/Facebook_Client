@@ -1,6 +1,5 @@
 import SockJS from "sockjs-client";
 import { Stomp } from "@stomp/stompjs";
-import { socketUrl } from "@/lib/utils";
 import { useChatStore } from "@/stores/useChatStore";
 
 class WebSocketService {
@@ -21,7 +20,7 @@ class WebSocketService {
     this.connecting = false;
     this.subscriptions = [];
     this.reconnectTimeout = null;
-    this.apiUrl = socketUrl || "http://localhost:4041";
+    this.apiUrl = "http://localhost:4040"; // Luôn sử dụng cổng 4040 của Spring Boot
     this.connectionCheckInterval = null;
     this.retryCount = 0;
     this.maxRetries = 5;

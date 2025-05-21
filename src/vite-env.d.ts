@@ -9,4 +9,11 @@ interface ImportMetaEnv {
 
 interface ImportMeta {
     readonly env: ImportMetaEnv
-} 
+}
+
+// Thêm định nghĩa cho biến global
+interface Window {
+    global: Window;
+}
+
+declare const global: Window; 

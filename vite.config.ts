@@ -11,5 +11,16 @@ export default defineConfig({
 	},
 	server: {
 		port: 3000,
+		proxy: {
+			"/ws": {
+				target: "http://localhost:4040",
+				ws: true,
+				changeOrigin: true
+			}
+		}
+	},
+	define: {
+		// Tạo biến toàn cầu global cho sockjs-client
+		global: {},
 	},
 });

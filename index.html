@@ -6,6 +6,13 @@
 	<link rel="icon" type="image/svg+xml" href="/facebook.png" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>Facebook</title>
+
+	<!-- Polyfill cho biến global để sửa lỗi sockjs-client -->
+	<script>
+		if (typeof global === 'undefined') {
+			window.global = window;
+		}
+	</script>
 </head>
 
 <body>

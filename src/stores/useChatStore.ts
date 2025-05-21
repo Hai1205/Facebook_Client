@@ -9,11 +9,14 @@ import {
   getOrCreateConversation,
   getUserConversations,
   getUsersWithConversation,
+  getOnlineUsers,
+  isUserOnline
 } from "@/utils/api/chatApi";
 import { toast } from "react-toastify";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { USER } from "@/utils/interface";
+import { CONVERSATION, MESSAGE } from '@/utils/interface';
 
 interface ChatStore {
   isLoading: boolean;
@@ -59,6 +62,13 @@ interface ChatStore {
   activeChats: USER[];
   startChat: (user: USER) => void;
   closeChat: (userId: string) => void;
+
+  onlineUsers: string[];
+  getOnlineUsers: () => Promise<string[]>;
+  isUserOnline: (userId: string) => Promise<boolean>;
+
+  setOnlineUsers: (userIds: string[]) => void;
+  clearMessages: () => void;
 }
 
 const initialState = {
@@ -73,6 +83,8 @@ const initialState = {
   currentConversation: null,
   messages: [],
   conversations: [],
+
+  onlineUsers: [],
 };
 
 export const useChatStore = create<ChatStore>()(
@@ -396,6 +408,36 @@ export const useChatStore = create<ChatStore>()(
           activeChats: state.activeChats.filter((chat) => chat.id !== userId),
         }));
       },
+
+      getOnlineUsers: async () => {
+        try {
+          const response = await getOnlineUsers();
+          const onlineUsers = response.data;
+          set({ onlineUsers });
+          return onlineUsers;
+        } catch (error) {
+          set({ error: 'Không thể lấy danh sách người dùng online' });
+          throw error;
+        }
+      },
+
+      isUserOnline: async (userId: string) => {
+        try {
+          const response = await isUserOnline(userId);
+          return response.data;
+        } catch (error) {
+          set({ error: 'Không thể kiểm tra trạng thái online' });
+          return false;
+        }
+      },
+
+      setOnlineUsers: (userIds) => {
+        set({ onlineUsers: userIds });
+      },
+
+      clearMessages: () => {
+        set({ messages: [] });
+      }
     }),
 
     {

@@ -7,7 +7,9 @@ import {
 	REPORT_TYPE,
 	USER_GENDER,
 	USER_ROLE,
-	USER_STATUS
+	USER_STATUS,
+	MESSAGE_TYPE,
+	MESSAGE_STATUS
 } from "./types";
 
 export interface USER {
@@ -89,6 +91,16 @@ export interface MESSAGE {
 	conversation: CONVERSATION;
 	sender: USER;
 	content: string;
+
+	// Thêm các trường mới
+	type?: MESSAGE_TYPE;
+	imageUrls?: string[];
+	fileUrl?: string;
+	fileName?: string;
+	fileSize?: number;
+	mimeType?: string;
+	status?: MESSAGE_STATUS;
+
 	isRead: boolean;
 	createdAt?: string;
 	updatedAt?: string;

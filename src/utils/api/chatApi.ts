@@ -1,6 +1,7 @@
 import axiosInstance from "../service/axiosInstance";
 
 const endpoint = "/api/chats";
+const messageEndpoint = "/api/messages";
 
 export const getOrCreateConversation = async (
     userId: string,
@@ -48,4 +49,32 @@ export const chatAI = async (prompt: string): Promise<any> => {
 
 export const getOnlineUsers = async (): Promise<any> => {
     return await axiosInstance.get(`${endpoint}/online-users`);
+}
+
+export const isUserOnline = async (userId: string): Promise<any> => {
+    return await axiosInstance.get(`${endpoint}/is-user-online/${userId}`);
+}
+
+export const sendMessage = async (messageData: any): Promise<any> => {
+    return await axiosInstance.post(`${messageEndpoint}`, messageData);
+}
+
+export const sendMessageWithFiles = async (formData: FormData): Promise<any> => {
+    return await axiosInstance.post(`${messageEndpoint}/send-with-files`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
+}
+
+export const sendMessageWithImages = async (formData: FormData): Promise<any> => {
+    return await axiosInstance.post(`${messageEndpoint}/send-with-images`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
+}
+
+export const markMessageAsDeleted = async (messageId: string, userId: string): Promise<any> => {
+    return await axiosInstance.post(`${messageEndpoint}/${messageId}/mark-as-deleted?userId=${userId}`);
 }

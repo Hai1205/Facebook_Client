@@ -218,6 +218,7 @@ export const useChatStore = create<ChatStore>()(
         try {
           const response = await getMessages(conversationId, userId);
           const { messageResponses } = response.data;
+          console.log(response)
 
           if (messageResponses) {
             set({ messages: messageResponses });

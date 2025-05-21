@@ -229,7 +229,10 @@ export function ChatWindow({
           conversation.id,
           userAuth.id
         );
-        const result = response.map((msg) => ({
+
+        console.log("Messages fetched:", response);
+
+        const result = response?.map((msg) => ({
           id: msg.id || Date.now().toString(),
           content: msg.content,
           sender: (msg.sender.id === userAuth.id ? "me" : "other") as SENDER,

@@ -97,7 +97,7 @@ export function ChatWindow({
         });
 
       const statusCallback = (statusData: any) => {
-        if (statusData.userId === user.id) {
+        if (statusData.userId === user?.id) {
           setIsUserOnline(statusData.online);
         }
       };
@@ -108,7 +108,7 @@ export function ChatWindow({
         webSocketService.offEvent("status", statusCallback);
       };
     }
-  }, [userAuth?.id, user.id]);
+  }, [userAuth?.id, user?.id]);
 
   useEffect(() => {
     const fetchConversation = async () => {
@@ -172,7 +172,7 @@ export function ChatWindow({
               webSocketService.subscribeToTypingStatus(
                 conversation.id,
                 (typingData) => {
-                  if (typingData.userId === user.id) {
+                  if (typingData.userId === user?.id) {
                     setIsTyping(typingData.isTyping);
                   }
                 }
@@ -387,7 +387,7 @@ export function ChatWindow({
                   },
                   body: JSON.stringify({
                     senderId: String(userAuth?.id || ""),
-                    receiverId: user.id,
+                    receiverId: user?.id,
                     conversationId: conversation.id,
                     content: input.trim(),
                   }),

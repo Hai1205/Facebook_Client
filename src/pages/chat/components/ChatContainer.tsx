@@ -20,7 +20,7 @@ export function ChatContainer() {
 
   const { beginValue, distance } = useMemo(() => {
     return {
-      beginValue: 600,
+      beginValue: 300,
       distance: 300,
     };
   }, []);
@@ -32,16 +32,16 @@ export function ChatContainer() {
 
         return (
           <div
-            key={user.id}
+            key={user?.id}
             className="absolute bottom-0"
             style={{ right: `${rightPosition}px` }}
           >
             <ChatWindow
-              key={user.id}
+              key={user?.id}
               user={user}
-              onClose={() => closeChat(user.id as string)}
-              isMinimized={minimizedChats[user.id as string] || false}
-              onToggleMinimize={() => toggleMinimize(user.id as string)}
+              onClose={() => closeChat(user?.id as string)}
+              isMinimized={minimizedChats[user?.id as string] || false}
+              onToggleMinimize={() => toggleMinimize(user?.id as string)}
             />
           </div>
         );

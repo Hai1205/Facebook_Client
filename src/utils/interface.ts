@@ -112,6 +112,8 @@ export interface CONVERSATION {
 	isGroupChat: boolean;
 	participants: PARTICIPANT[];
 	unreadCount: number;
+	lastMessage?: MESSAGE;
+	unread?: boolean;
 	createdAt?: string;
 	updatedAt?: string;
 }

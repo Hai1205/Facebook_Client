@@ -28,11 +28,16 @@ export function ChatHeader({
     >
       <div className="flex items-center gap-2">
         <Avatar className="h-8 w-8">
-          <AvatarImage src={user?.avatarPhotoUrl} alt={user?.fullName} />
-          <AvatarFallback className="bg-primary">
-            {user?.fullName?.charAt(0)}
+          <AvatarImage
+            src={user?.avatarPhotoUrl}
+            alt={user?.fullName}
+          />
+
+          <AvatarFallback className="bg-zinc-800">
+            {user?.fullName?.substring(0, 2) || "FU"}
           </AvatarFallback>
         </Avatar>
+
         <div>
           <div className="text-sm font-medium text-white">
             {user?.fullName || "Chat User"}

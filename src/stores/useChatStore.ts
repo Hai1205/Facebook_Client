@@ -27,7 +27,7 @@ interface ChatStore {
   currentUserId: string | null;
   currentConversation: any | null;
   messages: any[];
-  conversations: any[];
+  conversations: CONVERSATION[];
 
   // WebSocket actions
   setWebSocketConnected: (isConnected: boolean) => void;

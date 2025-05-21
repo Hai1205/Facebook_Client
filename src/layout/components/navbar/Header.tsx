@@ -67,7 +67,7 @@ const Header = () => {
 
       await getSuggestedUsers(userAuth?.id as string);
 
-      // await getUserConversations(userAuth?.id as string);
+      await getUserConversations(userAuth?.id as string);
     }
   }, [
     getUserFeed,

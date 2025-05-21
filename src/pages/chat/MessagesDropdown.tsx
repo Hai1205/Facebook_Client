@@ -1,10 +1,11 @@
 import { Search } from "lucide-react";
 import { useState, useMemo } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { USER } from "@/utils/interface";
-import { ChatMessageItem } from "@/pages/chat/components/ChatMessageItem";
+import { CONVERSATION, USER } from "@/utils/interface";
 import { mockChatBot } from "@/utils/fakeData";
 import { useChatStore } from "@/stores/useChatStore";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { ChatMessageItem } from "./components/ChatMessageItem";
 
 interface MessagesDropdownProps {
   onChatStart: (user: USER) => void;
@@ -12,14 +13,29 @@ interface MessagesDropdownProps {
 
 export function MessagesDropdown({ onChatStart }: MessagesDropdownProps) {
   const { conversations } = useChatStore();
+  const { userAuth } = useAuthStore();
 
   const [searchTerm, setSearchTerm] = useState<string>("");
 
-  const filteredChats = useMemo(() => {
-    return conversations.filter((contact) =>
-    contact?.participants[0]?.user?.fullName?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredConversations = useMemo(() => {
+    return conversations.filter((conversation) => {
+      const otherParticipant = conversation?.participants?.find(
+        (participant) => participant?.user?.id !== userAuth?.id
+      );
+
+      return otherParticipant?.user?.fullName
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase());
+    });
+  }, [conversations, searchTerm, userAuth]);
+
+  const handleChatStart = (conversation: CONVERSATION) => {
+    const otherParticipant = conversation?.participants?.find(
+      (participant) => participant?.user?.id !== userAuth?.id
     );
-  }, [conversations, searchTerm]);
+
+    onChatStart(otherParticipant?.user as USER);
+  };
 
   return (
     <div className="absolute right-0 mt-2 w-80 bg-gray-800 rounded-lg shadow-lg border border-gray-700 overflow-hidden z-50">
@@ -47,17 +63,17 @@ export function MessagesDropdown({ onChatStart }: MessagesDropdownProps) {
           onClick={() => onChatStart(mockChatBot)}
         />
 
-        {filteredChats.length > 0 ? (
-          filteredChats.map((chat) => (
+        {filteredConversations.length > 0 ? (
+          filteredConversations.map((conversation) => (
             <ChatMessageItem
-              key={chat.id}
-              chat={chat}
-              onClick={() => onChatStart(chat.user)}
+              key={conversation?.id}
+              conversation={conversation}
+              onClick={() => handleChatStart(conversation)}
             />
           ))
         ) : (
           <div className="p-4 text-center text-gray-400">
-            No conversation found
+            No conversations found
           </div>
         )}
       </ScrollArea>

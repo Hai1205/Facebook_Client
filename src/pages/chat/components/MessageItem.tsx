@@ -1,4 +1,11 @@
-import { Download, File as FileIcon, MoreVertical, Trash } from "lucide-react";
+import {
+  Download,
+  File as FileIcon,
+  MoreVertical,
+  Trash,
+  Clock,
+  Check,
+} from "lucide-react";
 import { MESSAGE_STATUS_ENUM, MESSAGE_TYPE_ENUM } from "@/utils/constants";
 import { MESSAGE_STATUS, MESSAGE_TYPE } from "@/utils/types";
 import {
@@ -59,14 +66,10 @@ export function MessageItem({
   };
 
   return (
-    <div
-      className={`mb-2 ${sender === "me" ? "text-right" : "text-left"}`}
-    >
+    <div className={`mb-2 ${sender === "me" ? "text-right" : "text-left"}`}>
       <div
         className={`inline-block max-w-[80%] rounded-lg px-3 py-2 ${
-          sender === "me"
-            ? "bg-blue-600 text-white"
-            : "bg-gray-700 text-white"
+          sender === "me" ? "bg-blue-600 text-white" : "bg-gray-700 text-white"
         }`}
       >
         {/* If message is image */}
@@ -88,14 +91,12 @@ export function MessageItem({
           <div className="flex items-center gap-2 my-1 p-2 bg-gray-800 rounded-md">
             <FileIcon size={20} />
             <div className="flex-1 min-w-0">
-              <div className="text-sm font-medium truncate">
-                {fileName}
-              </div>
+              <div className="text-sm font-medium truncate">{fileName}</div>
               <div className="text-xs opacity-70">
                 {formatFileSize(fileSize)}
               </div>
             </div>
-            
+
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -135,7 +136,18 @@ export function MessageItem({
             sender === "me" ? "text-blue-200" : "text-gray-400"
           }`}
         >
-          {formatTime(timestamp)}
+          <span className="mr-1">{formatTime(timestamp)}</span>
+          {sender === "me" && (
+            <>
+              {status === MESSAGE_STATUS_ENUM.SENDING && (
+                <Clock size={12} className="inline ml-1" />
+              )}
+              {status !== MESSAGE_STATUS_ENUM.SENDING &&
+                status !== MESSAGE_STATUS_ENUM.DELETED && (
+                  <Check size={12} className="inline ml-1" />
+                )}
+            </>
+          )}
         </div>
       </div>
 
@@ -160,4 +172,4 @@ export function MessageItem({
       )}
     </div>
   );
-} 
+}

@@ -160,12 +160,31 @@ export function ChatWindow({
                       message.status as (typeof MESSAGE_STATUS_ENUM)[keyof typeof MESSAGE_STATUS_ENUM],
                   };
 
-                  // console.log("Adding new message to UI:", newMessage);
+                  setMessages((prev) => {
+                    const messageExists = prev.some(
+                      (msg) =>
+                        msg.id === newMessage.id ||
+                        (msg.content === newMessage.content &&
+                          msg.sender === newMessage.sender &&
+                          Date.now() - msg.timestamp.getTime() < 10000)
+                    );
 
-                  setMessages((prev) => [
-                    ...prev.filter((msg) => msg.id !== newMessage.id),
-                    newMessage,
-                  ]);
+                    if (messageExists) {
+                      return prev.map((msg) => {
+                        if (
+                          msg.id === newMessage.id ||
+                          (msg.content === newMessage.content &&
+                            msg.sender === newMessage.sender &&
+                            Date.now() - msg.timestamp.getTime() < 10000)
+                        ) {
+                          return newMessage;
+                        }
+                        return msg;
+                      });
+                    } else {
+                      return [...prev, newMessage];
+                    }
+                  });
                 }
               );
 
@@ -205,8 +224,7 @@ export function ChatWindow({
         setMessages([
           {
             id: Date.now().toString(),
-            content:
-              "Hello! I am Chat Bot. How can I help you today?",
+            content: "Hello! I am Chat Bot. How can I help you today?",
             sender: "other",
             timestamp: new Date(),
           },
@@ -318,66 +336,87 @@ export function ChatWindow({
         content: input.trim() || "",
         sender: "me",
         timestamp: new Date(),
+        status: MESSAGE_STATUS_ENUM.SENDING,
       };
 
       if (isChatBot) {
-        // Nếu là chat với bot thì xử lý khác
-        // 1. Thêm tin nhắn người dùng vào danh sách hiển thị
         setMessages((prevMessages) => [...prevMessages, newMessage]);
 
-        // 2. Reset form
         setInput("");
         setImageFile(null);
         setFilePreview(null);
         setSelectedFile(null);
 
-        // 3. Gọi API lấy phản hồi từ bot
         fetchChatBotResponse(input.trim());
 
-        // Kết thúc sớm, không cần xử lý tiếp
         return;
       }
 
-      // Các xử lý khác chỉ áp dụng cho chat giữa người với người
       if (conversation?.id && userAuth?.id) {
         await ensureWebSocketConnected();
       }
 
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+
       if (imageFile && conversation?.id) {
+        newMessage = {
+          ...newMessage,
+          type: MESSAGE_TYPE_ENUM.IMAGE,
+          imageUrls: [URL.createObjectURL(imageFile)],
+          status: MESSAGE_STATUS_ENUM.SENDING,
+        };
+
+        setMessages((prevMessages) =>
+          prevMessages
+            .filter(
+              (msg) =>
+                !(
+                  msg.content === newMessage.content &&
+                  msg.sender === newMessage.sender &&
+                  Date.now() - msg.timestamp.getTime() < 10000
+                )
+            )
+            .concat([newMessage])
+        );
+
         const formData = new FormData();
         formData.append("file", imageFile);
         formData.append("conversationId", conversation.id);
         formData.append("senderId", userAuth?.id || "");
         formData.append("content", input.trim() || "");
 
-        const response = await sendMessageWithImages(formData);
-        if (response) {
-          newMessage = {
-            ...newMessage,
-            type: MESSAGE_TYPE_ENUM.IMAGE,
-            imageUrls: [response.imageUrl],
-          };
-        }
+        await sendMessageWithImages(formData);
       } else if (selectedFile && conversation?.id) {
+        newMessage = {
+          ...newMessage,
+          type: MESSAGE_TYPE_ENUM.FILE,
+          fileName: selectedFile.name,
+          fileSize: selectedFile.size,
+          mimeType: selectedFile.type,
+          status: MESSAGE_STATUS_ENUM.SENDING,
+        };
+
+        setMessages((prevMessages) =>
+          prevMessages
+            .filter(
+              (msg) =>
+                !(
+                  msg.content === newMessage.content &&
+                  msg.sender === newMessage.sender &&
+                  Date.now() - msg.timestamp.getTime() < 10000
+                )
+            )
+            .concat([newMessage])
+        );
+
         const formData = new FormData();
         formData.append("file", selectedFile);
         formData.append("conversationId", conversation.id);
         formData.append("senderId", userAuth?.id || "");
         formData.append("content", input.trim() || "");
 
-        const response = await sendMessageWithFiles(formData);
-        if (response) {
-          newMessage = {
-            ...newMessage,
-            type: MESSAGE_TYPE_ENUM.FILE,
-            fileUrl: response.fileUrl,
-            fileName: response.fileName,
-            fileSize: response.fileSize,
-            mimeType: response.mimeType,
-          };
-        }
+        await sendMessageWithFiles(formData);
       } else if (conversation?.id) {
-        // Xử lý gửi tin nhắn thông thường
         try {
           if (!webSocketService.isConnected() && userAuth?.id) {
             await webSocketService.connectToWebSocket(

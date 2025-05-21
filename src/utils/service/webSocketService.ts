@@ -8,6 +8,12 @@ type EVENT_TYPES = 'message' | 'status' | 'typing' | 'read' | 'delete' | 'error'
 let stompClient: Client | null = null;
 let connected = false;
 const subscriptions: { [key: string]: any } = {};
+let currentUserId: string = '';
+let currentServerUrl: string = '';
+let reconnectAttempts = 0;
+const MAX_RECONNECT_ATTEMPTS = 5;
+let reconnectTimer: NodeJS.Timeout | null = null;
+let connectionHeartbeatInterval: NodeJS.Timeout | null = null;
 
 const eventCallbacks: {
     [key: string]: Array<(data: any) => void>
@@ -22,13 +28,26 @@ const eventCallbacks: {
 
 export const connectToWebSocket = (userId: string, serverUrl: string): Promise<boolean> => {
     return new Promise((resolve) => {
-        if (connected && stompClient) {
+        // Lưu thông tin kết nối để dùng cho việc kết nối lại sau
+        currentUserId = userId;
+        currentServerUrl = serverUrl || 'http://localhost:4040';
+
+        if (connected && stompClient?.connected) {
             // console.log('WebSocket is already connected');
             resolve(true);
             return;
         }
 
-        const effectiveUrl = serverUrl || 'http://localhost:4040';
+        // Hủy bỏ timer tái kết nối cũ nếu có
+        if (reconnectTimer) {
+            clearTimeout(reconnectTimer);
+            reconnectTimer = null;
+        }
+
+        // Reset số lần thử kết nối
+        reconnectAttempts = 0;
+
+        const effectiveUrl = currentServerUrl;
         // console.log(`Connect to WebSocket at ${effectiveUrl}/ws`);
 
         const socket = new SockJS(`${effectiveUrl}/ws`);
@@ -48,19 +67,19 @@ export const connectToWebSocket = (userId: string, serverUrl: string): Promise<b
             }
         });
 
-        // stompClient.debug = function (str) {
-        //     console.log(`STOMP: ${str}`);
-        // };
-
         stompClient.onConnect = () => {
             // console.log('WebSocket connection successful:', frame);
             connected = true;
+            reconnectAttempts = 0;
 
             sendUserConnectMessage(userId);
 
             subscribeToUserStatus();
 
             subscribeToUserErrors(userId);
+
+            // Bắt đầu kiểm tra kết nối định kỳ
+            startConnectionHeartbeat();
 
             resolve(true);
         };
@@ -69,7 +88,19 @@ export const connectToWebSocket = (userId: string, serverUrl: string): Promise<b
             console.error('Lỗi STOMP:', frame);
             triggerCallbacks('error', { message: 'Lỗi kết nối WebSocket', frame });
             connected = false;
+
+            // Thử kết nối lại
+            attemptReconnect();
+
             resolve(false);
+        };
+
+        stompClient.onDisconnect = () => {
+            console.log('WebSocket disconnected');
+            connected = false;
+
+            // Thử kết nối lại
+            attemptReconnect();
         };
 
         stompClient.activate();
@@ -81,6 +112,17 @@ export const disconnectWebSocket = (userId: string): Promise<boolean> => {
         if (!connected || !stompClient) {
             resolve(true);
             return;
+        }
+
+        // Dừng heartbeat và các timer tái kết nối
+        if (connectionHeartbeatInterval) {
+            clearInterval(connectionHeartbeatInterval);
+            connectionHeartbeatInterval = null;
+        }
+
+        if (reconnectTimer) {
+            clearTimeout(reconnectTimer);
+            reconnectTimer = null;
         }
 
         sendUserDisconnectMessage(userId);
@@ -148,16 +190,27 @@ const subscribeToUserErrors = (userId: string) => {
 };
 
 export const subscribeToConversation = (conversationId: string, callback: (message: MESSAGE) => void) => {
-    if (!connected || !stompClient) {
-        // console.error('Chưa kết nối WebSocket');
+    if (!stompClient || !isConnected()) {
+        console.error(`Chưa kết nối WebSocket khi thử đăng ký conversation ${conversationId}`);
+
+        // Lưu lại thông tin đăng ký để thử lại sau
+        if (currentUserId && currentServerUrl) {
+            console.log(`Đang thử kết nối lại để đăng ký kênh ${conversationId}...`);
+
+            connectToWebSocket(currentUserId, currentServerUrl).then(success => {
+                if (success) {
+                    // Thử đăng ký lại sau khi kết nối
+                    setTimeout(() => subscribeToConversation(conversationId, callback), 500);
+                }
+            });
+        }
+
         return false;
     }
 
     if (subscriptions[`conversation-${conversationId}`]) {
         subscriptions[`conversation-${conversationId}`].unsubscribe();
     }
-
-    // console.log(`Subscribe to receive messages for conversation ${conversationId}`);
 
     try {
         const subscription = stompClient.subscribe(`/topic/conversation.${conversationId}`, (message: IMessage) => {
@@ -265,8 +318,21 @@ export const subscribeToTypingStatus = (conversationId: string, callback: (typin
 };
 
 export const sendMessage = (messageData: any) => {
-    if (!connected || !stompClient) {
-        // console.error('No WebSocket connection');
+    if (!stompClient || !isConnected()) {
+        console.log('WebSocket không kết nối, đang thử kết nối lại...');
+
+        // Thử kết nối lại và gửi tin nhắn
+        if (currentUserId && currentServerUrl) {
+            connectToWebSocket(currentUserId, currentServerUrl).then(success => {
+                if (success) {
+                    // Thử gửi lại tin nhắn sau khi kết nối
+                    setTimeout(() => sendMessage(messageData), 500);
+                } else {
+                    console.error('Không thể kết nối lại WebSocket để gửi tin nhắn');
+                }
+            });
+        }
+
         return false;
     }
 
@@ -319,12 +385,10 @@ export const sendMessage = (messageData: any) => {
 };
 
 export const sendTypingStatus = (conversationId: string, userId: string, isTyping: boolean) => {
-    if (!connected || !stompClient) {
-        // console.error('No WebSocket connection');
-        // console.log('Trying to send typing status when not connected:', {
-        //     conversationId, userId, isTyping
-        // });
-        return true;
+    if (!stompClient || !isConnected()) {
+        console.log('WebSocket không kết nối, đang bỏ qua gửi trạng thái đang nhập...');
+        // Không cần kết nối lại cho tính năng này vì không quan trọng
+        return false;
     }
 
     try {
@@ -396,7 +460,7 @@ const triggerCallbacks = (eventType: string, data: any) => {
 };
 
 export const isConnected = () => {
-    return connected && !!stompClient?.connected;
+    return connected && !!stompClient && stompClient.connected;
 };
 
 export const sendChatMessageWithREST = async (messageData: any): Promise<boolean> => {
@@ -487,4 +551,44 @@ export const unsubscribeFromAllTopics = () => {
             delete subscriptions[subId];
         }
     });
+};
+
+// Thêm hàm tự động kết nối lại
+const attemptReconnect = () => {
+    if (reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
+        console.log(`Đã vượt quá số lần thử kết nối tối đa (${MAX_RECONNECT_ATTEMPTS})`);
+        reconnectAttempts = 0;
+        return;
+    }
+
+    reconnectAttempts++;
+    const delay = Math.min(1000 * (2 ** reconnectAttempts), 30000); // Tối đa 30 giây
+
+    console.log(`Thử kết nối lại lần ${reconnectAttempts} sau ${delay / 1000} giây...`);
+
+    if (reconnectTimer) {
+        clearTimeout(reconnectTimer);
+    }
+
+    reconnectTimer = setTimeout(() => {
+        if (currentUserId && currentServerUrl) {
+            console.log('Đang thử kết nối lại WebSocket...');
+            connectToWebSocket(currentUserId, currentServerUrl);
+        }
+    }, delay);
+};
+
+export const startConnectionHeartbeat = () => {
+    // Xóa interval cũ nếu có
+    if (connectionHeartbeatInterval) {
+        clearInterval(connectionHeartbeatInterval);
+    }
+
+    // Kiểm tra kết nối mỗi 30 giây
+    connectionHeartbeatInterval = setInterval(() => {
+        if (!isConnected() && currentUserId && currentServerUrl) {
+            console.log('Heartbeat: Phát hiện mất kết nối, đang thử kết nối lại...');
+            connectToWebSocket(currentUserId, currentServerUrl);
+        }
+    }, 30000); // 30 giây
 }; 
